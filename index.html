@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Bootstrap + Knockout Example</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<script src="ko/ko-min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- html2pdf (bundle includes html2canvas + jsPDF) -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+</head>
+
+<body class="p-4">
+	<div class="container">
+		<h1 class="mb-4">Оферти SOFEL-MR</h1>
+		<!-- Нов селект за пликове -->
+		<div class="mb-3">
+			<label class="form-label">Избор на плик</label>
+			<select class="form-select"
+				data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId"></select>
+		</div>
+
+		<!-- Селект за материал (зависи от избрания плик) -->
+		<div class="mb-3">
+			<label class="form-label">Материал</label>
+			<select class="form-select"
+				data-bind="options: materialsForSelected, optionsText: 'name', optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Избран плик</label>
+			<div class="form-control-plaintext"
+				data-bind="text: selectedEnvelope() ? selectedEnvelope().name : 'Няма избор'"></div>
+		</div>
+		<!-- Export button -->
+		<div class="mb-3">
+			<button class="btn btn-success" data-bind="click: exportPdf">Export PDF</button>
+		</div>
+
+		<!-- Controls -->
+		<div class="mb-3">
+			<label class="form-label">Височина</label>
+			<input type="number" step="any" class="form-control"
+				data-bind="value: height, valueUpdate: 'afterkeydown'" />
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Ширина</label>
+			<input type="number" step="any" class="form-control"
+				data-bind="value: width, valueUpdate: 'afterkeydown'" />
+		</div>
+		<!-- Нов падащ списък: количество -->
+		<div class="mb-3">
+			<label class="form-label">Количество</label>
+			<select class="form-select" data-bind="options: quantities, value: selectedQuantity"></select>
+		</div>
+
+		<!-- Показване на стойността (количество * цена) -->
+		
+	</div>
+	<div  id="pdf-content">
+		<div class="mb-3">
+			<label class="form-label">Стойност</label>
+			<div class="form-control-plaintext" data-bind="text: totalPrice"></div>
+		</div>
+	</div>
+	<script>
+		function ViewModel() {
+			var self = this;
+			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
+			self.envelopes = ko.observableArray([
+				{
+					id: 1, name: "хартиен плик с прозорец",
+					materials: [
+						{ id: 101, name: "материал 1", price: 0.01 },
+						{ id: 102, name: "материал 2", price: 0.02 }
+					]
+				},
+				{
+					id: 2, name: "хартиен плик без прозорец",
+					materials: [
+						{ id: 201, name: "материал 3", price: 0.03 },
+						{ id: 202, name: "материал 4", price: 0.04 }
+					]
+				}
+			]);
+
+			// избран плик (само id) и computed за обекта
+			self.selectedEnvelopeId = ko.observable(self.envelopes()[0].id);
+			self.selectedEnvelope = ko.computed(function () {
+				var id = self.selectedEnvelopeId();
+				return ko.utils.arrayFirst(self.envelopes(), function (e) { return e.id === id; }) || null;
+			});
+
+			// материали за избрания плик (computed)
+			self.materialsForSelected = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return env && env.materials ? env.materials : [];
+			});
+
+			// избран материал (само id) и computed за обекта
+			self.selectedMaterialId = ko.observable(self.materialsForSelected().length ? self.materialsForSelected()[0].id : null);
+			// при смяна на плика избирай първия материал по подразбиране
+			self.selectedEnvelopeId.subscribe(function () {
+				var mats = self.materialsForSelected();
+				self.selectedMaterialId(mats.length ? mats[0].id : null);
+			});
+			self.selectedMaterial = ko.computed(function () {
+				var id = self.selectedMaterialId();
+				return ko.utils.arrayFirst(self.materialsForSelected(), function (m) { return m.id === id; }) || null;
+			});
+
+			// останалата логика (височина, ширина, площ, export и т.н.)
+			self.height = ko.observable(100);
+			self.width = ko.observable(200);
+			
+			// количества (observableArray) и избрано количество
+			self.quantities = ko.observableArray([10000, 15000, 35000, 50000]);
+			self.selectedQuantity = ko.observable(self.quantities()[0]);
+			
+			// обща стойност = количество * цена на избрания материал
+			self.totalPrice = ko.computed(function() {
+				var qty = parseFloat(self.selectedQuantity()) || 0;
+				var mat = self.selectedMaterial(); // използва вече дефинираното selectedMaterial
+				var price = mat && mat.price ? parseFloat(mat.price) : 0;
+				return (qty * price).toFixed(2);
+			});
+
+			self.exportPdf = function () {
+				var element = document.getElementById('pdf-content');
+				var opt = {
+					margin: 0.5,
+					filename: 'export.pdf',
+					image: { type: 'jpeg', quality: 0.98 },
+					html2canvas: { scale: 2, useCORS: true },
+					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+				};
+				html2pdf().set(opt).from(element).save();
+			};
+
+			// (ако имате items/нови елементи) — запазете съществуващата логика
+		}
+
+		ko.applyBindings(new ViewModel());
+	</script>
+
+</body>
+
+</html>
