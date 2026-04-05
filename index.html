@@ -15,50 +15,82 @@
 
 <body class="p-4">
 	<div class="container">
-		<h1 class="mb-4">Оферти SOFEL-MR2</h1>
-		<!-- Нов селект за пликове -->
-		<div class="mb-3">
-			<label class="form-label">Избор на плик</label>
-			<select class="form-select"
-				data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId"></select>
-		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="mb-4">Оферти SOFEL-MR2</h1>
+				<!-- Нов селект за пликове -->
+				<div class="mb-3">
+					<label class="form-label">Избор на плик</label>
+					<select class="form-select"
+						data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId"></select>
+				</div>
 
-		<!-- Селект за материал (зависи от избрания плик) -->
-		<div class="mb-3">
-			<label class="form-label">Материал</label>
-			<select class="form-select"
-				data-bind="options: materialsForSelected, optionsText: 'name', optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
-		</div>
+				<!-- Селект за материал (зависи от избрания плик) -->
+				<div class="mb-3">
+					<label class="form-label">Материал</label>
+					<select class="form-select"
+						data-bind="options: materialsForSelected, optionsText: 'name', optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
+				</div>
 
-		<div class="mb-3">
-			<label class="form-label">Избран плик</label>
-			<div class="form-control-plaintext"
-				data-bind="text: selectedEnvelope() ? selectedEnvelope().name : 'Няма избор'"></div>
-		</div>
-		<!-- Export button -->
-		<div class="mb-3">
-			<button class="btn btn-success" data-bind="click: exportPdf">Export PDF</button>
-		</div>
+				<div class="mb-3">
+					<label class="form-label">Избран плик</label>
+					<div class="form-control-plaintext"
+						data-bind="text: selectedEnvelope() ? selectedEnvelope().name : 'Няма избор'"></div>
+				</div>
+				<!-- (Moved) Export / Print buttons will appear below Quantity -->
 
-		<!-- Controls -->
-		<div class="mb-3">
-			<label class="form-label">Височина</label>
-			<input type="number" step="any" class="form-control"
-				data-bind="value: height, valueUpdate: 'afterkeydown'" />
-		</div>
-		<div class="mb-3">
-			<label class="form-label">Ширина</label>
-			<input type="number" step="any" class="form-control"
-				data-bind="value: width, valueUpdate: 'afterkeydown'" />
-		</div>
-		<!-- Нов падащ списък: количество -->
-		<div class="mb-3">
-			<label class="form-label">Количество</label>
-			<select class="form-select" data-bind="options: quantities, value: selectedQuantity"></select>
-		</div>
+				<!-- Controls -->
+				<div class="mb-3">
+					<label class="form-label">Височина</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: height, valueUpdate: 'afterkeydown'" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Ширина</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: width, valueUpdate: 'afterkeydown'" />
+				</div>
+				<!-- Нов падащ списък: количество -->
+				<div class="mb-3">
+					<label class="form-label">Количество</label>
+					<select class="form-select" data-bind="options: quantities, value: selectedQuantity"></select>
+				</div>
 
-		<!-- Показване на стойността (количество * цена) -->
+				<!-- Export + Print buttons (moved under Quantity) -->
+				<div class="mb-3">
+					<button class="btn btn-success me-2" data-bind="click: exportPdf">Export PDF</button>
+					<button class="btn btn-primary" data-bind="click: printDoc">Print</button>
+				</div>
 
+				<!-- Показване на стойността (количество * цена) -->
+			</div>
+
+			<div class="col-md-6">
+				<div class="card p-3">
+					<h5>Получател</h5>
+					<div class="mb-3">
+						<label class="form-label">До</label>
+						<input type="text" class="form-control" data-bind="value: recipientCompany" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">На вниманието на</label>
+						<input type="text" class="form-control" data-bind="value: attentionName" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Телефон</label>
+						<input type="text" class="form-control" data-bind="value: recipientPhone" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Имейл адрес</label>
+						<input type="email" class="form-control" data-bind="value: recipientEmail" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">По запитване</label>
+						<input type="text" class="form-control" data-bind="value: inquiryFrom" />
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div id="pdf-content">
 		<div class=WordSection1>
@@ -73,31 +105,17 @@
 normal'><span style='position:absolute;z-index:-1895824384;left:0px;margin-left:
 364px;margin-top:2px;width:207px;height:38px'><img width=207 height=38 src="rudi_simple_files/image003.png"></span></p>
 
-			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>До</span><span lang=EN-US
-					style='font-family:"Century Gothic",sans-serif'>:</span><span lang=EN-US
-					style='font-size:14.0pt;font-family:"Century Gothic",sans-serif'> </span><b><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;color:#333333;
-background:white'>„ПЛАСТИК-СОФИЯ“ ООД           </span></b><span
-					style='font-size:8.5pt;font-family:"Century Gothic",sans-serif;color:#333333'><br>
-				</span><span style='font-family:"Century Gothic",sans-serif'>На вниманието на:</span><span
-					style='font-family:"Century Gothic",sans-serif'> </span><span style='font-family:
-"Century Gothic",sans-serif;color:#333333;background:white'>Любомир Недков</span></p>
+			<p class=MsoNoSpacing>
+				<span style='font-family:"Century Gothic",sans-serif'>До</span><span>:</span>
+				<b><span data-bind="text: recipientCompany" style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;color:#333333;background:white'></span></b><br/>
+				<span style='font-family:"Century Gothic",sans-serif'>На вниманието на: </span><span data-bind="text: attentionName" style='font-family:"Century Gothic",sans-serif;color:#333333;background:white'></span>
+			</p>
 
-			<p class=MsoNoSpacing><span style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>тел.
-					за контакт :</span><span style='font-size:8.0pt;font-family:"Century Gothic",sans-serif;
-color:#333333;background:white'>  +359 888626342</span></p>
+			<p class=MsoNoSpacing><span style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>тел. за контакт :</span><span style='font-size:8.0pt;font-family:"Century Gothic",sans-serif;color:#333333;background:white' data-bind="text: recipientPhone"></span></p>
 
-			<p class=MsoNoSpacing><span lang=EN-US style='font-family:"Century Gothic",sans-serif'>e-mail
-					:</span><span lang=EN-US style='font-family:"Century Gothic",sans-serif'> </span><span lang=EN-US
-					style='font-family:"Century Gothic",sans-serif'>l.nedkov</span><span
-					style='font-family:"Century Gothic",sans-serif'>@plastic-sofia .com</span></p>
+			<p class=MsoNoSpacing><span lang=EN-US style='font-family:"Century Gothic",sans-serif'>e-mail :</span> <span data-bind="text: recipientEmail" style='font-family:"Century Gothic",sans-serif'></span></p>
 
-			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>по
-					запитване: от </span><span lang=EN-US
-					style='font-family:"Century Gothic",sans-serif'>12.04</span><span
-					style='font-family:"Century Gothic",sans-serif'>.20</span><span lang=EN-US
-					style='font-family:"Century Gothic",sans-serif'>21</span><span
-					style='font-family:"Century Gothic",sans-serif'> – </span><span
-					style='font-family:"Century Gothic",sans-serif'> <span lang=EN-US>e-mail</span></span></p>
+			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>по запитване: </span><span data-bind="text: inquiryFrom" style='font-family:"Century Gothic",sans-serif'></span></p>
 
 			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>&nbsp;</span></p>
 
@@ -411,6 +429,13 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 			self.quantities = ko.observableArray([10000, 15000, 35000, 50000]);
 			self.selectedQuantity = ko.observable(self.quantities()[0]);
 
+			// recipient fields bound to the PDF content
+			self.recipientCompany = ko.observable('„ПЛАСТИК-СОФИЯ“ ООД');
+			self.attentionName = ko.observable('Любомир Недков');
+			self.recipientPhone = ko.observable('+359 888626342');
+			self.recipientEmail = ko.observable('l.nedkov@plastic-sofia.com');
+			self.inquiryFrom = ko.observable('от 12.04.2021 – e-mail');
+
 			// обща стойност = количество * цена на избрания материал
 			self.totalPrice = ko.computed(function () {
 				var qty = parseFloat(self.selectedQuantity()) || 0;
@@ -429,6 +454,19 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
 				html2pdf().set(opt).from(element).save();
+			};
+
+			self.printDoc = function () {
+				var element = document.getElementById('pdf-content');
+				var w = window.open('', '_blank');
+				var html = '<!doctype html><html><head><meta charset="utf-8"/>' +
+				    '<title>Print</title>' +
+				    '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>' +
+				    '</head><body>' + element.innerHTML + '</body></html>';
+				w.document.write(html);
+				w.document.close();
+				w.focus();
+				setTimeout(function () { try { w.print(); } catch (e) {} }, 300);
 			};
 
 			// (ако имате items/нови елементи) — запазете съществуващата логика
