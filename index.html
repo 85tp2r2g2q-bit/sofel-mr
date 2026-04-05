@@ -55,6 +55,29 @@
 			padding: 18px;
 			border-radius: 6px;
 		}
+
+		/* Responsive controls toolbar */
+		.controls-toolbar {
+			display: flex;
+			gap: .5rem;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+		.controls-toolbar .btn { flex: 0 1 auto; }
+		@media (max-width: 576px) {
+			.controls-toolbar .btn { flex: 1 1 100%; }
+		}
+
+		/* Prevent PDF content overflow on small screens */
+		.pdf-container img { max-width: 100%; height: auto; }
+		@media (max-width: 576px) {
+			/* undo absolute positioning that comes from imported MHT markup */
+			.pdf-container img[style*="position:absolute"] { position: static !important; left: auto !important; top: auto !important; }
+		}
+
+		/* Make tables responsive inside the PDF box */
+		#pdf-content table { display: block; width: 100% !important; overflow-x: auto; }
+		#pdf-content td, #pdf-content th { word-wrap: break-word; white-space: normal; }
 	</style>
 </head>
 
@@ -114,10 +137,10 @@
 				</div>
 
 				<!-- Export + Print buttons (moved under Quantity) -->
-				<div class="mb-3">
-					<button class="btn btn-success me-2" data-bind="click: exportPdf">Export PDF</button>
+				<div class="mb-3 controls-toolbar">
+					<button class="btn btn-success" data-bind="click: exportPdf">Export PDF</button>
 					<button class="btn btn-primary" data-bind="click: printDoc">Print</button>
-					<button class="btn btn-outline-secondary ms-2" data-bind="click: addToOffer">Добави към оферта</button>
+					<button class="btn btn-outline-secondary" data-bind="click: addToOffer">Добави към оферта</button>
 				</div>
 
 					<!-- Показване на стойността (количество * цена) -->
