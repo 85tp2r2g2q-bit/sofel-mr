@@ -38,6 +38,20 @@
 		.preview-mode img { max-width: 100%; height: auto; }
 		.preview-mode table { width: 100% !important; table-layout: fixed; }
 
+		/* Fix: ensure images from imported MHT (often absolutely positioned or with negative z-index)
+		   are visible on screen — don't rely on their inline absolute positioning for layout. */
+		@media screen {
+			#pdf-content span[style*="position:absolute"],
+			#pdf-content img[style*="position:absolute"] {
+				position: static !important;
+				left: auto !important;
+				top: auto !important;
+			}
+			#pdf-content [style*="z-index:-"] {
+				z-index: auto !important;
+			}
+		}
+
 		/* Visual separation for on-page document area */
 		.pdf-container {
 			margin-top: 24px;
@@ -151,6 +165,10 @@
 				<div class="card p-3">
 					<h5>Получател</h5>
 					<div class="mb-3">
+						<label class="form-label">Избор на получател</label>
+						<select class="form-select" data-bind="options: recipients, optionsText: 'label', optionsValue: 'id', value: selectedRecipientId, optionsCaption: '— избери —'"></select>
+					</div>
+					<div class="mb-3">
 						<label class="form-label">До</label>
 						<input type="text" class="form-control" data-bind="value: recipientCompany" />
 					</div>
@@ -200,12 +218,7 @@ normal'><span style='position:absolute;z-index:-1895824384;left:0px;margin-left:
 
 			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>по запитване: </span><span data-bind="text: inquiryFrom" style='font-family:"Century Gothic",sans-serif'></span></p>
 
-			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>&nbsp;</span></p>
-
-			<p class=MsoNoSpacing align=center style='text-align:center'><span
-					style='font-family:"Century Gothic",sans-serif'>&nbsp;</span></p>
-
-			<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>Във
+			<p class=MsoNoSpacing style='margin-top:0cm;margin-bottom:0.15cm'><span style='font-family:"Century Gothic",sans-serif'>Във
 					връзка с отправено ваше запитване и предоставена проектна документация
 					предлагаме на вашето внимание следната:</span></p>
 
@@ -476,6 +489,25 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 			self.recipientPhone = ko.observable('+359 888626342');
 			self.recipientEmail = ko.observable('l.nedkov@plastic-sofia.com');
 			self.inquiryFrom = ko.observable('от 12.04.2021 – e-mail');
+
+			// recipients list and selection
+			self.recipients = ko.observableArray([
+				{ id: 1, label: 'ПЛАСТИК-СОФИЯ', company: '„ПЛАСТИК-СОФИЯ“ ООД', attention: 'Любомир Недков', phone: '+359 888626342', email: 'l.nedkov@plastic-sofia.com', inquiry: 'от 12.04.2021 – e-mail' },
+				{ id: 2, label: 'Клиент Пример', company: 'Клиент Пример ООД', attention: 'Иван Петров', phone: '+359 888111222', email: 'ivan@primer.bg', inquiry: 'по запитване' }
+			]);
+			self.selectedRecipientId = ko.observable();
+
+			// when a recipient is selected, populate the form fields
+			self.selectedRecipientId.subscribe(function (id) {
+				var rec = ko.utils.arrayFirst(self.recipients(), function (r) { return r.id === id; });
+				if (rec) {
+					self.recipientCompany(rec.company || '');
+					self.attentionName(rec.attention || '');
+					self.recipientPhone(rec.phone || '');
+					self.recipientEmail(rec.email || '');
+					self.inquiryFrom(rec.inquiry || '');
+				}
+			});
 
 			// offer metadata (dynamic)
 			self.offerNumber = ko.observable('00974');
