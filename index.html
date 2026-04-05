@@ -11,15 +11,61 @@
 
 	<!-- html2pdf (bundle includes html2canvas + jsPDF) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+	<style>
+		/* Hide elements with .no-print when printing */
+		@media print {
+			.no-print { display: none !important; }
+		}
+		/* Helper to hide action cells during PDF export/print when wrapper .hide-actions is applied */
+		.hide-actions .no-print { display: none !important; }
+
+		/* On-screen print preview styling (A4-like) */
+		.preview-mode {
+			background: #777; /* page background */
+			padding: 20px 0;
+		}
+		.preview-mode #pdf-content {
+			width: 210mm; /* A4 width */
+			min-height: 297mm; /* A4 height */
+			margin: 0 auto;
+			padding: 20mm;
+			background: white;
+			box-shadow: 0 0 20px rgba(0,0,0,0.5);
+			overflow: auto;
+		}
+		/* Make images and tables fit the preview page */
+		.preview-mode img { max-width: 100%; height: auto; }
+		.preview-mode table { width: 100% !important; table-layout: fixed; }
+
+		/* Visual separation for on-page document area */
+		.pdf-container {
+			margin-top: 24px;
+			display: block;
+		}
+		.pdf-container-header {
+			margin-bottom: 8px;
+			font-family: "Century Gothic", sans-serif;
+			color: #1f497d;
+		}
+		#pdf-content {
+			background: #fff;
+			border: 1px solid #e1e4e8;
+			box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+			padding: 18px;
+			border-radius: 6px;
+		}
+	</style>
 </head>
 
 <body class="p-4">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
-				<h1 class="mb-4">Оферти SOFEL-MR2</h1>
-				<!-- Нов селект за пликове -->
-				<div class="mb-3">
+				<div class="card p-3">
+					<h5 class="mb-3">Данни за артикули</h5>
+					<!-- Нов селект за пликове -->
+					<div class="mb-3">
 					<label class="form-label">Избор на плик</label>
 					<select class="form-select"
 						data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId"></select>
@@ -32,11 +78,7 @@
 						data-bind="options: materialsForSelected, optionsText: 'name', optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
 				</div>
 
-				<div class="mb-3">
-					<label class="form-label">Избран плик</label>
-					<div class="form-control-plaintext"
-						data-bind="text: selectedEnvelope() ? selectedEnvelope().name : 'Няма избор'"></div>
-				</div>
+
 				<!-- (Moved) Export / Print buttons will appear below Quantity -->
 
 				<!-- Controls -->
@@ -56,13 +98,30 @@
 					<select class="form-select" data-bind="options: quantities, value: selectedQuantity"></select>
 				</div>
 
+				<!-- Номер и предмет на офертата (динамични) -->
+				<div class="mb-3">
+					<label class="form-label">Номер на офертата</label>
+					<input type="text" class="form-control" data-bind="value: offerNumber" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Предмет на офертата</label>
+					<input type="text" class="form-control" data-bind="value: offerSubject" />
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label">Дата на документа</label>
+					<input type="date" class="form-control" data-bind="value: documentDateRaw" />
+				</div>
+
 				<!-- Export + Print buttons (moved under Quantity) -->
 				<div class="mb-3">
 					<button class="btn btn-success me-2" data-bind="click: exportPdf">Export PDF</button>
 					<button class="btn btn-primary" data-bind="click: printDoc">Print</button>
+					<button class="btn btn-outline-secondary ms-2" data-bind="click: addToOffer">Добави към оферта</button>
 				</div>
 
-				<!-- Показване на стойността (количество * цена) -->
+					<!-- Показване на стойността (количество * цена) -->
+				</div>
 			</div>
 
 			<div class="col-md-6">
@@ -92,12 +151,13 @@
 			</div>
 		</div>
 	</div>
-	<div id="pdf-content">
+	<div class="pdf-container">
+		<div class="pdf-container-header"><h5>Документ</h5></div>
+		<div id="pdf-content">
 		<div class=WordSection1>
 
 			<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-					style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>събота, 04
-					април 2026 г.</span><span style='position:relative;z-index:-1895823360'><span
+					style='font-size:9.0pt;font-family:"Century Gothic",sans-serif' data-bind="text: documentDate"></span><span style='position:relative;z-index:-1895823360'><span
 						style='position:absolute;left:585px;top:-3px;width:127px;height:73px'><img width=127 height=73
 							src="rudi_simple_files/image002.jpg"></span></span></p>
 
@@ -126,26 +186,13 @@ normal'><span style='position:absolute;z-index:-1895824384;left:0px;margin-left:
 					връзка с отправено ваше запитване и предоставена проектна документация
 					предлагаме на вашето внимание следната:</span></p>
 
-			<p class=MsoNormal align=center style='text-align:center'><b><span
-						style='font-size:20.0pt;line-height:115%;font-family:"Century Gothic",sans-serif'>ОФЕРТА
-						№.009</span></b><b><span lang=EN-US style='font-size:20.0pt;line-height:115%;
-font-family:"Century Gothic",sans-serif'>74</span></b><b><span
-						style='font-size:20.0pt;line-height:115%;font-family:"Century Gothic",sans-serif'>/</span></b><b><span
-						style='font-size:20.0pt;line-height:115%;font-family:"Century Gothic",sans-serif'>2026-04-04</span></b>
-			</p>
+			<p class=MsoNormal align=center style='text-align:center'><b style='font-size:20.0pt;line-height:115%;font-family:"Century Gothic",sans-serif'>ОФЕРТА №<span data-bind="text: offerNumber"></span>/<span data-bind="text: offerDate"></span></b></p>
 
 			<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
 font-family:"Century Gothic",sans-serif'>&nbsp;</span></p>
 
-			<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
-0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
-font-family:"Century Gothic",sans-serif'>Предмет на офертата<span data-bind="text:totalPrice"></span><span
-					style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'> </span><b><span
-						style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Хартиени
-						пликове</span></b><b><span lang=EN-US
-						style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>
-						KAUFLAND RO</span></b></p>
+			<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Предмет на офертата: </span><b><span data-bind="text: offerSubject"></span></b></p>
 
 			<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
@@ -201,70 +248,40 @@ font-family:"Times New Roman",serif'>&nbsp;</span></p>
 									style='font-size:10.0pt;color:red'>.</span><span style='font-size:10.0pt;
   color:red'>/бр.</span></p>
 						</td>
-					</tr>
-					<tr style='height:38.95pt'>
-						<td width=22 style='width:16.15pt;border:solid windowtext 1.0pt;border-top:
-  none;padding:0cm 2.85pt 0cm 2.85pt;height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-bottom:0cm;text-align:center;
-  line-height:normal'><b><span style='font-size:10.0pt;color:#00B0F0'>1</span></b></p>
-						</td>
-						<td width=139 style='width:104.1pt;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.0pt;border-right:solid #1F497D 1.0pt;
-  padding:0cm 2.85pt 0cm 2.85pt;height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:0cm;text-align:center;line-height:normal'><span
-									style='font-size:10.0pt;font-family:"Century Gothic",sans-serif'>Хартиен плик
-								</span></p>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:0cm;text-align:center;line-height:normal'><b><span
-										style='font-size:10.0pt;font-family:"Century Gothic",sans-serif'>БЯЛ
-										пергамин</span></b></p>
-						</td>
-						<td width=113 style='width:3.0cm;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt;
-  height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:0cm;text-align:center;line-height:normal'><b><span lang=EN-US
-										style='font-family:"Century Gothic",sans-serif'>200x</span></b><b><span
-										style='font-family:"Century Gothic",sans-serif'>8</span></b><b><span lang=EN-US
-										style='font-family:"Century Gothic",sans-serif'>0x</span></b><b><span
-										style='font-family:"Century Gothic",sans-serif'>36</span></b><b><span lang=EN-US
-										style='font-family:"Century Gothic",sans-serif'>0</span></b></p>
-						</td>
-						<td width=95 style='width:70.9pt;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt;
-  height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:0cm;text-align:center;line-height:normal'><span
-									style='font-size:10.0pt;font-family:"Century Gothic",sans-serif'>1 цвят</span></p>
-						</td>
-						<td width=113 style='width:3.0cm;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt;
-  height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-										style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>Пергамин
-										45гр/м2 КИТ 7-8</span></b><span
-									style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>
-								</span></p>
-						</td>
-						<td width=94 style='width:70.85pt;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0cm 2.85pt 0cm 2.85pt;height:38.95pt'>
-							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><span
-									style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;color:#1F497D'>250-300&nbsp;000
-									месечно</span></p>
-						</td>
-						<td width=85 style='width:63.8pt;border-top:none;border-left:none;border-bottom:
-  solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt;
-  height:38.95pt'>
+						<td class='no-print' style='width:80px;border:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 							<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
-  margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><b><span lang=EN-US style='font-size:12.0pt;font-family:"Century Gothic",sans-serif;
-  color:#1F497D'>0,0</span></b><b><span style='font-size:12.0pt;font-family:
-  "Century Gothic",sans-serif;color:#1F497D'>351</span></b></p>
+							margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><b>Действия</b></p>
 						</td>
 					</tr>
+					<!-- ko foreach: items -->
+					<tr>
+						<td style='border:solid windowtext 1.0pt;border-top:none;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-bottom:0cm;text-align:center;line-height:normal'><b><span data-bind='text: $index() + 1'></span></b></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span data-bind='text: name'></span></p>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span data-bind='text: material'></span></b></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span data-bind='text: size'></span></b></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span data-bind='text: printInfo'></span></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span data-bind='text: material'></span></b></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span data-bind='text: minOrder'></span></p>
+						</td>
+						<td style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
+							<p class=MsoNormal align=center style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span data-bind='text: priceDisplay'></span></b></p>
+						</td>
+						<td class='no-print' style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:4px;text-align:center'>
+							<button class='btn btn-sm btn-danger' data-bind='click: $parent.removeItem'>Изтрий</button>
+						</td>
+					</tr>
+					<!-- /ko -->
 				</table>
 
 			</div>
@@ -373,6 +390,7 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 							.</span></span></b></p>
 
 		</div>
+	</div>
 
 	</div>
 	<script>
@@ -436,6 +454,24 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 			self.recipientEmail = ko.observable('l.nedkov@plastic-sofia.com');
 			self.inquiryFrom = ko.observable('от 12.04.2021 – e-mail');
 
+			// offer metadata (dynamic)
+			self.offerNumber = ko.observable('00974');
+			self.offerDate = ko.observable((new Date()).toISOString().slice(0,10));
+			self.offerSubject = ko.observable('Хартиени пликове KAUFLAND RO');
+
+			// document date (displayed in Bulgarian, dynamic)
+			self.documentDateRaw = ko.observable((new Date()).toISOString().slice(0,10));
+			self.documentDate = ko.computed(function () {
+				var raw = self.documentDateRaw();
+				var d = new Date(raw);
+				if (isNaN(d.getTime())) d = new Date();
+				var weekday = d.toLocaleDateString('bg-BG', { weekday: 'long' });
+				var day = ('0' + d.getDate()).slice(-2);
+				var month = d.toLocaleDateString('bg-BG', { month: 'long' });
+				var year = d.getFullYear();
+				return weekday + ', ' + day + ' ' + month + ' ' + year + ' г.';
+			});
+
 			// обща стойност = количество * цена на избрания материал
 			self.totalPrice = ko.computed(function () {
 				var qty = parseFloat(self.selectedQuantity()) || 0;
@@ -453,23 +489,90 @@ font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'
 					html2canvas: { scale: 2, useCORS: true },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
-				html2pdf().set(opt).from(element).save();
+				// Temporarily hide action column by adding wrapper class on the element
+				element.classList.add('hide-actions');
+				var task = html2pdf().set(opt).from(element).save();
+				// restore after save completes (html2pdf returns a Promise in modern builds)
+				if (task && typeof task.then === 'function') {
+					task.then(function () { element.classList.remove('hide-actions'); });
+				} else {
+					setTimeout(function () { element.classList.remove('hide-actions'); }, 1000);
+				}
 			};
 
 			self.printDoc = function () {
 				var element = document.getElementById('pdf-content');
 				var w = window.open('', '_blank');
+				// Include CSS to hide .no-print inside the new window and wrap content with .hide-actions
 				var html = '<!doctype html><html><head><meta charset="utf-8"/>' +
 				    '<title>Print</title>' +
 				    '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>' +
-				    '</head><body>' + element.innerHTML + '</body></html>';
+				    '<style>.hide-actions .no-print{display:none !important;} @media print{ .no-print{display:none !important;} }</style>' +
+				    '</head><body><div class="hide-actions">' + element.innerHTML + '</div></body></html>';
 				w.document.write(html);
 				w.document.close();
 				w.focus();
 				setTimeout(function () { try { w.print(); } catch (e) {} }, 300);
 			};
 
-			// (ако имате items/нови елементи) — запазете съществуващата логика
+			// Preview mode: toggle on-screen A4-like WYSIWYG preview
+			self.isPreview = ko.observable(false);
+
+			self.previewButtonText = ko.computed(function () {
+				return self.isPreview() ? 'Затвори преглед' : 'Преглед';
+			});
+
+			self.togglePreview = function () {
+				var el = document.body;
+				var pdf = document.getElementById('pdf-content');
+				if (!self.isPreview()) {
+					self.isPreview(true);
+					el.classList.add('preview-mode');
+					// hide action column while previewing
+					if (pdf) pdf.classList.add('hide-actions');
+					// scroll to preview area
+					setTimeout(function () { if (pdf) pdf.scrollIntoView({behavior:'smooth'}); }, 50);
+				} else {
+					self.isPreview(false);
+					el.classList.remove('preview-mode');
+					if (pdf) pdf.classList.remove('hide-actions');
+				}
+			};
+
+			// items collection: allow adding multiple offer items
+			self.items = ko.observableArray([]);
+
+			self.addToOffer = function () {
+				var env = self.selectedEnvelope();
+				var mat = self.selectedMaterial();
+				var qty = parseFloat(self.selectedQuantity()) || 0;
+				var w = parseFloat(self.width()) || 0;
+				var h = parseFloat(self.height()) || 0;
+				var pricePerUnit = mat && mat.price ? parseFloat(mat.price) : 0;
+				var total = (qty * pricePerUnit).toFixed(2);
+				var item = {
+					name: env ? env.name : '—',
+					material: mat ? mat.name : '—',
+					size: (w + ' x ' + h + ' mm'),
+					printInfo: (mat && mat.price ? '1 цвят' : ''),
+					minOrder: '—',
+					priceDisplay: total + ' лв'
+				};
+				self.items.push(item);
+			};
+
+			self.removeItem = function (item) {
+				self.items.remove(item);
+			};
+
+			self.totalSum = ko.computed(function () {
+				var sum = 0;
+				self.items().forEach(function (it) {
+					var p = parseFloat((it.priceDisplay || '').toString().replace(/[^\\d\.\,]/g, '').replace(',', '.')) || 0;
+					sum += p;
+				});
+				return sum.toFixed(2) + ' лв';
+			});
 		}
 
 		ko.applyBindings(new ViewModel());
