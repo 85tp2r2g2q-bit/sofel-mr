@@ -141,23 +141,27 @@
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Фалт B</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: foldB, valueUpdate: 'afterkeydown'" />
+					<select class="form-select mb-2"
+						data-bind="visible: isPaperBagSelected, options: foldBOptions, value: foldBSelectedOption, optionsCaption: 'Избери Фалт B'"></select>
+					<input type="text" class="form-control"
+						data-bind="textInput: foldB, attr: { placeholder: isPaperBagSelected() ? 'или въведи ръчно' : '' }" />
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Дължина C</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: lengthC, valueUpdate: 'afterkeydown'" />
+					<select class="form-select mb-2"
+						data-bind="visible: isPaperBagSelected, options: lengthCOptions, value: lengthCSelectedOption, optionsCaption: 'Избери Дължина C'"></select>
+					<input type="text" class="form-control"
+						data-bind="textInput: lengthC, attr: { placeholder: isPaperBagSelected() ? 'или въведи ръчно' : '' }" />
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Ширина на хартията</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
-						data-bind="value: paperWidth, valueUpdate: 'afterkeydown'" />
+						data-bind="value: paperWidth" />
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Дължина на отрязък</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
-						data-bind="value: cutLength, valueUpdate: 'afterkeydown'" />
+						data-bind="textInput: cutLength" />
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Цена на хартия /€ без ДДС</label>
@@ -186,7 +190,7 @@
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Разход за труд и материали /€</label>
-					<input type="number" step="any" class="form-control"
+					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: laborAndOverheadEur, valueUpdate: 'afterkeydown'" />
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
@@ -200,6 +204,16 @@
 					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return q.qty; }, enable: quantitiesForSelected().length > 0"></select>
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
+					<label class="form-label">ОБЩО ХАРТИЯ ЗА ТИРАЖА /кг</label>
+					<input type="number" step="any" class="form-control readonly-field" readonly
+						data-bind="value: totalPaperForQuantityKg, valueUpdate: 'afterkeydown'" />
+				</div>
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
+					<label class="form-label">ЦЕНА ЗА ПЕЧАТ ТРУД / 0,44 ЛВ/КГ/</label>
+					<input type="number" step="any" class="form-control readonly-field" readonly
+						data-bind="value: printLaborPriceEur, valueUpdate: 'afterkeydown'" />
+				</div>
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Стойност на хартията /€</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: paperValueTotalEur, valueUpdate: 'afterkeydown'" />
@@ -210,9 +224,14 @@
 						data-bind="value: laborValueTotalEur, valueUpdate: 'afterkeydown'" />
 				</div>
 				<div class="mb-3">
-					<label class="form-label fw-bold">Цена според запитването на клиента</label>
+					<label class="form-label fw-bold" data-bind="text: isPaperBagSelected() ? 'ЦЕНА ЗА ЧАНТА БЕЗ ПЕЧАТ КЛИЕНТА EUR БЕЗ ДДС' : 'Цена според запитването на клиента'"></label>
 					<input type="number" step="any" class="form-control readonly-field fw-bold" readonly
 						data-bind="value: customerInquiryPriceEur, valueUpdate: 'afterkeydown'" />
+				</div>
+				<div class="mb-3" data-bind="visible: isPaperBagSelected">
+					<label class="form-label fw-bold">ЦЕНА ЗА ЧАНТА С ПЕЧАТ EUR БЕЗ ДДС</label>
+					<input type="number" step="any" class="form-control readonly-field fw-bold" readonly
+						data-bind="value: bagWithPrintPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Обща себестойност по тираж /€</label>
@@ -606,6 +625,7 @@
 						{ qty: 100000, index: 1.12,sign : '/' }
 					],
 					cut: 1, // Стойност на отрязъка за този плик
+					trudAndMaterials: 0.002, // Стойност на труда и материалите за този плик
 					materials: [
 						{ id: 201, name: "материал 3", price: 1 },
 						{ id: 202, name: "материал 4", price: 1 }
@@ -621,13 +641,15 @@
 						{ count: 4, value: 10 }
 					],
 					quantities: [
-						{ qty: 20000, index: 0.0637, sign: '/' },
-						{ qty: 30000, index: 0.0621, sign: '/' },
-						{ qty: 50000, index: 0.0606, sign: '/' },
-						{ qty: 100000, index: 0.0589, sign: '/' },
-						{ qty: 200000, index: 0.0568, sign: '/' }
+						{ qty: 20000, index: 2,sign : '*'   },
+						{ qty: 25000, index: 1.7, sign: '*' },
+						{ qty: 30000, index: 1.7, sign: '*' },
+						{ qty: 50000, index: 1.5, sign: '*' },
+						{ qty: 100000, index: 1.5, sign: '*' }
 					],
 					cut: 1, // Стойност на отрязъка за този плик
+					flatHandels :0.006, // Стойност на ръчките за хартиената чанта
+					trudAndMaterials: 0.007, // Стойност на труда и материалите за този плик
 					materials: [
 						{ id: 301, name: "Бял крафт", price: 0.95 },
 						{ id: 302, name: "Кафяв Крафт", price: 0.8 },
@@ -671,6 +693,8 @@
 				var qtyOptions = self.quantitiesForSelected();
 				self.selectedQuantity(qtyOptions.length ? qtyOptions[0] : null);
 				self.widthASelectedOption('');
+				self.foldBSelectedOption('');
+				self.lengthCSelectedOption('');
 			});
 			self.selectedMaterial = ko.computed(function () {
 				var id = self.selectedMaterialId();
@@ -699,17 +723,54 @@
 				return [];
 			});
 			self.foldB = ko.observable(0);
+			self.foldBSelectedOption = ko.observable('');
+			self.foldBSelectedOption.subscribe(function (value) {
+				if (value === null || value === undefined || value === '') return;
+				self.foldB(value);
+			});
+			self.foldBOptions = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				if (env && env.name === 'хартиена чанта') {
+					return [10, 12, 14, 16, 17, 18, 20, 21, 22];
+				}
+				return [];
+			});
 			self.lengthC = ko.observable(0);
-			self.paperWidth = ko.computed(function () {
+			self.lengthCSelectedOption = ko.observable('');
+			self.lengthCSelectedOption.subscribe(function (value) {
+				if (value === null || value === undefined || value === '') return;
+				self.lengthC(value);
+			});
+			self.lengthCOptions = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				if (env && env.name === 'хартиена чанта') {
+					var options = [];
+					for (var c = 24; c <= 46; c++) options.push(c);
+					return options;
+				}
+				return [];
+			});
+			self.paperWidth = ko.observable(0);
+			ko.computed(function () {
 				var a = parseFloat(self.widthA()) || 0;
 				var b = parseFloat(self.foldB()) || 0;
-				return (2 * a + 2) + (2 * b);
+				if (self.isPaperBagSelected()) {
+					self.paperWidth((2 * a + 3) + (2 * b));
+				} else {
+					self.paperWidth((2 * a + 2) + (2 * b));
+				}
 			});
-			self.cutLength = ko.computed(function () {
+			self.cutLength = ko.observable(0);
+			ko.computed(function () {
 				var c = parseFloat(self.lengthC()) || 0;
-				var env = self.selectedEnvelope();
-				var cut = env && env.cut ? parseFloat(env.cut) : 0;
-				return c + (isNaN(cut) ? 0 : cut);
+				if (self.isPaperBagSelected()) {
+					var b = parseFloat(self.foldB()) || 0;
+					self.cutLength(c + (b / 2) + 3);
+				} else {
+					var env = self.selectedEnvelope();
+					var cut = env && env.cut ? parseFloat(env.cut) : 0;
+					self.cutLength(c + (isNaN(cut) ? 0 : cut));
+				}
 			});
 			self.paperPriceEur = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
@@ -731,11 +792,27 @@
 			self.materialCostPerEnvelopeEur = ko.computed(function () {
 				var paperPricePerKg = parseFloat(self.paperPriceEur()) || 0;
 				var perKgCount = parseFloat(self.envelopesPerKg()) || 0;
-				if (perKgCount <= 0) return 0;
-				return (paperPricePerKg / perKgCount).toFixed(6);
+				var basePaperCost = perKgCount > 0 ? (paperPricePerKg / perKgCount) : 0;
+				if (self.isPaperBagSelected()) {
+					var env = self.selectedEnvelope();
+					var flatHandles = env && env.flatHandels !== undefined && env.flatHandels !== null && env.flatHandels !== ''
+						? parseFloat(env.flatHandels)
+						: 0;
+					if (isNaN(flatHandles)) flatHandles = 0;
+					return (basePaperCost + flatHandles).toFixed(6);
+				}
+				return basePaperCost.toFixed(6);
 			});
 
 			self.laborAndOverheadEur = ko.observable(0.002);
+			ko.computed(function () {
+				var env = self.selectedEnvelope();
+				var labor = env && env.trudAndMaterials !== undefined && env.trudAndMaterials !== null && env.trudAndMaterials !== ''
+					? parseFloat(env.trudAndMaterials)
+					: 0;
+				if (isNaN(labor)) labor = 0;
+				self.laborAndOverheadEur(labor);
+			});
 
 			self.totalCostPerEnvelopeEur = ko.computed(function () {
 				var materialCost = parseFloat(self.materialCostPerEnvelopeEur()) || 0;
@@ -751,6 +828,18 @@
 				var qty = selectedQty && typeof selectedQty === 'object' ? (parseFloat(selectedQty.qty) || 0) : (parseFloat(selectedQty) || 0);
 				var materialCost = parseFloat(self.materialCostPerEnvelopeEur()) || 0;
 				return (qty * materialCost).toFixed(6);
+			});
+
+			self.totalPaperForQuantityKg = ko.computed(function () {
+				var selectedQty = self.selectedQuantity();
+				var qty = selectedQty && typeof selectedQty === 'object' ? (parseFloat(selectedQty.qty) || 0) : (parseFloat(selectedQty) || 0);
+				var weightPerEnvelopeGr = parseFloat(self.envelopeWeightGr()) || 0;
+				return ((qty * weightPerEnvelopeGr) / 1000).toFixed(6);
+			});
+
+			self.printLaborPriceEur = ko.computed(function () {
+				var totalPaperKg = parseFloat(self.totalPaperForQuantityKg()) || 0;
+				return (totalPaperKg * 0.23).toFixed(6);
 			});
 
 			self.laborValueTotalEur = ko.computed(function () {
@@ -804,8 +893,27 @@
 			self.customerInquiryPriceEur = ko.computed(function () {
 				var selected = self.selectedQuantity();
 				if (!selected) return '0.00000';
-				var pricePerUnit = calculateFinalPrice(selected);
+				var pricePerUnit;
+				if (self.isPaperBagSelected()) {
+					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+					var idx = parseFloat(selected.index) || 1;
+					pricePerUnit = baseCost * idx;
+				} else {
+					pricePerUnit = calculateFinalPrice(selected);
+				}
 				return pricePerUnit.toFixed(5);
+			});
+
+			self.bagWithPrintPriceEur = ko.computed(function () {
+				if (!self.isPaperBagSelected()) return '';
+				var selected = self.selectedQuantity();
+				if (!selected) return '0.0000';
+				var qty = parseFloat(selected.qty) || 0;
+				var printLaborTotal = parseFloat(self.printLaborPriceEur()) || 0;
+				var bagWithoutPrint = parseFloat(self.customerInquiryPriceEur()) || 0;
+				var printLaborPerBag = qty > 0 ? (printLaborTotal / qty) : 0;
+				var pricePerUnit = printLaborPerBag + bagWithoutPrint;
+				return pricePerUnit.toFixed(4);
 			});
 
 				// Всички варианти тираж + цена по индекс
