@@ -134,8 +134,10 @@
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Ширина A</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: widthA, valueUpdate: 'afterkeydown'" />
+					<select class="form-select mb-2"
+						data-bind="visible: isPaperBagSelected, options: widthAOptions, value: widthASelectedOption, optionsCaption: 'Избери ширина A'"></select>
+					<input type="text" class="form-control"
+						data-bind="textInput: widthA, attr: { placeholder: isPaperBagSelected() ? 'или въведи ръчно' : '' }" />
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Фалт B</label>
@@ -147,12 +149,12 @@
 					<input type="number" step="any" class="form-control"
 						data-bind="value: lengthC, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Ширина на хартията</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: paperWidth, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Дължина на отрязък</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: cutLength, valueUpdate: 'afterkeydown'" />
@@ -165,29 +167,29 @@
 				<div class="mb-3">
 					<label class="form-label">Печат / брой цветове</label>
 					<select class="form-select"
-						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return (v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'; }, enable: printColorsForSelected().length > 0"></select>
+						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return v.count === 0 ? 'без цвят' : ((v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'); }, enable: printColorsForSelected().length > 0"></select>
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Тегло на 1 плик /гр</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: envelopeWeightGr, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Брой пликове в 1 кг</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: envelopesPerKg, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Себестойност на 1 плик /€</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: materialCostPerEnvelopeEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Разход за труд и материали /€</label>
 					<input type="number" step="any" class="form-control"
 						data-bind="value: laborAndOverheadEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Обща себестойност материал + труд /€</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: totalCostPerEnvelopeEur, valueUpdate: 'afterkeydown'" />
@@ -195,14 +197,14 @@
 				<!-- Нов падащ списък: количество -->
 				<div class="mb-3">
 					<label class="form-label">Тираж по запитване от клиент /бр</label>
-					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return q.qty + ' / индекс ' + q.index; }, enable: quantitiesForSelected().length > 0"></select>
+					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return q.qty; }, enable: quantitiesForSelected().length > 0"></select>
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Стойност на хартията /€</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: paperValueTotalEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Стойност на труда и други разходи /€</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: laborValueTotalEur, valueUpdate: 'afterkeydown'" />
@@ -212,7 +214,7 @@
 					<input type="number" step="any" class="form-control readonly-field fw-bold" readonly
 						data-bind="value: customerInquiryPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Обща себестойност по тираж /€</label>
 					<table class="table table-sm table-bordered mb-0">
 						<thead class="table-light">
@@ -232,6 +234,21 @@
 							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
+					<label class="form-label">Допълнителни ценови нива / ако клиента иска</label>
+					<div class="mb-2">
+						<label class="form-label">Цена за 30 000</label>
+						<input type="number" step="any" class="form-control readonly-field" readonly data-bind="value: priceLevel30000" />
+					</div>
+					<div class="mb-2">
+						<label class="form-label">Цена за 50 000</label>
+						<input type="number" step="any" class="form-control readonly-field" readonly data-bind="value: priceLevel50000" />
+					</div>
+					<div>
+						<label class="form-label">Цена за 100 000</label>
+						<input type="number" step="any" class="form-control readonly-field" readonly data-bind="value: priceLevel100000" />
+					</div>
 				</div>
 
 					<!-- Показване на стойността (количество * цена) -->
@@ -575,27 +592,9 @@
 			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
 			self.envelopes = ko.observableArray([
 				{
-					id: 1, name: "хартиен плик с прозорец",
-					printColors: [
-						{ count: 1, value: 3 },
-						{ count: 2, value: 5 },
-						{ count: 3, value: 7 },
-						{ count: 4, value: 10 }
-					],
-					quantities: [
-						{ qty: 30000, index: 1.6, sign : '*' },
-						{ qty: 50000, index: 1.06, sign : '/'  },
-						{ qty: 100000, index: 1.12 ,sign : '/' }
-					],
-					cut: 1, // Стойност на отрязъка за този плик
-					materials: [
-						{ id: 101, name: "материал 1", price: 0.01 },
-						{ id: 102, name: "материал 2", price: 0.02 }
-					]
-				},
-				{
 					id: 2, name: "хартиен плик без прозорец",
 					printColors: [
+						{ count: 0, value: 0 },
 						{ count: 1, value: 3 },
 						{ count: 2, value: 5 },
 						{ count: 3, value: 7 },
@@ -608,8 +607,32 @@
 					],
 					cut: 1, // Стойност на отрязъка за този плик
 					materials: [
-						{ id: 201, name: "материал 3", price: 0.03 },
-						{ id: 202, name: "материал 4", price: 0.04 }
+						{ id: 201, name: "материал 3", price: 1 },
+						{ id: 202, name: "материал 4", price: 1 }
+					]
+				},
+				{
+					id: 3, name: "хартиена чанта",
+					printColors: [
+						{ count: 0, value: 0 },
+						{ count: 1, value: 3 },
+						{ count: 2, value: 5 },
+						{ count: 3, value: 7 },
+						{ count: 4, value: 10 }
+					],
+					quantities: [
+						{ qty: 20000, index: 0.0637, sign: '/' },
+						{ qty: 30000, index: 0.0621, sign: '/' },
+						{ qty: 50000, index: 0.0606, sign: '/' },
+						{ qty: 100000, index: 0.0589, sign: '/' },
+						{ qty: 200000, index: 0.0568, sign: '/' }
+					],
+					cut: 1, // Стойност на отрязъка за този плик
+					materials: [
+						{ id: 301, name: "Бял крафт", price: 0.95 },
+						{ id: 302, name: "Кафяв Крафт", price: 0.8 },
+						{ id: 303, name: "Крафт MIX", price: 0.76 },
+						{ id: 304, name: "Рециклиран Крафт", price: 0.55 }
 					]
 				}
 			]);
@@ -647,6 +670,7 @@
 				self.selectedPrintColor(colors.length ? colors[0] : null);
 				var qtyOptions = self.quantitiesForSelected();
 				self.selectedQuantity(qtyOptions.length ? qtyOptions[0] : null);
+				self.widthASelectedOption('');
 			});
 			self.selectedMaterial = ko.computed(function () {
 				var id = self.selectedMaterialId();
@@ -654,8 +678,26 @@
 			});
 
 			// останалата логика (размери, export и т.н.)
+			// Смени на true, за да покажеш разширените ценови полета.
+			self.showAdvancedPricingFields = ko.observable(false);
 			self.paperGrammage = ko.observable(0);
 			self.widthA = ko.observable(0);
+			self.widthASelectedOption = ko.observable('');
+			self.widthASelectedOption.subscribe(function (value) {
+				if (value === null || value === undefined || value === '') return;
+				self.widthA(value);
+			});
+			self.isPaperBagSelected = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return !!(env && env.name === 'хартиена чанта');
+			});
+			self.widthAOptions = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				if (env && env.name === 'хартиена чанта') {
+					return [22, 24, 26, 28, 32, 35];
+				}
+				return [];
+			});
 			self.foldB = ko.observable(0);
 			self.lengthC = ko.observable(0);
 			self.paperWidth = ko.computed(function () {
@@ -718,32 +760,59 @@
 				return (qty * laborCost).toFixed(6);
 			});
 
+			function calculatePriceFromBase(entry, baseValue) {
+				var idx = parseFloat(entry && entry.index) || 1;
+				if ((entry && entry.sign) === '*') {
+					return baseValue * idx;
+				}
+				return idx !== 0 ? baseValue / idx : 0;
+			}
+
+			function smallestQuantityCalculatedPrice() {
+				var qtys = self.quantitiesForSelected();
+				if (!qtys || !qtys.length) return 0;
+				var smallest = qtys[0];
+				for (var i = 1; i < qtys.length; i++) {
+					var currentQty = parseFloat(qtys[i].qty) || 0;
+					var smallestQty = parseFloat(smallest.qty) || 0;
+					if (currentQty < smallestQty) smallest = qtys[i];
+				}
+				var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+				return calculatePriceFromBase(smallest, baseCost);
+			}
+
+			function printColorMultiplier() {
+				var color = self.selectedPrintColor();
+				var percent = color && typeof color === 'object' ? (parseFloat(color.value) || 0) : 0;
+				return 1 + (percent / 100);
+			}
+
+			function calculateFinalPrice(entry) {
+				if (!entry) return 0;
+				var basePrice;
+				if (entry.sign === '/') {
+					var minCalculated = smallestQuantityCalculatedPrice();
+					var idx = parseFloat(entry.index) || 1;
+					basePrice = idx !== 0 ? (minCalculated / idx) : 0;
+				} else {
+					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+					basePrice = calculatePriceFromBase(entry, baseCost);
+				}
+				return basePrice * printColorMultiplier();
+			}
+
 			self.customerInquiryPriceEur = ko.computed(function () {
 				var selected = self.selectedQuantity();
-				if (!selected) return '0.000000';
-				var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
-				var idx = parseFloat(selected.index) || 1;
-				var pricePerUnit;
-				if (selected.sign === '*') {
-					pricePerUnit = baseCost * idx;
-				} else {
-					pricePerUnit = idx !== 0 ? baseCost / idx : 0;
-				}
-				return pricePerUnit.toFixed(6);
+				if (!selected) return '0.00000';
+				var pricePerUnit = calculateFinalPrice(selected);
+				return pricePerUnit.toFixed(5);
 			});
 
 				// Всички варианти тираж + цена по индекс
 				self.allQuantityPrices = ko.computed(function () {
-					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
 					var qtys = self.quantitiesForSelected();
 					return qtys.map(function (q) {
-						var idx = parseFloat(q.index) || 1;
-						var pricePerUnit;
-						if (q.sign === '*') {
-							pricePerUnit = baseCost * idx;
-						} else {
-							pricePerUnit = idx !== 0 ? baseCost / idx : 0;
-						}
+						var pricePerUnit = calculateFinalPrice(q);
 						return {
 							qty: q.qty,
 							index: q.index,
@@ -752,6 +821,29 @@
 						};
 					});
 				});
+
+			self.priceByQuantity = function (targetQty) {
+				var qtyNumber = parseFloat(targetQty) || 0;
+				var list = self.allQuantityPrices();
+				for (var i = 0; i < list.length; i++) {
+					if ((parseFloat(list[i].qty) || 0) === qtyNumber) {
+						return list[i].pricePerUnit;
+					}
+				}
+				return '';
+			};
+
+			self.priceLevel30000 = ko.computed(function () {
+				return self.priceByQuantity(30000);
+			});
+
+			self.priceLevel50000 = ko.computed(function () {
+				return self.priceByQuantity(50000);
+			});
+
+			self.priceLevel100000 = ko.computed(function () {
+				return self.priceByQuantity(100000);
+			});
 			// recipient fields bound to the PDF content
 			self.recipientCompany = ko.observable('„ПЛАСТИК-СОФИЯ" ООД');
 			self.attentionName = ko.observable('Любомир Недков');
@@ -883,7 +975,7 @@
 					name: env ? env.name : '—',
 					material: mat ? mat.name : '—',
 					size: (a + ' x ' + b + ' x ' + c + ' mm'),
-					printInfo: (colors === 1 ? '1 цвят' : (colors + ' цвята')),
+					printInfo: (colors === 0 ? 'без цвят' : (colors === 1 ? '1 цвят' : (colors + ' цвята'))),
 					minOrder: qty,
 					priceDisplay: self.customerInquiryPriceEur() + ' EUR'
 				};
