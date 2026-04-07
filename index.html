@@ -163,14 +163,58 @@
 			border-bottom: 1px dotted #dd6b6b;
 		}
 
+		.offer-meta-layout {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			margin: 2px 0 6px 0;
+			width: 100%;
+			clear: both;
+		}
+
+		.offer-meta-left {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.offer-meta-date {
+			font-size: 11pt;
+			font-family: "Mont ExtraLight DEMO", "Century Gothic", sans-serif;
+			color: #2d2d2d;
+			line-height: 1.3;
+		}
+
+		.offer-cert-logos {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-left: auto;
+			padding-top: 0;
+			flex: 0 0 auto;
+		}
+
+		.offer-fssc-logo {
+			width: 170px;
+			height: auto;
+			display: block;
+		}
+
+		.offer-fsc-logo {
+			width: 58px;
+			height: auto;
+			display: block;
+		}
+
 		.offer-contact-compact {
-			margin: 10px 0 6px 0;
+			margin: 8px 0 0 0;
+			width: 100%;
 		}
 
 		.offer-contact-compact p {
 			margin: 0;
-			line-height: 1.25;
-			font-size: 9.5pt;
+			line-height: 1.35;
+			font-size: 10.5pt;
 			font-family: "Mont ExtraLight DEMO", "Century Gothic", sans-serif;
 		}
 
@@ -202,6 +246,11 @@
 			.offer-brand-name { font-size: 36px; }
 			.offer-brand-sub { font-size: 10px; }
 			.offer-header-logo { width: 100%; height: auto; }
+			.offer-meta-layout { flex-direction: column; align-items: flex-start; }
+			.offer-meta-left { width: 100%; }
+			.offer-cert-logos { margin-left: 0; gap: 14px; }
+			.offer-fssc-logo { width: 145px; }
+			.offer-fsc-logo { width: 50px; }
 			.offer-doc-footer { flex-direction: column; align-items: flex-start; }
 			.offer-footer-right { margin-left: 0; max-width: 100%; text-align: left; }
 		}
@@ -517,22 +566,21 @@
 			</div>
 			<div class=WordSection1>
 	
-				<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-						style='font-size:9.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'
-						data-bind="text: documentDate"></span><span style='position:relative;z-index:-1895823360'><span
-							style='position:absolute;left:460px;top:1px;width:59px;height:92px'><img width=59 height=92
-								src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image001.jpg"></span></span></p>
-	
-				<p class=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:
-	normal'><span style='position:absolute;z-index:-1895824384;left:0px;margin-left:
-	391px;margin-top:15px;width:169px;height:31px'><img width=169 height=31 src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image002.png"></span></p>
-	
-				<div class="offer-contact-compact">
-					<p>До: <span class="value" data-bind="text: recipientCompany"></span></p>
-					<p>На вниманието на: <span class="value" data-bind="text: attentionName"></span></p>
-					<p>тел. за контакт : <span class="value" data-bind="text: recipientPhone"></span></p>
-					<p>e-mail : <span class="value" data-bind="text: recipientEmail"></span></p>
-					<p>по запитване: <span class="value" data-bind="text: inquiryFrom"></span></p>
+				<div class="offer-meta-layout">
+					<div class="offer-meta-left">
+						<div class="offer-meta-date" data-bind="text: documentDate"></div>
+						<div class="offer-contact-compact">
+							<p>До: <span class="value" data-bind="text: recipientCompany"></span></p>
+							<p>На вниманието на: <span class="value" data-bind="text: attentionName"></span></p>
+							<p>тел. за контакт : <span class="value" data-bind="text: recipientPhone"></span></p>
+							<p>e-mail : <span class="value" data-bind="text: recipientEmail"></span></p>
+							<p>по запитване: <span class="value" data-bind="text: inquiryFrom"></span></p>
+						</div>
+					</div>
+					<div class="offer-cert-logos">
+						<img class="offer-fssc-logo" src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image002.png" alt="FSSC 22000" />
+						<img class="offer-fsc-logo" src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image001.jpg" alt="FSC" />
+					</div>
 				</div>
 	
 				<p class="MsoNoSpacing offer-intro-gap" style='margin-top:0cm;margin-bottom:0.15cm'><span
@@ -543,10 +591,6 @@
 				<p class=MsoNormal align=center style='text-align:center'><b
 						style='font-size:20.0pt;line-height:115%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'>ОФЕРТА №<span
 							data-bind="text: offerNumber"></span>/<span data-bind="text: offerDate"></span></b></p>
-	
-				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
-	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
-	font-family:"Century Gothic",sans-serif'>&nbsp;</span></p>
 	
 				<p class=MsoNormal
 					style='margin-top:0cm;margin-right:27.25pt;margin-bottom:0cm;margin-left:0cm;line-height:normal'><span
@@ -790,6 +834,9 @@
 								.</span></span></b></p>
 	
 			</div>
+				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
+	0cm;margin-left:0cm;line-height:normal'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
 			<div class="offer-doc-footer">
 				<div class="offer-footer-left">Изготвил: <span data-bind="text: issuedBy"></span>
 /фамилия, подпис/</div>
@@ -1390,21 +1437,81 @@
 				return '.hide-actions .no-print{display:none !important;}' +
 				    '.offer-doc-header{margin-bottom:12px;}' +
 				    '.offer-header-logo{display:block; width:100% !important; height:auto !important; max-width:100% !important; filter:brightness(1.24) contrast(1.08);}' +
-				    '.offer-doc-footer{padding-top:14px; margin-top:16px; border-top:none; display:flex; justify-content:space-between; align-items:flex-end; gap:20px;}' +
+				    '.offer-meta-layout{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin:2px 0 8px 0; width:100%; float:none !important; clear:both;}' +
+				    '.offer-meta-left{flex:1 1 auto; min-width:0;}' +
+				    '.offer-meta-date{font-size:11pt; font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif; color:#2d2d2d; line-height:1.3;}' +
+				    '.offer-cert-logos{display:flex; align-items:center; gap:18px; margin-left:auto; padding-top:2px; flex:0 0 auto; float:none !important;}' +
+				    '.offer-fssc-logo{width:180px; height:auto; display:block;}' +
+				    '.offer-fsc-logo{width:62px; height:auto; display:block;}' +
+				    '.offer-doc-footer{padding-top:14px; margin-top:16px; border-top:none; display:flex; justify-content:space-between; align-items:flex-end; gap:20px; page-break-before:avoid; page-break-inside:avoid;}' +
 				    '.offer-footer-left{font-size:11px; line-height:1.25; color:#6b6f78; white-space:pre-line;}' +
 				    '.offer-footer-right{margin-left:auto; max-width:520px; text-align:right; font-size:11px; line-height:1.25; color:#dd6b6b;}' +
 				    '.offer-footer-line{display:block; margin-top:3px; border-bottom:1px dotted #dd6b6b;}' +
-				    '@media (max-width:576px){.offer-doc-footer{flex-direction:column; align-items:flex-start;} .offer-footer-right{margin-left:0; max-width:100%; text-align:left;}}' +
-				    '.offer-contact-compact{margin:10px 0 6px 0 !important;}' +
-				    '.offer-contact-compact p{margin:0 !important; line-height:1.2 !important;}' +
+				    '@media (max-width:576px){.offer-meta-layout{flex-direction:column; align-items:flex-start;} .offer-meta-left{width:100%;} .offer-cert-logos{margin-left:0; gap:14px;} .offer-fssc-logo{width:145px;} .offer-fsc-logo{width:50px;} .offer-doc-footer{flex-direction:column; align-items:flex-start;} .offer-footer-right{margin-left:0; max-width:100%; text-align:left;}}' +
+				    '.offer-contact-compact{margin:8px 0 0 0 !important; clear:both; display:block; width:100%;}' +
+				    '.offer-contact-compact p{margin:0 !important; line-height:1.35 !important; font-size:10.5pt !important;}' +
 				    '.offer-intro-gap{margin-top:10px !important;}' +
+				    '#pdf-content table.MsoTableGrid,.print-content table.MsoTableGrid{width:100% !important; max-width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; page-break-inside:auto; orphans:3; widows:3;}' +
+				    '#pdf-content table.MsoTableGrid td,#pdf-content table.MsoTableGrid th,.print-content table.MsoTableGrid td,.print-content table.MsoTableGrid th{font-size:9pt !important; padding:2px 3px !important; vertical-align:middle !important; word-break:break-word !important; white-space:normal !important; page-break-inside:avoid;}' +
+				    '#pdf-content table.MsoTableGrid p,.print-content table.MsoTableGrid p{margin:0 !important; line-height:1.15 !important;}' +
 				    '#pdf-content img{max-width:100%; height:auto;}' +
 				    '#pdf-content span[style*="position:absolute"],#pdf-content img[style*="position:absolute"]{position:static !important; left:auto !important; top:auto !important; margin:0 !important; max-width:100% !important; height:auto !important;}' +
+				    '.print-content span[style*="position:absolute"],.print-content img[style*="position:absolute"]{position:static !important; left:auto !important; top:auto !important; margin:0 !important; max-width:100% !important; height:auto !important;}' +
 				    '@media print{ .no-print{display:none !important;} body{margin:0;} }';
+			}
+
+			function cloneContentWithoutBands(element) {
+				var clone = element.cloneNode(true);
+				var clonedHeader = clone.querySelector('.offer-doc-header');
+				var clonedFooter = clone.querySelector('.offer-doc-footer');
+				if (clonedHeader) clonedHeader.parentNode.removeChild(clonedHeader);
+				if (clonedFooter) clonedFooter.parentNode.removeChild(clonedFooter);
+				return clone;
+			}
+
+			function captureNodeAsImage(node) {
+				if (!node || typeof html2canvas !== 'function') return Promise.resolve(null);
+				return html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null })
+					.then(function (canvas) {
+						if (!canvas || !canvas.width || !canvas.height) return null;
+						return { dataUrl: canvas.toDataURL('image/png'), ratio: canvas.height / canvas.width };
+					})
+					.catch(function () { return null; });
+			}
+
+			function addBandsToPdfPages(pdf, headerImage, footerImage) {
+				if (!pdf) return;
+				var totalPages = pdf.internal.getNumberOfPages();
+				var pageWidth = pdf.internal.pageSize.getWidth();
+				var pageHeight = pdf.internal.pageSize.getHeight();
+				var sideMargin = 0.45;
+				var bandWidth = pageWidth - (sideMargin * 2);
+				for (var page = 1; page <= totalPages; page++) {
+					pdf.setPage(page);
+					if (headerImage) {
+						var headerHeight = Math.min(0.62, bandWidth * headerImage.ratio);
+						pdf.addImage(headerImage.dataUrl, 'PNG', sideMargin, 0.12, bandWidth, headerHeight, undefined, 'FAST');
+					}
+					if (footerImage) {
+						var footerHeight = Math.min(0.52, bandWidth * footerImage.ratio);
+						var footerY = pageHeight - footerHeight - 0.12;
+						pdf.addImage(footerImage.dataUrl, 'PNG', sideMargin, footerY, bandWidth, footerHeight, undefined, 'FAST');
+					}
+				}
 			}
 
 			self.exportPdf = function () {
 				var element = document.getElementById('pdf-content');
+				if (!element) return;
+				var exportClone = element.cloneNode(true);
+				var exportMount = document.createElement('div');
+				exportMount.style.position = 'fixed';
+				exportMount.style.left = '-100000px';
+				exportMount.style.top = '0';
+				exportMount.style.width = element.offsetWidth + 'px';
+				exportMount.className = 'hide-actions';
+				exportMount.appendChild(exportClone);
+				document.body.appendChild(exportMount);
 				var orderNumber = (self.offerNumber() || '').toString().trim();
 				var companyName = (self.recipientCompany() || '').toString().trim();
 				var safeOrderNumber = orderNumber.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_');
@@ -1416,22 +1523,22 @@
 				styleEl.appendChild(document.createTextNode(getOfferRenderCss()));
 				document.head.appendChild(styleEl);
 				var opt = {
-					margin: 0.5,
+					margin: [0.82, 0.45, 0.72, 0.45],
 					filename: pdfFileName,
 					image: { type: 'jpeg', quality: 0.98 },
 					html2canvas: { scale: 2, useCORS: true },
+					pagebreak: { mode: ['css', 'legacy'] },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
-				// Temporarily hide action column by adding wrapper class on the element
-				element.classList.add('hide-actions');
-				var task = html2pdf().set(opt).from(element).save();
+				var task = html2pdf().set(opt).from(exportClone).save();
 				function cleanup() {
-					element.classList.remove('hide-actions');
 					if (styleEl && styleEl.parentNode) {
 						styleEl.parentNode.removeChild(styleEl);
 					}
+					if (exportMount && exportMount.parentNode) {
+						exportMount.parentNode.removeChild(exportMount);
+					}
 				}
-				// restore after save completes (html2pdf returns a Promise in modern builds)
 				if (task && typeof task.then === 'function') {
 					task.then(cleanup, cleanup);
 				} else {
@@ -1441,14 +1548,21 @@
 
 			self.printDoc = function () {
 				var element = document.getElementById('pdf-content');
+				if (!element) return;
+				var printContent = element.cloneNode(true);
 				var w = window.open('', '_blank');
 				var renderCss = getOfferRenderCss();
-				// Include CSS to hide .no-print inside the new window and wrap content with .hide-actions
 				var html = '<!doctype html><html><head><meta charset="utf-8"/>' +
 				    '<title>Print</title>' +
 				    '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>' +
-				    '<style>' + renderCss + '</style>' +
-				    '</head><body><div class="hide-actions">' + element.innerHTML + '</div></body></html>';
+				    '<style>' + renderCss +
+				    '@page{size:A4; margin:16mm 10mm 16mm 10mm;}' +
+				    'body{margin:0;}' +
+				    '.print-content{padding:0 10mm;}' +
+				    '</style>' +
+				    '</head><body>' +
+				    '<div class="hide-actions print-content">' + printContent.innerHTML + '</div>' +
+				    '</body></html>';
 				w.document.write(html);
 				w.document.close();
 				w.focus();
