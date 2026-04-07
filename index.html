@@ -174,7 +174,7 @@
 					<input type="text" class="form-control"
 						data-bind="textInput: widthA, attr: { placeholder: widthAOptions().length > 0 ? 'или въведи ръчно' : '' }" />
 				</div>
-				<div class="mb-3">
+				<div class="mb-3" data-bind="visible: !isPaperFormatSelected()">
 					<label class="form-label">Фалт B</label>
 					<select class="form-select mb-2"
 						data-bind="visible: foldBOptions().length > 0, options: foldBOptions, value: foldBSelectedOption, optionsCaption: 'Избери Фалт B'"></select>
@@ -683,7 +683,7 @@
 		function ViewModel() {
 			var self = this;
 			// Смени на true, за да покажеш разширените ценови полета.
-			self.showAdvancedPricingFields = ko.observable(false);
+			self.showAdvancedPricingFields = ko.observable(true);
 			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
 			self.envelopes = ko.observableArray([
 				{
@@ -712,6 +712,33 @@
 						{ id: 302, name: "Кафяв Крафт", price: 1.1 },
 						{ id: 303, name: "Екструдиран Крафт ", price: 2.2 },
 						{ id: 303, name: "Маслоустойчив Крафт", price: 1.85 }
+					]
+				},
+				{
+					id: 6, name: "хартиен формат",
+					printColors: [
+						{ count: 0, value: 0 },
+						{ count: 1, value: 3 },
+						{ count: 2, value: 5 },
+						{ count: 3, value: 7 },
+						{ count: 4, value: 10 }
+					],
+					quantities: [
+						{ qty: 200, index: 1,sign : '*'  },
+						{ qty: 300, index: 1.03 ,sign : '/'},
+						{ qty: 500, index: 1.05,sign : '/' },
+						{ qty: 1000, index: 1.1,sign : '/' }
+					],
+					cut: 0, // Стойност на отрязъка за този плик
+					trudAndMaterials: 0.00085, // Стойност на труда и материалите за този плик
+					paperGrammageOptions: [30,32,35,38,40,45],
+					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
+					materials: [
+						{ id: 301, name: "Бял крафт", price: 1 },
+						{ id: 302, name: "Кафяв Крафт", price: 1 },
+						{ id: 303, name: "Екструдиран Крафт ", price: 1 },
+						{ id: 303, name: "Маслоустойчив Крафт", price: 1 }
 					]
 				},
 				{
@@ -895,6 +922,10 @@
 				var env = self.selectedEnvelope();
 				return !!(env && env.name === 'хартиена чанта');
 			});
+			self.isPaperFormatSelected = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return !!(env && env.id === 6);
+			});
 			self.widthAOptions = ko.computed(function () {
 				var env = self.selectedEnvelope();
 				return (env && env.widthAOptions) ? env.widthAOptions : [];
@@ -931,7 +962,11 @@
 					self.paperWidth(Math.max(val, 0));
 				} else if (self.isPaperBagSelected()) {
 					self.paperWidth((2 * a + 3) + (2 * b));
-				} else {
+				}
+				else if (env && env.id === 6) {
+					self.paperWidth(a);
+				}
+				 else {
 					self.paperWidth((2 * a + 2) + (2 * b));
 				}
 			});
@@ -1122,7 +1157,13 @@
 				var selected = self.selectedQuantity();
 				if (!selected) return '0.00000';
 				var pricePerUnit;
-				if (self.isPaperBagSelected()) {
+				if (self.isPaperFormatSelected()) {
+					// За хартиен формат (id=6): (Брой пликове в 1 кг * Обща себестойност) умножено/делено с индекса
+					var perKg = parseFloat(self.envelopesPerKg()) || 0;
+					var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+					var basePrice = perKg * totalCost;
+					pricePerUnit = calculatePriceFromBase(selected, basePrice);
+				} else if (self.isPaperBagSelected()) {
 					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
 					var idx = parseFloat(selected.index) || 1;
 					pricePerUnit = baseCost * idx * printColorMultiplier();
@@ -1148,7 +1189,14 @@
 				self.allQuantityPrices = ko.computed(function () {
 					var qtys = self.quantitiesForSelected();
 					return qtys.map(function (q) {
-						var pricePerUnit = calculateFinalPrice(q);
+						var pricePerUnit;
+						if (self.isPaperFormatSelected()) {
+							var perKg = parseFloat(self.envelopesPerKg()) || 0;
+							var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+							pricePerUnit = calculatePriceFromBase(q, perKg * totalCost);
+						} else {
+							pricePerUnit = calculateFinalPrice(q);
+						}
 						return {
 							qty: q.qty,
 							index: q.index,
