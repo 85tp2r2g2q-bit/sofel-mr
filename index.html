@@ -217,6 +217,9 @@
 						</tbody>
 					</table>
 				</div>
+				<div class="mt-3 d-flex justify-content-end">
+					<button class="btn btn-outline-secondary" data-bind="click: addToOffer">Добави към оферта</button>
+				</div>
 					<!-- Показване на стойността (количество * цена) -->
 				</div>
 				</div>
@@ -274,7 +277,6 @@
 					<div class="mb-3 controls-toolbar">
 						<button class="btn btn-success" data-bind="click: exportPdf">Export PDF</button>
 						<button class="btn btn-primary" data-bind="click: printDoc">Print</button>
-						<button class="btn btn-outline-secondary" data-bind="click: addToOffer">Добави към оферта</button>
 					</div>
 				</div>
 			</div>
@@ -486,7 +488,7 @@
 							</td>
 							<td class='no-print'
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:4px;text-align:center'>
-								<div class='action-buttons'>
+								<div class='action-buttons' data-bind='visible: $root.canEditActions'>
 									<button class='btn btn-sm btn-outline-primary icon-btn'
 										data-bind='click: $parent.togglePriceEdit, attr: { title: isEditingPrice() ? "Запази" : "Редакция", "aria-label": isEditingPrice() ? "Запази" : "Редакция" }'>
 										<span data-bind='visible: !isEditingPrice()'>
