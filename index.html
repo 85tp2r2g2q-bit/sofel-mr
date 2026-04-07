@@ -1454,6 +1454,8 @@
 				    '#pdf-content table.MsoTableGrid,.print-content table.MsoTableGrid{width:100% !important; max-width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; page-break-inside:auto; orphans:3; widows:3;}' +
 				    '#pdf-content table.MsoTableGrid td,#pdf-content table.MsoTableGrid th,.print-content table.MsoTableGrid td,.print-content table.MsoTableGrid th{font-size:9pt !important; padding:2px 3px !important; vertical-align:middle !important; word-break:break-word !important; white-space:normal !important; page-break-inside:avoid;}' +
 				    '#pdf-content table.MsoTableGrid p,.print-content table.MsoTableGrid p{margin:0 !important; line-height:1.15 !important;}' +
+				    '#pdf-content p.MsoNormal,#pdf-content p.MsoListParagraphCxSpFirst,#pdf-content p.MsoListParagraphCxSpMiddle,#pdf-content p.MsoListParagraphCxSpLast,.print-content p.MsoNormal,.print-content p.MsoListParagraphCxSpFirst,.print-content p.MsoListParagraphCxSpMiddle,.print-content p.MsoListParagraphCxSpLast{page-break-inside:avoid !important; break-inside:avoid-page !important;}' +
+				    '#pdf-content p,.print-content p{orphans:1; widows:1;}' +
 				    '#pdf-content img{max-width:100%; height:auto;}' +
 				    '#pdf-content span[style*="position:absolute"],#pdf-content img[style*="position:absolute"]{position:static !important; left:auto !important; top:auto !important; margin:0 !important; max-width:100% !important; height:auto !important;}' +
 				    '.print-content span[style*="position:absolute"],.print-content img[style*="position:absolute"]{position:static !important; left:auto !important; top:auto !important; margin:0 !important; max-width:100% !important; height:auto !important;}' +
@@ -1530,7 +1532,7 @@
 					filename: pdfFileName,
 					image: { type: 'jpeg', quality: 0.98 },
 					html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-					pagebreak: { mode: ['css', 'legacy'] },
+					pagebreak: { mode: ['css', 'legacy'], avoid: ['p', 'tr', 'td', 'th', '.offer-doc-footer'] },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
 				var task = html2pdf().set(opt).from(exportClone).save();
