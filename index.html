@@ -1503,7 +1503,10 @@
 			self.exportPdf = function () {
 				var element = document.getElementById('pdf-content');
 				if (!element) return;
-				var exportClone = element.cloneNode(true);
+				var printContent = element.cloneNode(true);
+				var exportClone = document.createElement('div');
+				exportClone.className = 'hide-actions print-content';
+				exportClone.innerHTML = printContent.innerHTML;
 				var exportMount = document.createElement('div');
 				exportMount.style.position = 'fixed';
 				exportMount.style.left = '-100000px';
@@ -1520,13 +1523,13 @@
 				var styleEl = document.createElement('style');
 				styleEl.type = 'text/css';
 				styleEl.id = 'pdf-export-render-style';
-				styleEl.appendChild(document.createTextNode(getOfferRenderCss()));
+				styleEl.appendChild(document.createTextNode(getOfferRenderCss() + '.print-content{padding:0 10mm;}'));
 				document.head.appendChild(styleEl);
 				var opt = {
-					margin: [0.82, 0.45, 0.72, 0.45],
+					margin: [0.63, 0.39, 0.63, 0.39],
 					filename: pdfFileName,
 					image: { type: 'jpeg', quality: 0.98 },
-					html2canvas: { scale: 2, useCORS: true },
+					html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
 					pagebreak: { mode: ['css', 'legacy'] },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
