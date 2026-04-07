@@ -70,6 +70,50 @@
 			border-radius: 6px;
 		}
 
+		.offer-doc-header,
+		.offer-doc-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			font-family: "Century Gothic", sans-serif;
+			font-size: 11px;
+			color: #1f497d;
+		}
+
+		.offer-doc-header {
+			padding: 12px 16px;
+			margin-bottom: 10px;
+			border: 1px solid #d9d9d9;
+			background: #ececec;
+			color: #6d6d6d;
+		}
+
+		.offer-brand-name {
+			font-size: 56px;
+			line-height: 1;
+			font-weight: 700;
+			letter-spacing: 0.5px;
+		}
+
+		.offer-brand-sub {
+			font-size: 14px;
+			letter-spacing: 3px;
+			margin-top: 2px;
+		}
+
+		.offer-doc-header-right {
+			font-size: 14px;
+			text-align: right;
+			line-height: 1.2;
+		}
+
+		.offer-doc-footer {
+			padding-top: 10px;
+			margin-top: 14px;
+			border-top: 1px solid #cfd8e3;
+		}
+
 		/* Responsive controls toolbar */
 		.controls-toolbar {
 			display: flex;
@@ -80,6 +124,15 @@
 		.controls-toolbar .btn { flex: 0 1 auto; }
 		@media (max-width: 576px) {
 			.controls-toolbar .btn { flex: 1 1 100%; }
+			.offer-doc-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+			.offer-doc-header-right {
+				text-align: left;
+			}
+			.offer-brand-name { font-size: 36px; }
+			.offer-brand-sub { font-size: 10px; }
 		}
 
 		/* Prevent PDF content overflow on small screens */
@@ -237,7 +290,7 @@
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: envelopeFoilWeightGr, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
+				<div class="mb-3" data-bind="visible: showAdvancedPricingFields() || isPaperFormatSelected()">
 					<label class="form-label">Брой пликове в 1 кг</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: envelopesPerKg, valueUpdate: 'afterkeydown'" />
@@ -384,45 +437,52 @@
 			<h5>Документ</h5>
 		</div>
 		<div id="pdf-content">
+			<div class="offer-doc-header">
+				<div>
+					<div class="offer-brand-name">Sofel</div>
+					<div class="offer-brand-sub">PAPER PACKAGING</div>
+				</div>
+				<div class="offer-doc-header-right">SOFEL-MR LTD | 4230, Asenovgrad, Bulgaria, Stroitel 10, str. | www.sofel-mr.eu</div>
+			</div>
 			<div class=WordSection1>
 	
 				<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-						style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'
+						style='font-size:9.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'
 						data-bind="text: documentDate"></span><span style='position:relative;z-index:-1895823360'><span
-							style='position:absolute;left:585px;top:-3px;width:127px;height:73px'><img width=127 height=73
-								src="rudi_simple_files/image002.jpg"></span></span></p>
+							style='position:absolute;left:598px;top:1px;width:59px;height:92px'><img width=59 height=92
+								src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image001.jpg"></span></span></p>
 	
 				<p class=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:
 	normal'><span style='position:absolute;z-index:-1895824384;left:0px;margin-left:
-	364px;margin-top:2px;width:207px;height:38px'><img width=207 height=38 src="rudi_simple_files/image003.png"></span></p>
+	391px;margin-top:15px;width:169px;height:31px'><img width=169 height=31 src="rudi_simple_files/new%20offer%20version%202026%20new%20logo_files/image002.png"></span></p>
 	
 				<p class=MsoNoSpacing>
-					<span style='font-family:"Century Gothic",sans-serif'>До</span><span>:</span>
+					<span style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>До</span><span>:</span>
 					<b><span data-bind="text: recipientCompany"
-							style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;color:#333333;background:white'></span></b><br />
-					<span style='font-family:"Century Gothic",sans-serif'>На вниманието на: </span><span
+							style='font-size:10.0pt;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif;color:#333333;background:white'></span></b><br />
+					<span style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>На вниманието на: </span><span
 						data-bind="text: attentionName"
-						style='font-family:"Century Gothic",sans-serif;color:#333333;background:white'></span>
+						style='font-family:"Mont Heavy DEMO","Century Gothic",sans-serif;color:#333333;background:white'></span>
 				</p>
 	
-				<p class=MsoNoSpacing><span style='font-size:9.0pt;font-family:"Century Gothic",sans-serif'>тел. за контакт
+				<p class=MsoNoSpacing><span style='font-size:9.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>тел. за контакт
 						:</span><span
-						style='font-size:8.0pt;font-family:"Century Gothic",sans-serif;color:#333333;background:white'
+						style='font-size:8.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif;color:#333333;background:white'
 						data-bind="text: recipientPhone"></span></p>
 	
-				<p class=MsoNoSpacing><span lang=EN-US style='font-family:"Century Gothic",sans-serif'>e-mail :</span> <span
-						data-bind="text: recipientEmail" style='font-family:"Century Gothic",sans-serif'></span></p>
+				<p class=MsoNoSpacing><span lang=EN-US style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>e-mail :</span> <span
+						data-bind="text: recipientEmail" style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'></span></p>
 	
-				<p class=MsoNoSpacing><span style='font-family:"Century Gothic",sans-serif'>по запитване: </span><span
-						data-bind="text: inquiryFrom" style='font-family:"Century Gothic",sans-serif'></span></p>
+				<p class=MsoNoSpacing><span style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>по запитване: </span><span
+						data-bind="text: inquiryFrom" style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'></span></p>
 	
 				<p class=MsoNoSpacing style='margin-top:0cm;margin-bottom:0.15cm'><span
-						style='font-family:"Century Gothic",sans-serif'>Във
+						style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>Във
 						връзка с отправено ваше запитване и предоставена проектна документация
 						предлагаме на вашето внимание следната:</span></p>
 	
 				<p class=MsoNormal align=center style='text-align:center'><b
-						style='font-size:20.0pt;line-height:115%;font-family:"Century Gothic",sans-serif'>ОФЕРТА №<span
+						style='font-size:20.0pt;line-height:115%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'>ОФЕРТА №<span
 							data-bind="text: offerNumber"></span>/<span data-bind="text: offerDate"></span></b></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
@@ -431,8 +491,8 @@
 	
 				<p class=MsoNormal
 					style='margin-top:0cm;margin-right:27.25pt;margin-bottom:0cm;margin-left:0cm;line-height:normal'><span
-						style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Предмет на офертата:
-					</span><b><span data-bind="text: offerSubject"></span></b></p>
+						style='font-size:12.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>Предмет на офертата:
+					</span><b><span data-bind="text: offerSubject" style='font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'></span></b></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
@@ -457,13 +517,13 @@
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Размер /mm</span></b></p>
+											style='font-size:10.0pt;color:#00B0F0'>Размер /см</span></b></p>
 							</td>
 							<td width=95 style='width:70.9pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Печат/цена клише</span></b></p>
+											style='font-size:10.0pt;color:#00B0F0'>Печат</span></b></p>
 							</td>
 							<td width=113 style='width:3.0cm;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
@@ -475,18 +535,14 @@
 	  none;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Мин. </span></b></p>
-								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
-	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Траж/бр</span></b></p>
+											style='font-size:10.0pt;color:#00B0F0'>Тираж/бр.</span></b></p>
 							</td>
 							<td width=85 style='width:63.8pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
 	  margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><span
-												style='font-size:10.0pt;color:red'>Цена EUR</span><span lang=EN-US
-										style='font-size:10.0pt;color:red'>.</span><span style='font-size:10.0pt;
-	  color:red'>/бр.</span></p>
+												style='font-size:10.0pt;color:red'>Цена €</span><span style='font-size:10.0pt;
+	  color:red'>/бр</span></p>
 							</td>
 							<td class='no-print'
 								style='width:80px;border:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
@@ -609,7 +665,7 @@
 						style='font-size:12.0pt;color:#0070C0'><img width=13 height=13 src="rudi_simple_files/image001.png"
 							alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Срок
-						за изработка<b> : допълнително се уточнява</b></span></p>
+						за изработка<b> : <span style='color:#0070C0'>4 работни седмици</span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;line-height:normal'><b><span
@@ -638,7 +694,7 @@
 						style='font-size:12.0pt;color:#0070C0'><img width=13 height=13 src="rudi_simple_files/image001.png"
 							alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Валидност
-						на офертата:  <b><span style='color:#0070C0'>30 календарни дни</span></b></span></p>
+						на офертата:  <b><span style='color:#0070C0'>15 календарни дни</span></b></span></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
@@ -646,8 +702,7 @@
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
-	font-family:"Century Gothic",sans-serif'>*Цени клише <span style='color:#0070C0'>:
-							 </span></span></p>
+	font-family:"Century Gothic",sans-serif'>*Цени клише <b>:</b></span></p>
 	
 				<p class=MsoListParagraphCxSpFirst style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:53.4pt;text-indent:-18.0pt;line-height:normal'><span
@@ -676,6 +731,10 @@
 								.</span></span></b></p>
 	
 			</div>
+			<div class="offer-doc-footer">
+				<div>SOFEL-MR генератор на оферти</div>
+				<div><span data-bind="text: documentDate"></span></div>
+			</div>
 		</div>
 	
 	</div>
@@ -683,7 +742,7 @@
 		function ViewModel() {
 			var self = this;
 			// Смени на true, за да покажеш разширените ценови полета.
-			self.showAdvancedPricingFields = ko.observable(false);
+			self.showAdvancedPricingFields = ko.observable(true);
 			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
 			self.envelopes = ko.observableArray([
 				{
@@ -730,15 +789,15 @@
 						{ qty: 1000, index: 1.1,sign : '/' }
 					],
 					cut: 0, // Стойност на отрязъка за този плик
-					trudAndMaterials: 0.00085, // Стойност на труда и материалите за този плик
+					trudAndMaterials: 0.004, // Стойност на труда и материалите за този плик
 					paperGrammageOptions: [30,32,35,38,40,45],
 					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
 					materials: [
-						{ id: 301, name: "Бял крафт", price: 1 },
-						{ id: 302, name: "Кафяв Крафт", price: 1 },
-						{ id: 303, name: "Екструдиран Крафт ", price: 1 },
-						{ id: 303, name: "Маслоустойчив Крафт", price: 1 }
+						{ id: 301, name: "Бял крафт", price: 1.7 },
+						{ id: 302, name: "Кафяв Крафт", price: 1.7 },
+						{ id: 303, name: "Екструдиран Крафт ", price: 1.7 },
+						{ id: 303, name: "Маслоустойчив Крафт", price: 1.7 }
 					]
 				},
 				{
