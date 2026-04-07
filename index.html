@@ -285,22 +285,18 @@
 					<input type="number" step="any" class="form-control readonly-field fw-bold" readonly
 						data-bind="value: bagWithPrintPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
-					<label class="form-label">Обща себестойност по тираж /€</label>
+				<div class="mb-3">
+					<label class="form-label">КРАЙНА СЕБЕСТОЙНОСТ НА ГОТОВ ПРОДУКТ</label>
 					<table class="table table-sm table-bordered mb-0">
 						<thead class="table-light">
 							<tr>
 								<th>Тираж /бр</th>
-								<th>Индекс</th>
-								<th>Знак</th>
 								<th>Цена /€ за 1 бр</th>
 							</tr>
 						</thead>
 						<tbody data-bind="foreach: allQuantityPrices">
 							<tr>
 								<td data-bind="text: qty"></td>
-								<td data-bind="text: index"></td>
-								<td data-bind="text: sign"></td>
 								<td data-bind="text: pricePerUnit"></td>
 							</tr>
 						</tbody>
@@ -1088,7 +1084,7 @@
 							qty: q.qty,
 							index: q.index,
 							sign: q.sign || '/',
-							pricePerUnit: pricePerUnit.toFixed(6)
+							pricePerUnit: pricePerUnit.toFixed(5)
 						};
 					});
 				});
