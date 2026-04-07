@@ -1,0 +1,321 @@
+/* Hide elements with .no-print when printing */
+		@media print {
+			.no-print { display: none !important; }
+			/* Keep imported Word absolutely-positioned images within the printable page */
+			#pdf-content span[style*="position:absolute"],
+			#pdf-content img[style*="position:absolute"] {
+				position: static !important;
+				left: auto !important;
+				top: auto !important;
+				margin: 0 !important;
+				max-width: 100% !important;
+				height: auto !important;
+			}
+		}
+		/* Helper to hide action cells during PDF export/print when wrapper .hide-actions is applied */
+		.hide-actions .no-print { display: none !important; }
+		
+		/* On-screen print preview styling (A4-like) */
+		.preview-mode {
+			background: #777; /* page background */
+			padding: 20px 0;
+		}
+		.preview-mode #pdf-content {
+			width: 210mm; /* A4 width */
+			min-height: 297mm; /* A4 height */
+			margin: 0 auto;
+			padding: 20mm;
+			background: white;
+			box-shadow: 0 0 20px rgba(0,0,0,0.5);
+			overflow: auto;
+		}
+		/* Make images and tables fit the preview page */
+		.preview-mode img { max-width: 100%; height: auto; }
+		.preview-mode table { width: 100% !important; table-layout: fixed; }
+
+		/* Fix: ensure images from imported MHT (often absolutely positioned or with negative z-index)
+		   are visible on screen — don't rely on their inline absolute positioning for layout. */
+		@media screen {
+			#pdf-content span[style*="position:absolute"],
+			#pdf-content img[style*="position:absolute"] {
+				position: static !important;
+				left: auto !important;
+				top: auto !important;
+			}
+			#pdf-content [style*="z-index:-"] {
+				z-index: auto !important;
+			}
+		}
+
+		/* Visual separation for on-page document area */
+		.pdf-container {
+			margin-top: 24px;
+			display: block;
+		}
+		.pdf-container-header {
+			margin-bottom: 8px;
+			font-family: "Century Gothic", sans-serif;
+			color: #1f497d;
+		}
+		#pdf-content {
+			background: #fff;
+			border: 1px solid #e1e4e8;
+			box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+			padding: 18px;
+			border-radius: 6px;
+		}
+
+		.offer-doc-header,
+		.offer-doc-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			font-family: "Century Gothic", sans-serif;
+			font-size: 11px;
+			color: #1f497d;
+		}
+
+		.offer-doc-header {
+			padding: 0;
+			margin-bottom: 12px;
+			border: 0;
+			background: transparent;
+			color: #6d6d6d;
+			margin-left: -16px;
+		}
+
+		.offer-brand-name {
+			font-size: 56px;
+			line-height: 1;
+			font-weight: 700;
+			letter-spacing: 0.5px;
+		}
+
+		.offer-header-logo {
+			width: 106%;
+			max-width: none;
+			height: auto;
+			display: block;
+		}
+
+		@media print {
+			/* image005.jpg contains a gray baked background; brighten for cleaner white paper output */
+			.offer-header-logo {
+				filter: brightness(1.24) contrast(1.08);
+			}
+		}
+
+		.offer-brand-sub {
+			font-size: 14px;
+			letter-spacing: 3px;
+			margin-top: 2px;
+		}
+
+		.offer-doc-header-right {
+			font-size: 14px;
+			text-align: right;
+			line-height: 1.2;
+		}
+
+		.offer-doc-footer {
+			padding-top: 14px;
+			margin-top: 16px;
+			border-top: none;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+			gap: 20px;
+		}
+
+		.offer-footer-left {
+			font-size: 11px;
+			line-height: 1.25;
+			color: #6b6f78;
+			white-space: pre-line;
+		}
+
+		.offer-footer-right {
+			margin-left: auto;
+			max-width: 520px;
+			text-align: right;
+			font-size: 11px;
+			line-height: 1.25;
+			color: #dd6b6b;
+		}
+
+		.offer-footer-line {
+			display: block;
+			margin-top: 3px;
+			border-bottom: 1px dotted #dd6b6b;
+		}
+
+		.offer-meta-layout {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			margin: 2px 0 6px 0;
+			width: 100%;
+			clear: both;
+		}
+
+		.offer-meta-left {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.offer-meta-date {
+			font-size: 11pt;
+			font-family: "Mont ExtraLight DEMO", "Century Gothic", sans-serif;
+			color: #2d2d2d;
+			line-height: 1.3;
+		}
+
+		.offer-cert-logos {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-left: auto;
+			padding-top: 0;
+			flex: 0 0 auto;
+		}
+
+		.offer-fssc-logo {
+			width: 170px;
+			height: auto;
+			display: block;
+		}
+
+		.offer-fsc-logo {
+			width: 58px;
+			height: auto;
+			display: block;
+		}
+
+		.offer-contact-compact {
+			margin: 8px 0 0 0;
+			width: 100%;
+		}
+
+		.offer-contact-compact p {
+			margin: 0;
+			line-height: 1.35;
+			font-size: 10.5pt;
+			font-family: "Mont ExtraLight DEMO", "Century Gothic", sans-serif;
+		}
+
+		.offer-contact-compact .value {
+			color: #333333;
+			background: white;
+		}
+
+		.offer-intro-gap {
+			margin-top: 10px !important;
+		}
+
+		/* Compact the terms block so it fits on one A4 page */
+		#pdf-content p.MsoListParagraphCxSpFirst,
+		#pdf-content p.MsoListParagraphCxSpMiddle,
+		#pdf-content p.MsoListParagraphCxSpLast {
+			line-height: 1.15 !important;
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
+		}
+
+		#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoNormal span[style*="font-size:12.0pt"][style*="Century Gothic"] {
+			font-size: 10.5pt !important;
+		}
+
+		#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:10.0pt"],
+		#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:10.0pt"],
+		#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:10.0pt"] {
+			font-size: 9pt !important;
+		}
+
+		.blue-circle-bullet {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			border: 2px solid #0070c0;
+			border-radius: 50%;
+			vertical-align: middle;
+			margin-right: 4px;
+			box-sizing: border-box;
+		}
+
+		/* Responsive controls toolbar */
+		.controls-toolbar {
+			display: flex;
+			gap: .5rem;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+		.controls-toolbar .btn { flex: 0 1 auto; }
+		@media (max-width: 576px) {
+			.controls-toolbar .btn { flex: 1 1 100%; }
+			.offer-doc-header {
+				padding: 0;
+			}
+			.offer-doc-header-right {
+				text-align: left;
+			}
+			.offer-brand-name { font-size: 36px; }
+			.offer-brand-sub { font-size: 10px; }
+			.offer-header-logo { width: 100%; height: auto; }
+			.offer-meta-layout { flex-direction: column; align-items: flex-start; }
+			.offer-meta-left { width: 100%; }
+			.offer-cert-logos { margin-left: 0; gap: 14px; }
+			.offer-fssc-logo { width: 145px; }
+			.offer-fsc-logo { width: 50px; }
+			.offer-doc-footer { flex-direction: column; align-items: flex-start; }
+			.offer-footer-right { margin-left: 0; max-width: 100%; text-align: left; }
+		}
+
+		/* Prevent PDF content overflow on small screens */
+		.pdf-container img { max-width: 100%; height: auto; }
+		@media (max-width: 576px) {
+			/* undo absolute positioning that comes from imported MHT markup */
+			.pdf-container img[style*="position:absolute"] { position: static !important; left: auto !important; top: auto !important; }
+		}
+
+		/* Make tables responsive inside the PDF box */
+		#pdf-content table { display: block; width: 100% !important; overflow-x: auto; }
+		#pdf-content td, #pdf-content th { word-wrap: break-word; white-space: normal; }
+
+		/* Visual hint for non-editable fields */
+		.readonly-field {
+			background-color: #f1f3f5;
+			border-color: #adb5bd;
+			color: #495057;
+			cursor: not-allowed;
+		}
+
+		.inline-price-editor {
+			min-width: 110px;
+		}
+
+		.action-buttons {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 6px;
+			flex-wrap: nowrap;
+		}
+
+		.icon-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 32px;
+			height: 32px;
+			padding: 0;
+		}
+
+		.icon-btn svg {
+			width: 14px;
+			height: 14px;
+		}
