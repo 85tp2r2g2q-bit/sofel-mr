@@ -160,14 +160,8 @@
 					<input type="text" class="form-control"
 						data-bind="textInput: paperGrammage, attr: { placeholder: paperGrammageOptions().length > 0 ? 'или въведи ръчно' : '' }" />
 				</div>
-				<!-- Грамаж на прозорец (видимо само за плик id=5) -->
-				<div class="mb-3" data-bind="visible: showWindowGrammage">
-					<label class="form-label">Грамаж на прозорец</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: windowGrammage, valueUpdate: 'afterkeydown'" />
-				</div>
 				<div class="mb-3" data-bind="visible: showFoilGrammage">
-					<label class="form-label">Грамаж на фолио</label>
+					<label class="form-label">Грамаж на фолио/прозорец</label>
 					<select class="form-select mb-2"
 						data-bind="visible: foilGrammageOptions().length > 0, options: foilGrammageOptions, value: foilGrammageSelectedOption, optionsCaption: 'Избери грамаж'"></select>
 					<input type="text" class="form-control"
@@ -221,14 +215,9 @@
 					<input type="number" step="any" class="form-control"
 						data-bind="value: paperPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<!-- Цена на прозорец /€ без ДДС (видимо само за плик с прозорец) -->
-				<div class="mb-3" data-bind="visible: showWindowGrammage">
-					<label class="form-label">Цена на прозорец /€ без ДДС</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: windowPriceEur, valueUpdate: 'afterkeydown'" />
-				</div>
+				<!-- Цена на фолио /€ без ДДС (видимо за пликове с фолио/прозорец) -->
 				<div class="mb-3" data-bind="visible: showFoilGrammage">
-					<label class="form-label">Цена на фолиото /€ без ДДС</label>
+					<label class="form-label">Цена на фолио/прозорец/ /€ без ДДС</label>
 					<input type="number" step="any" class="form-control"
 						data-bind="value: foilPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
@@ -741,6 +730,12 @@
 						{ qty: 100000, index: 1.45,sign : '*'  },
 						{ qty: 200000, index: 1.35,sign : '*'  }
 					],
+					foilPrice : 2.71, // цена за фолио (само за плик с каширане) без ддс
+					paperGrammageOptions: [32,35,38,40,45,50],
+					foilGrammageOptions: [15, 20],
+					widthAOptions: [12,13,14,15,16,17,18],
+					foldBOptions: [4,5,6,7,8],
+					lengthCOptions: [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],
 					cut: 1, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.0035, // Стойност на труда и материалите за този плик
 					materials: [
@@ -864,8 +859,6 @@
 				var env = self.selectedEnvelope();
 				return (env && env.paperGrammageOptions) ? env.paperGrammageOptions : [];
 			});
-			// Грамаж на прозорец (видимо само за плик с id === 5)
-			self.windowGrammage = ko.observable(0);
 			self.showWindowGrammage = ko.computed(function () {
 				var env = self.selectedEnvelope();
 				return !!(env && env.id === 5);
@@ -887,10 +880,10 @@
 					var env = self.selectedEnvelope();
 					return (env && env.foilGrammageOptions) ? env.foilGrammageOptions : [];
 				});
-				// Show foil grammage only for a specific envelope (id === 3)
+				// Show foil grammage for thermo/grill and envelope with window
 			self.showFoilGrammage = ko.computed(function () {
 				var env = self.selectedEnvelope();
-				return !!(env && env.id === 3);
+				return !!(env && (env.id === 3 || env.id === 5));
 			});
 			self.widthA = ko.observable(0);
 			self.widthASelectedOption = ko.observable('');
@@ -957,9 +950,7 @@
 				}
 			});
 			self.paperPriceEur = ko.observable(0);
-			// Цена на прозорец в евро без ДДС (ръчно поле, видимо само за плик с прозорец)
-			self.windowPriceEur = ko.observable(0);
-			// Цена на фолиото в евро (без ДДС) — видимо само за плик с id === 3
+			// Цена на фолиото в евро (без ДДС) — видимо за id === 3 и id === 5
 			self.foilPriceEur = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
 
@@ -976,10 +967,9 @@
 				var env = self.selectedEnvelope();
 				var widthMm = parseFloat(self.paperWidth()) || 0;
 				var lengthMm = parseFloat(self.cutLength()) || 0;
-				// use foil grammage by default, but for envelope id===5 use window grammage
+				// use foil grammage; for envelope id===5 use window width area
 				var foilGsm = parseFloat(self.foilGrammage()) || 0;
 				if (env && env.id === 5) {
-					foilGsm = parseFloat(self.windowGrammage()) || 0;
 					widthMm = parseFloat(self.windowWidth()) || 0;
 				}
 				
@@ -998,11 +988,7 @@
 			self.foilCostPerEnvelopeEur = ko.computed(function () {
 				var price = parseFloat(self.foilPriceEur()) || 0;
 				var perKg = parseFloat(self.envelopesPerKgFoil()) || 0;
-				var env = self.selectedEnvelope();
-				 if (env && env.id === 5) {
-				  price = parseFloat(self.windowPriceEur()) || 0;
-			    }
-				 
+				
 				if (perKg <= 0) return '0.000000';
 				return (price / perKg).toFixed(6);
 			});
