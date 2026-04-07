@@ -1104,7 +1104,7 @@
 				if (self.isPaperBagSelected()) {
 					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
 					var idx = parseFloat(selected.index) || 1;
-					pricePerUnit = baseCost * idx;
+					pricePerUnit = baseCost * idx * printColorMultiplier();
 				} else {
 					pricePerUnit = calculateFinalPrice(selected);
 				}
