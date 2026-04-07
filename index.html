@@ -24,8 +24,9 @@
 					<div class="mb-3">
 					<label class="form-label">Избор на плик</label>
 					<select class="form-select"
-						data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId"></select>
+						data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId, optionsCaption: 'моля избери'"></select>
 				</div>
+				<div data-bind="visible: selectedEnvelope()">
 
 				<!-- Селект за материал (зависи от избрания плик) -->
 				<div class="mb-3">
@@ -40,38 +41,48 @@
 				<!-- Controls -->
 				<div class="mb-3">
 					<label class="form-label">Грамаж на хартията</label>
-					<select class="form-select mb-2"
-						data-bind="visible: paperGrammageOptions().length > 0, options: paperGrammageOptions, value: paperGrammageSelectedOption, optionsCaption: 'Избери грамаж'"></select>
-					<input type="text" class="form-control"
-						data-bind="textInput: paperGrammage, attr: { placeholder: paperGrammageOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					<div class="dual-input-row">
+						<select class="form-select"
+							data-bind="visible: paperGrammageOptions().length > 0, options: paperGrammageOptions, value: paperGrammageSelectedOption, optionsCaption: 'Избери грамаж'"></select>
+						<input type="text" class="form-control"
+							data-bind="textInput: paperGrammage, attr: { placeholder: paperGrammageOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					</div>
 				</div>
 				<div class="mb-3" data-bind="visible: showFoilGrammage">
 					<label class="form-label">Грамаж на фолио/прозорец</label>
-					<select class="form-select mb-2"
-						data-bind="visible: foilGrammageOptions().length > 0, options: foilGrammageOptions, value: foilGrammageSelectedOption, optionsCaption: 'Избери грамаж'"></select>
-					<input type="text" class="form-control"
-						data-bind="textInput: foilGrammage, attr: { placeholder: foilGrammageOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					<div class="dual-input-row">
+						<select class="form-select"
+							data-bind="visible: foilGrammageOptions().length > 0, options: foilGrammageOptions, value: foilGrammageSelectedOption, optionsCaption: 'Избери грамаж'"></select>
+						<input type="text" class="form-control"
+							data-bind="textInput: foilGrammage, attr: { placeholder: foilGrammageOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					</div>
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Ширина A</label>
-					<select class="form-select mb-2"
-						data-bind="visible: widthAOptions().length > 0, options: widthAOptions, value: widthASelectedOption, optionsCaption: 'Избери ширина A'"></select>
-					<input type="text" class="form-control"
-						data-bind="textInput: widthA, attr: { placeholder: widthAOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					<div class="dual-input-row">
+						<select class="form-select"
+							data-bind="visible: widthAOptions().length > 0, options: widthAOptions, value: widthASelectedOption, optionsCaption: 'Избери ширина A'"></select>
+						<input type="text" class="form-control"
+							data-bind="textInput: widthA, attr: { placeholder: widthAOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					</div>
 				</div>
 				<div class="mb-3" data-bind="visible: !isPaperFormatSelected()">
 					<label class="form-label">Фалт B</label>
-					<select class="form-select mb-2"
-						data-bind="visible: foldBOptions().length > 0, options: foldBOptions, value: foldBSelectedOption, optionsCaption: 'Избери Фалт B'"></select>
-					<input type="text" class="form-control"
-						data-bind="textInput: foldB, attr: { placeholder: foldBOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					<div class="dual-input-row">
+						<select class="form-select"
+							data-bind="visible: foldBOptions().length > 0, options: foldBOptions, value: foldBSelectedOption, optionsCaption: 'Избери Фалт B'"></select>
+						<input type="text" class="form-control"
+							data-bind="textInput: foldB, attr: { placeholder: foldBOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					</div>
 				</div>
 				<div class="mb-3">
 					<label class="form-label">Дължина C</label>
-					<select class="form-select mb-2"
-						data-bind="visible: lengthCOptions().length > 0, options: lengthCOptions, value: lengthCSelectedOption, optionsCaption: 'Избери Дължина C'"></select>
-					<input type="text" class="form-control"
-						data-bind="textInput: lengthC, attr: { placeholder: lengthCOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					<div class="dual-input-row">
+						<select class="form-select"
+							data-bind="visible: lengthCOptions().length > 0, options: lengthCOptions, value: lengthCSelectedOption, optionsCaption: 'Избери Дължина C'"></select>
+						<input type="text" class="form-control"
+							data-bind="textInput: lengthC, attr: { placeholder: lengthCOptions().length > 0 ? 'или въведи ръчно' : '' }" />
+					</div>
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Ширина на хартията</label>
@@ -208,6 +219,7 @@
 				</div>
 					<!-- Показване на стойността (количество * цена) -->
 				</div>
+				</div>
 			</div>
 			
 
@@ -245,7 +257,7 @@
 					<h5>Данни за офертата</h5>
 					<div class="mb-3">
 						<label class="form-label">Издадена от</label>
-						<select class="form-select" data-bind="options: issuerOptions, value: issuedBy"></select>
+						<select class="form-select" data-bind="options: issuerOptions, optionsText: 'name', optionsValue: 'name', value: issuedBy"></select>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Номер на офертата</label>
@@ -297,7 +309,7 @@
 											data-bind="visible: isEditingPrice, value: priceValue, valueUpdate: 'afterkeydown'" />
 									</td>
 									<td class="text-center">
-										<div class="action-buttons">
+										<div class="action-buttons" data-bind="visible: $root.canEditActions">
 											<button class="btn btn-sm btn-outline-primary icon-btn"
 												data-bind="click: $parent.togglePriceEdit, attr: { title: isEditingPrice() ? 'Запази' : 'Редакция', 'aria-label': isEditingPrice() ? 'Запази' : 'Редакция' }">
 												<span data-bind="visible: !isEditingPrice()">
@@ -760,7 +772,7 @@
 			]);
 
 			// избран плик (само id) и computed за обекта
-			self.selectedEnvelopeId = ko.observable(self.envelopes()[0].id);
+			self.selectedEnvelopeId = ko.observable();
 			self.selectedEnvelope = ko.computed(function () {
 				var id = self.selectedEnvelopeId();
 				return ko.utils.arrayFirst(self.envelopes(), function (e) { return e.id === id; }) || null;
@@ -783,7 +795,7 @@
 			});
 
 			// избран материал (само id) и computed за обекта
-			self.selectedMaterialId = ko.observable(self.materialsForSelected().length ? self.materialsForSelected()[0].id : null);
+			self.selectedMaterialId = ko.observable(null);
 			// при смяна на плика избирай първия материал по подразбиране
 			self.selectedEnvelopeId.subscribe(function () {
 				var mats = self.materialsForSelected();
@@ -1169,10 +1181,17 @@
 
 			// offer metadata (dynamic)
 			self.issuerOptions = ko.observableArray([
-				'Юлиана Николова',
-				'Румен Хаджиев'
+				{name:'Юлиана Николова',canedit :false},
+				{name:'Румен Хаджиев',canedit :true}
 			]);
 			self.issuedBy = ko.observable('Юлиана Николова');
+			self.canEditActions = ko.computed(function () {
+				var selected = self.issuedBy();
+				var issuer = ko.utils.arrayFirst(self.issuerOptions(), function (item) {
+					return item.name === selected;
+				});
+				return !!(issuer && (issuer.canEdit === true || issuer.canedit === true));
+			});
 			self.offerNumber = ko.observable('00974');
 			self.offerDate = ko.observable((new Date()).toISOString().slice(0,10));
 			self.offerSubject = ko.observable('Хартиени пликове KAUFLAND RO');
@@ -1190,15 +1209,7 @@
 				return weekday + ', ' + day + ' ' + month + ' ' + year + ' г.';
 			});
 
-			// обща стойност = количество * цена на избрания материал
-			self.totalPrice = ko.computed(function () {
-				var selectedQty = self.selectedQuantity();
-				var qty = selectedQty && typeof selectedQty === 'object' ? (parseFloat(selectedQty.qty) || 0) : (parseFloat(selectedQty) || 0);
-				var mat = self.selectedMaterial(); // използва вече дефинираното selectedMaterial
-				var price = mat && mat.price ? parseFloat(mat.price) : 0;
-				return (qty * price).toFixed(2);
-			});
-
+			
 			function getOfferRenderCss() {
 				return '.hide-actions .no-print{display:none !important;}' +
 				    '.offer-doc-header{margin-bottom:12px; margin-left:-62px;}' +
@@ -1232,45 +1243,6 @@
 				    '@media print{ .no-print{display:none !important;} body{margin:0;} }';
 			}
 
-			function cloneContentWithoutBands(element) {
-				var clone = element.cloneNode(true);
-				var clonedHeader = clone.querySelector('.offer-doc-header');
-				var clonedFooter = clone.querySelector('.offer-doc-footer');
-				if (clonedHeader) clonedHeader.parentNode.removeChild(clonedHeader);
-				if (clonedFooter) clonedFooter.parentNode.removeChild(clonedFooter);
-				return clone;
-			}
-
-			function captureNodeAsImage(node) {
-				if (!node || typeof html2canvas !== 'function') return Promise.resolve(null);
-				return html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null })
-					.then(function (canvas) {
-						if (!canvas || !canvas.width || !canvas.height) return null;
-						return { dataUrl: canvas.toDataURL('image/png'), ratio: canvas.height / canvas.width };
-					})
-					.catch(function () { return null; });
-			}
-
-			function addBandsToPdfPages(pdf, headerImage, footerImage) {
-				if (!pdf) return;
-				var totalPages = pdf.internal.getNumberOfPages();
-				var pageWidth = pdf.internal.pageSize.getWidth();
-				var pageHeight = pdf.internal.pageSize.getHeight();
-				var sideMargin = 0.45;
-				var bandWidth = pageWidth - (sideMargin * 2);
-				for (var page = 1; page <= totalPages; page++) {
-					pdf.setPage(page);
-					if (headerImage) {
-						var headerHeight = Math.min(0.62, bandWidth * headerImage.ratio);
-						pdf.addImage(headerImage.dataUrl, 'PNG', sideMargin, 0.12, bandWidth, headerHeight, undefined, 'FAST');
-					}
-					if (footerImage) {
-						var footerHeight = Math.min(0.52, bandWidth * footerImage.ratio);
-						var footerY = pageHeight - footerHeight - 0.12;
-						pdf.addImage(footerImage.dataUrl, 'PNG', sideMargin, footerY, bandWidth, footerHeight, undefined, 'FAST');
-					}
-				}
-			}
 
 			self.exportPdf = function () {
 				var element = document.getElementById('pdf-content');
@@ -1351,29 +1323,6 @@
 				setTimeout(function () { try { w.print(); } catch (e) {} }, 300);
 			};
 
-			// Preview mode: toggle on-screen A4-like WYSIWYG preview
-			self.isPreview = ko.observable(false);
-
-			self.previewButtonText = ko.computed(function () {
-				return self.isPreview() ? 'Затвори преглед' : 'Преглед';
-			});
-
-			self.togglePreview = function () {
-				var el = document.body;
-				var pdf = document.getElementById('pdf-content');
-				if (!self.isPreview()) {
-					self.isPreview(true);
-					el.classList.add('preview-mode');
-					// hide action column while previewing
-					if (pdf) pdf.classList.add('hide-actions');
-					// scroll to preview area
-					setTimeout(function () { if (pdf) pdf.scrollIntoView({behavior:'smooth'}); }, 50);
-				} else {
-					self.isPreview(false);
-					el.classList.remove('preview-mode');
-					if (pdf) pdf.classList.remove('hide-actions');
-				}
-			};
 
 			// items collection: allow adding multiple offer items
 			self.items = ko.observableArray([]);
@@ -1424,15 +1373,6 @@
 				self.items.remove(item);
 			};
 
-			self.totalSum = ko.computed(function () {
-				var sum = 0;
-				self.items().forEach(function (it) {
-					var rawValue = ko.unwrap(it.priceValue);
-					var p = parseFloat((rawValue || '').toString().replace(',', '.')) || 0;
-					sum += p;
-				});
-				return sum.toFixed(2) + ' лв';
-			});
 		}
 
 		ko.applyBindings(new ViewModel());

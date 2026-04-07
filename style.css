@@ -259,6 +259,12 @@
 			flex-wrap: wrap;
 			align-items: center;
 		}
+		.dual-input-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: .5rem;
+			align-items: start;
+		}
 		.controls-toolbar .btn { flex: 0 1 auto; }
 		@media (max-width: 576px) {
 			.controls-toolbar .btn { flex: 1 1 100%; }
