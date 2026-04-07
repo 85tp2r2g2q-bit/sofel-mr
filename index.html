@@ -132,6 +132,12 @@
 					<input type="number" step="any" class="form-control"
 						data-bind="value: paperGrammage, valueUpdate: 'afterkeydown'" />
 				</div>
+				<!-- Грамаж на прозорец (видимо само за плик id=5) -->
+				<div class="mb-3" data-bind="visible: showWindowGrammage">
+					<label class="form-label">Грамаж на прозорец</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: windowGrammage, valueUpdate: 'afterkeydown'" />
+				</div>
 				<div class="mb-3" data-bind="visible: showFoilGrammage">
 					<label class="form-label">Грамаж на фолио</label>
 					<input type="number" step="any" class="form-control"
@@ -168,10 +174,28 @@
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="textInput: cutLength" />
 				</div>
+				<!-- Ръчно поле Прозорец (под Дължина на отрязък), видимо само за плик с прозорец -->
+				<div class="mb-3" data-bind="visible: showWindowGrammage">
+					<label class="form-label">Прозорец (мм)</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: windowManual, valueUpdate: 'afterkeydown'" />
+				</div>
+				<!-- Ширина на прозорец (само за плик id=5) - readonly, изчислява се от Прозорец + 4 -->
+			<div class="mb-3" data-bind="visible: showWindowGrammage">
+				<label class="form-label">Ширина на прозорец (мм)</label>
+				<input type="number" step="any" class="form-control readonly-field" readonly
+					data-bind="value: windowWidth" />
+			</div>
 				<div class="mb-3">
 					<label class="form-label">Цена на хартия /€ без ДДС</label>
 					<input type="number" step="any" class="form-control"
 						data-bind="value: paperPriceEur, valueUpdate: 'afterkeydown'" />
+				</div>
+				<!-- Цена на прозорец /€ без ДДС (видимо само за плик с прозорец) -->
+				<div class="mb-3" data-bind="visible: showWindowGrammage">
+					<label class="form-label">Цена на прозорец /€ без ДДС</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: windowPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
 				<div class="mb-3" data-bind="visible: showFoilGrammage">
 					<label class="form-label">Цена на фолиото /€ без ДДС</label>
@@ -285,6 +309,7 @@
 					<!-- Показване на стойността (количество * цена) -->
 				</div>
 			</div>
+			
 
 			<div class="col-md-6">
 				<div class="card p-3">
@@ -621,7 +646,7 @@
 		function ViewModel() {
 			var self = this;
 			// Смени на true, за да покажеш разширените ценови полета.
-			self.showAdvancedPricingFields = ko.observable(false);
+			self.showAdvancedPricingFields = ko.observable(true);
 			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
 			self.envelopes = ko.observableArray([
 				{
@@ -640,6 +665,29 @@
 					],
 					cut: 1, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.002, // Стойност на труда и материалите за този плик
+					materials: [
+						{ id: 201, name: "материал 3", price: 1 },
+						{ id: 202, name: "материал 4", price: 1 }
+					]
+				},
+				{
+					id: 5, name: "хартиен плик с прозорец",
+					printColors: [
+						{ count: 0, value: 0 },
+						{ count: 1, value: 3 },
+						{ count: 2, value: 5 },
+						{ count: 3, value: 7 },
+						{ count: 4, value: 10 }
+					],
+					quantities: [
+						{ qty: 20000, index: 2,sign : '*'   },
+						{ qty: 30000, index: 1.75,sign : '*'   },
+						{ qty: 50000, index: 1.65 ,sign : '*' },
+						{ qty: 100000, index: 1.45,sign : '*'  },
+						{ qty: 200000, index: 1.35,sign : '*'  }
+					],
+					cut: 1, // Стойност на отрязъка за този плик
+					trudAndMaterials: 0.0035, // Стойност на труда и материалите за този плик
 					materials: [
 						{ id: 201, name: "материал 3", price: 1 },
 						{ id: 202, name: "материал 4", price: 1 }
@@ -735,6 +783,18 @@
 			// останалата логика (размери, export и т.н.)
 			
 			self.paperGrammage = ko.observable(0);
+			// Грамаж на прозорец (видимо само за плик с id === 5)
+			self.windowGrammage = ko.observable(0);
+			self.showWindowGrammage = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return !!(env && env.id === 5);
+			});
+			// Прозорец: ръчно поле (мм) и изчислявана ширина: windowWidth = прозорец + 4
+			self.windowManual = ko.observable(0);
+			self.windowWidth = ko.computed(function () {
+				var w = parseFloat(self.windowManual()) || 0;
+				return w + 4;
+			});
 			// Грамаж на фолио (свободно поле за попълване)
 			self.foilGrammage = ko.observable(0);
 			// Show foil grammage only for a specific envelope (id === 3)
@@ -791,12 +851,20 @@
 			ko.computed(function () {
 				var a = parseFloat(self.widthA()) || 0;
 				var b = parseFloat(self.foldB()) || 0;
-				if (self.isPaperBagSelected()) {
+				var env = self.selectedEnvelope();
+				// If envelope id === 5, paper width = (2*A) + (2*B) - windowWidth
+				if (env && env.id === 5) {
+					var w = parseFloat(self.windowManual()) || 0;
+					var val = (2 * a) + (2 * b) - w;
+					self.paperWidth(Math.max(val, 0));
+				} else if (self.isPaperBagSelected()) {
 					self.paperWidth((2 * a + 3) + (2 * b));
 				} else {
 					self.paperWidth((2 * a + 2) + (2 * b));
 				}
 			});
+
+			
 			self.cutLength = ko.observable(0);
 			ko.computed(function () {
 				var c = parseFloat(self.lengthC()) || 0;
@@ -810,6 +878,8 @@
 				}
 			});
 			self.paperPriceEur = ko.observable(0);
+			// Цена на прозорец в евро без ДДС (ръчно поле, видимо само за плик с прозорец)
+			self.windowPriceEur = ko.observable(0);
 			// Цена на фолиото в евро (без ДДС) — видимо само за плик с id === 3
 			self.foilPriceEur = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
@@ -824,10 +894,15 @@
 
 			// Изчислено тегло на 1 плик за фолио (използва ширина/дължина, но грамаж на фолио)
 			self.envelopeFoilWeightGr = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				// use foil grammage by default, but for envelope id===5 use window grammage
 				var foilGsm = parseFloat(self.foilGrammage()) || 0;
+				if (env && env.id === 5) {
+					foilGsm = parseFloat(self.windowGrammage()) || 0;
+				}
 				var widthMm = parseFloat(self.paperWidth()) || 0;
 				var lengthMm = parseFloat(self.cutLength()) || 0;
-				// same formula as envelopeWeightGr but using foil grammage
+				// same formula as envelopeWeightGr but using selected grammage
 				return ((widthMm / 100) * (lengthMm / 100) * foilGsm).toFixed(4);
 			});
 
