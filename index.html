@@ -100,6 +100,32 @@
 			color: #495057;
 			cursor: not-allowed;
 		}
+
+		.inline-price-editor {
+			min-width: 110px;
+		}
+
+		.action-buttons {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 6px;
+			flex-wrap: nowrap;
+		}
+
+		.icon-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 32px;
+			height: 32px;
+			padding: 0;
+		}
+
+		.icon-btn svg {
+			width: 14px;
+			height: 14px;
+		}
 	</style>
 </head>
 
@@ -519,11 +545,33 @@
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center
 									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span
-											data-bind='text: priceDisplay'></span></b></p>
+										data-bind='visible: !isEditingPrice(), text: formattedPrice'></span></b>
+									<input type='number' step='any' class='form-control form-control-sm inline-price-editor no-print'
+										data-bind='visible: isEditingPrice, value: priceValue, valueUpdate: "afterkeydown"' /></p>
 							</td>
 							<td class='no-print'
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:4px;text-align:center'>
-								<button class='btn btn-sm btn-danger' data-bind='click: $parent.removeItem'>Изтрий</button>
+								<div class='action-buttons'>
+									<button class='btn btn-sm btn-outline-primary icon-btn'
+										data-bind='click: $parent.togglePriceEdit, attr: { title: isEditingPrice() ? "Запази" : "Редакция", "aria-label": isEditingPrice() ? "Запази" : "Редакция" }'>
+										<span data-bind='visible: !isEditingPrice()'>
+											<svg viewBox='0 0 16 16' fill='currentColor' aria-hidden='true'>
+												<path d='M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-9.5 9.5L3 14l.646-3.354zM11.207 2L4 9.207V12h2.793L14 4.793z'></path>
+											</svg>
+										</span>
+										<span data-bind='visible: isEditingPrice'>
+											<svg viewBox='0 0 16 16' fill='currentColor' aria-hidden='true'>
+												<path d='M13.485 1.929a.75.75 0 0 1 1.06 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.47 6.47a.75.75 0 1 1 1.06-1.06l3.235 3.234z'></path>
+											</svg>
+										</span>
+									</button>
+									<button class='btn btn-sm btn-danger icon-btn' data-bind='click: $parent.removeItem, attr: { title: "Изтрий", "aria-label": "Изтрий" }'>
+										<svg viewBox='0 0 16 16' fill='currentColor' aria-hidden='true'>
+											<path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z'></path>
+											<path d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM7 2v1h2V2z'></path>
+										</svg>
+									</button>
+								</div>
 							</td>
 						</tr>
 						<!-- /ko -->
@@ -1205,6 +1253,12 @@
 			// items collection: allow adding multiple offer items
 			self.items = ko.observableArray([]);
 
+			function formatPriceValue(value) {
+				var numeric = parseFloat(value);
+				if (!isFinite(numeric)) return '0.00000 EUR';
+				return numeric.toFixed(5) + ' EUR';
+			}
+
 			self.addToOffer = function () {
 				var env = self.selectedEnvelope();
 				var mat = self.selectedMaterial();
@@ -1216,16 +1270,29 @@
 				var c = parseFloat(self.lengthC()) || 0;
 				var selectedColor = self.selectedPrintColor() || { count: 1, value: 3 };
 				var colors = parseInt(selectedColor.count, 10) || 1;
-				var colorValue = parseFloat(selectedColor.value) || 0;
+				var initialPrice = parseFloat(self.customerInquiryPriceEur()) || 0;
 				var item = {
 					name: env ? env.name : '—',
 					material: mat ? mat.name : '—',
 					size: (a + ' x ' + b + ' x ' + c + ' mm'),
 					printInfo: (colors === 0 ? 'без цвят' : (colors === 1 ? '1 цвят' : (colors + ' цвята'))),
 					minOrder: qty,
-					priceDisplay: self.customerInquiryPriceEur() + ' EUR'
+					priceValue: ko.observable(initialPrice.toFixed(5)),
+					isEditingPrice: ko.observable(false)
 				};
+				item.formattedPrice = ko.pureComputed(function () {
+					return formatPriceValue(item.priceValue());
+				});
 				self.items.push(item);
+			};
+
+			self.togglePriceEdit = function (item) {
+				var currentlyEditing = item.isEditingPrice();
+				if (currentlyEditing) {
+					var normalized = parseFloat(item.priceValue());
+					item.priceValue(isFinite(normalized) ? normalized.toFixed(5) : '0.00000');
+				}
+				item.isEditingPrice(!currentlyEditing);
 			};
 
 			self.removeItem = function (item) {
@@ -1235,7 +1302,8 @@
 			self.totalSum = ko.computed(function () {
 				var sum = 0;
 				self.items().forEach(function (it) {
-					var p = parseFloat((it.priceDisplay || '').toString().replace(/[^\\d\.\,]/g, '').replace(',', '.')) || 0;
+					var rawValue = ko.unwrap(it.priceValue);
+					var p = parseFloat((rawValue || '').toString().replace(',', '.')) || 0;
 					sum += p;
 				});
 				return sum.toFixed(2) + ' лв';
