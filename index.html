@@ -1507,13 +1507,13 @@
 				if (!element) return;
 				var printContent = element.cloneNode(true);
 				var exportClone = document.createElement('div');
-				exportClone.className = 'hide-actions print-content';
+				exportClone.className = 'hide-actions print-content pdf-export-root';
 				exportClone.innerHTML = printContent.innerHTML;
 				var exportMount = document.createElement('div');
 				exportMount.style.position = 'fixed';
 				exportMount.style.left = '-100000px';
 				exportMount.style.top = '0';
-				exportMount.style.width = element.offsetWidth + 'px';
+				exportMount.style.width = '794px';
 				exportMount.className = 'hide-actions';
 				exportMount.appendChild(exportClone);
 				document.body.appendChild(exportMount);
@@ -1525,13 +1525,20 @@
 				var styleEl = document.createElement('style');
 				styleEl.type = 'text/css';
 				styleEl.id = 'pdf-export-render-style';
-				styleEl.appendChild(document.createTextNode(getOfferRenderCss() + '.print-content{padding:0 10mm;}'));
+				styleEl.appendChild(document.createTextNode(getOfferRenderCss() +
+					'.print-content{padding:0 10mm;}' +
+					'.pdf-export-root .offer-meta-layout{display:flex !important; flex-direction:row !important; align-items:flex-start !important; justify-content:space-between !important;}' +
+					'.pdf-export-root .offer-meta-left{width:auto !important; flex:1 1 auto !important;}' +
+					'.pdf-export-root .offer-cert-logos{margin-left:auto !important; gap:18px !important;}' +
+					'.pdf-export-root .offer-fssc-logo{width:180px !important;}' +
+					'.pdf-export-root .offer-fsc-logo{width:62px !important;}'
+				));
 				document.head.appendChild(styleEl);
 				var opt = {
 					margin: [0.63, 0.39, 0.63, 0.39],
 					filename: pdfFileName,
 					image: { type: 'jpeg', quality: 0.98 },
-					html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+					html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1200 },
 					pagebreak: { mode: ['css', 'legacy'], avoid: ['p', 'tr', 'td', 'th', '.offer-doc-footer'] },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
