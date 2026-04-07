@@ -181,7 +181,7 @@
 						data-bind="value: windowManual, valueUpdate: 'afterkeydown'" />
 				</div>
 				<!-- Ширина на прозорец (само за плик id=5) - readonly, изчислява се от Прозорец + 4 -->
-			<div class="mb-3" data-bind="visible: showWindowGrammage">
+			<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 				<label class="form-label">Ширина на прозорец (мм)</label>
 				<input type="number" step="any" class="form-control readonly-field" readonly
 					data-bind="value: windowWidth" />
@@ -895,13 +895,15 @@
 			// Изчислено тегло на 1 плик за фолио (използва ширина/дължина, но грамаж на фолио)
 			self.envelopeFoilWeightGr = ko.computed(function () {
 				var env = self.selectedEnvelope();
+				var widthMm = parseFloat(self.paperWidth()) || 0;
+				var lengthMm = parseFloat(self.cutLength()) || 0;
 				// use foil grammage by default, but for envelope id===5 use window grammage
 				var foilGsm = parseFloat(self.foilGrammage()) || 0;
 				if (env && env.id === 5) {
 					foilGsm = parseFloat(self.windowGrammage()) || 0;
+					widthMm = parseFloat(self.windowWidth()) || 0;
 				}
-				var widthMm = parseFloat(self.paperWidth()) || 0;
-				var lengthMm = parseFloat(self.cutLength()) || 0;
+				
 				// same formula as envelopeWeightGr but using selected grammage
 				return ((widthMm / 100) * (lengthMm / 100) * foilGsm).toFixed(4);
 			});
@@ -917,6 +919,11 @@
 			self.foilCostPerEnvelopeEur = ko.computed(function () {
 				var price = parseFloat(self.foilPriceEur()) || 0;
 				var perKg = parseFloat(self.envelopesPerKgFoil()) || 0;
+				var env = self.selectedEnvelope();
+				 if (env && env.id === 5) {
+				  price = parseFloat(self.windowPriceEur()) || 0;
+			    }
+				 
 				if (perKg <= 0) return '0.000000';
 				return (price / perKg).toFixed(6);
 			});
@@ -930,7 +937,9 @@
 			self.materialCostPerEnvelopeEur = ko.computed(function () {
 				var paperPricePerKg = parseFloat(self.paperPriceEur()) || 0;
 				var perKgCount = parseFloat(self.envelopesPerKg()) || 0;
+				var env = self.selectedEnvelope();
 				var basePaperCost = perKgCount > 0 ? (paperPricePerKg / perKgCount) : 0;
+				
 				if (self.isPaperBagSelected()) {
 					var env = self.selectedEnvelope();
 					var flatHandles = env && env.flatHandels !== undefined && env.flatHandels !== null && env.flatHandels !== ''
@@ -959,10 +968,11 @@
 				var foilBgn = parseFloat(self.foilCostPerEnvelopeEur()) || 0;
 				var cashirane = parseFloat(env && env.cashirane) || 0;
 				// Log the three components for envelope id === 3
-				// if (env && env.id === 3) {
-				// 	console.log('materialCost:', materialCost, 'foilCostPerEnvelopeEur:', foilBgn, 'cashirane:', cashirane);
-				// }
+				 
 				var total = materialCost + laborCost + foilBgn + cashirane;
+				if (env && env.id === 5) {
+					total = materialCost + foilBgn+laborCost;
+				}
 				//console.log('Total cost per envelope (EUR):', total);
 				// For envelope ID=3 include foil cost (foil is entered in BGN -> convert to EUR)
 				// and include cashirane (каширане) cost defined on the envelope object
