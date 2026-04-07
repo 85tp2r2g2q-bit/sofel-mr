@@ -341,7 +341,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="pdf-container">
+	<div class="pdf-container" data-bind="css: { 'dev-show': showPdfContainer }">
 		<div class="pdf-container-header">
 			<h5>Документ</h5>
 		</div>
@@ -423,14 +423,13 @@
 	  none;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Тираж/бр.</span></b></p>
+											style='font-size:10.0pt;color:#00B0F0'>Тираж</span></b></p>
 							</td>
 							<td width=85 style='width:63.8pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
 	  margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><span
-												style='font-size:10.0pt;color:red'>Цена €</span><span style='font-size:10.0pt;
-	  color:red'>/бр</span></p>
+												style='font-size:10.0pt;color:red'>Цена </span></p>
 							</td>
 							<td class='no-print'
 								style='width:80px;border:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
@@ -632,6 +631,7 @@
 			var self = this;
 			// Смени на true, за да покажеш разширените ценови полета.
 			self.showAdvancedPricingFields = ko.observable(false);
+			self.showPdfContainer = ko.observable(false);
 			// envelopes с вложен масив materials (по 2 материала с ID-та и цена)
 			self.envelopes = ko.observableArray([
 				{
@@ -659,7 +659,7 @@
 						{ id: 301, name: "Бял крафт", price: 1.2 },
 						{ id: 302, name: "Кафяв Крафт", price: 1.1 },
 						{ id: 303, name: "Екструдиран Крафт ", price: 2.2 },
-						{ id: 303, name: "Маслоустойчив Крафт", price: 1.85 }
+						{ id: 304, name: "Маслоустойчив Крафт", price: 1.85 }
 					]
 				},
 				{
@@ -683,10 +683,10 @@
 					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
 					materials: [
-						{ id: 301, name: "Бял крафт", price: 1.7 },
-						{ id: 302, name: "Кафяв Крафт", price: 1.7 },
-						{ id: 303, name: "Екструдиран Крафт ", price: 1.7 },
-						{ id: 303, name: "Маслоустойчив Крафт", price: 1.7 }
+						{ id: 301, name: "Бял крафт", price: 1.2 },
+						{ id: 302, name: "Кафяв Крафт", price: 1.1 },
+						{ id: 303, name: "Екструдиран Крафт ", price: 2.2 },
+						{ id: 304, name: "Маслоустойчив Крафт", price: 1.85 }
 					]
 				},
 				{
@@ -714,8 +714,10 @@
 					cut: 1, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.0035, // Стойност на труда и материалите за този плик
 					materials: [
-						{ id: 201, name: "Бял Крафт", price: 1.2 },
-						{ id: 202, name: "Кафяв Крафт", price: 1.1 }
+						{ id: 301, name: "Бял крафт", price: 1.2 },
+						{ id: 302, name: "Кафяв Крафт", price: 1.1 },
+						{ id: 303, name: "Екструдиран Крафт ", price: 2.2 },
+						{ id: 304, name: "Маслоустойчив Крафт", price: 1.85 }
 					]
 				},
 				{
@@ -737,8 +739,10 @@
 					lengthCOptions: [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],
 					foilGrammageOptions: [15, 20],
 					materials: [
-						{ id: 201, name: "Бял Крафт", price: 1.2 },
-						{ id: 202, name: "Кафяв Крафт", price: 1 }
+						{ id: 301, name: "Бял крафт", price: 1.2 },
+						{ id: 302, name: "Кафяв Крафт", price: 1.1 },
+						{ id: 303, name: "Екструдиран Крафт ", price: 2.2 },
+						{ id: 304, name: "Маслоустойчив Крафт", price: 1.85 }
 					]
 				},
 				{
@@ -825,6 +829,8 @@
 			// останалата логика (размери, export и т.н.)
 			
 			self.paperGrammage = ko.observable(0);
+			// Observable flag to show/hide the pdf container in the UI (dev toggle)
+			
 			self.paperGrammageSelectedOption = ko.observable('');
 			self.paperGrammageSelectedOption.subscribe(function (value) {
 				if (value === null || value === undefined || value === '') return;
@@ -1344,13 +1350,19 @@
 				var a = parseFloat(self.widthA()) || 0;
 				var b = parseFloat(self.foldB()) || 0;
 				var c = parseFloat(self.lengthC()) || 0;
+				// Build size string but omit any zero components (e.g. 30 x 0 x 20 -> 30 x 20)
+				var sizeParts = [];
+				if (a && !isNaN(a)) sizeParts.push(a);
+				if (b && !isNaN(b)) sizeParts.push(b);
+				if (c && !isNaN(c)) sizeParts.push(c);
+				var sizeStr = sizeParts.join(' x ');
 				var selectedColor = self.selectedPrintColor() || { count: 1, value: 3 };
 				var colors = parseInt(selectedColor.count, 10) || 1;
 				var initialPrice = parseFloat(self.customerInquiryPriceEur()) || 0;
 				var item = {
 					name: env ? env.name : '—',
 					material: mat ? mat.name : '—',
-					size: (a + ' x ' + b + ' x ' + c + ' mm'),
+						size: sizeStr,
 					printInfo: (colors === 0 ? 'без цвят' : (colors === 1 ? '1 цвят' : (colors + ' цвята'))),
 					minOrder: qty,
 					priceValue: ko.observable(initialPrice.toFixed(5)),

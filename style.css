@@ -49,14 +49,23 @@
 
 		/* Visual separation for on-page document area */
 		.pdf-container {
-			position: absolute;
-			left: -100000px;
-			top: 0;
-			width: 210mm;
-			opacity: 0;
-			pointer-events: none;
-			display: block;
+				position: absolute;
+				left: -100000px;
+				top: 0;
+				width: 210mm;
+				opacity: 0;
+				pointer-events: none;
+				display: block;
 		}
+			/* When .dev-show is present, force the pdf container visible for debugging/preview */
+			.pdf-container.dev-show {
+				position: static !important;
+				left: auto !important;
+				top: auto !important;
+				opacity: 1 !important;
+				pointer-events: auto !important;
+				width: auto !important;
+			}
 		.pdf-container-header {
 			margin-bottom: 8px;
 			font-family: "Century Gothic", sans-serif;
