@@ -67,6 +67,9 @@
 			margin-top: 24px;
 			display: block;
 		}
+		.pdf-container.is-hidden {
+			display: none !important;
+		}
 		.pdf-container-header {
 			margin-bottom: 8px;
 			font-family: "Century Gothic", sans-serif;
@@ -97,6 +100,7 @@
 			border: 0;
 			background: transparent;
 			color: #6d6d6d;
+			margin-left: -16px;
 		}
 
 		.offer-brand-name {
@@ -107,7 +111,8 @@
 		}
 
 		.offer-header-logo {
-			width: 100%;
+			width: 106%;
+			max-width: none;
 			height: auto;
 			display: block;
 		}
@@ -225,6 +230,39 @@
 
 		.offer-intro-gap {
 			margin-top: 10px !important;
+		}
+
+		/* Compact the terms block so it fits on one A4 page */
+		#pdf-content p.MsoListParagraphCxSpFirst,
+		#pdf-content p.MsoListParagraphCxSpMiddle,
+		#pdf-content p.MsoListParagraphCxSpLast {
+			line-height: 1.15 !important;
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
+		}
+
+		#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:12.0pt"],
+		#pdf-content p.MsoNormal span[style*="font-size:12.0pt"][style*="Century Gothic"] {
+			font-size: 10.5pt !important;
+		}
+
+		#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:10.0pt"],
+		#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:10.0pt"],
+		#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:10.0pt"] {
+			font-size: 9pt !important;
+		}
+
+		.blue-circle-bullet {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			border: 2px solid #0070c0;
+			border-radius: 50%;
+			vertical-align: middle;
+			margin-right: 4px;
+			box-sizing: border-box;
 		}
 
 		/* Responsive controls toolbar */
@@ -554,9 +592,66 @@
 					</div>
 				</div>
 			</div>
+			<div class="col-12 mt-3">
+				<div class="card p-3">
+					<h5>Копие на таблицата</h5>
+					<table class="table table-sm table-bordered mb-0">
+						<thead class="table-light">
+							<tr>
+								<th>№</th>
+								<th>Наименование</th>
+								<th>Размер /см</th>
+								<th>Печат</th>
+								<th>Материал</th>
+								<th>Тираж/бр.</th>
+								<th>Цена €/бр</th>
+								<th>Действия</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: items">
+							<tr>
+								<td data-bind="text: $index() + 1"></td>
+								<td data-bind="text: name"></td>
+								<td data-bind="text: size"></td>
+								<td data-bind="text: printInfo"></td>
+								<td data-bind="text: material"></td>
+								<td data-bind="text: minOrder"></td>
+								<td>
+									<span data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
+									<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
+										data-bind="visible: isEditingPrice, value: priceValue, valueUpdate: 'afterkeydown'" />
+								</td>
+								<td class="text-center">
+									<div class="action-buttons">
+										<button class="btn btn-sm btn-outline-primary icon-btn"
+											data-bind="click: $parent.togglePriceEdit, attr: { title: isEditingPrice() ? 'Запази' : 'Редакция', 'aria-label': isEditingPrice() ? 'Запази' : 'Редакция' }">
+											<span data-bind="visible: !isEditingPrice()">
+												<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+													<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-9.5 9.5L3 14l.646-3.354zM11.207 2L4 9.207V12h2.793L14 4.793z"></path>
+												</svg>
+											</span>
+											<span data-bind="visible: isEditingPrice()">
+												<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+													<path d="M13.485 1.929a.75.75 0 0 1 1.06 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.47 6.47a.75.75 0 1 1 1.06-1.06l3.235 3.234z"></path>
+												</svg>
+											</span>
+										</button>
+										<button class="btn btn-sm btn-danger icon-btn" data-bind="click: $parent.removeItem, attr: { title: 'Изтрий', 'aria-label': 'Изтрий' }">
+											<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+												<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+												<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM7 2v1h2V2z"></path>
+											</svg>
+										</button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="pdf-container">
+	<div class="pdf-container is-hidden">
 		<div class="pdf-container-header">
 			<h5>Документ</h5>
 		</div>
@@ -589,7 +684,7 @@
 						предлагаме на вашето внимание следната:</span></p>
 	
 				<p class=MsoNormal align=center style='text-align:center'><b
-						style='font-size:20.0pt;line-height:115%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'>ОФЕРТА №<span
+						style='font-size:17.0pt;line-height:90%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'>ОФЕРТА №<span
 							data-bind="text: offerNumber"></span>/<span data-bind="text: offerDate"></span></b></p>
 	
 				<p class=MsoNormal
@@ -740,17 +835,15 @@
 	
 				<p class=MsoListParagraphCxSpFirst style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
-						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><img width=13 height=13
-							src="rudi_simple_files/image001.png" alt="*"><span
-							style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span>
+							<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Цена:
 						<b><span style='color:#0070C0'>посочените цени са без ДДС!</span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
-						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><img width=13 height=13
-							src="rudi_simple_files/image001.png" alt="*"><span
-							style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span>
+							<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Условия 
 						на доставка: <b><span style='color:#0070C0'>посочените цени са от</span></b><span
 							style='color:#0070C0'> <b>наш склад в гр. Асеновград</b></span></span></p>
@@ -765,8 +858,7 @@
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
-						style='font-size:12.0pt;color:#0070C0'><img width=13 height=13 src="rudi_simple_files/image001.png"
-							alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Срок
 						за изработка<b> : <span style='color:#0070C0'>4 работни седмици</span></b></span></p>
 	
@@ -780,8 +872,7 @@
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
-						style='font-size:12.0pt;color:#0070C0'><img width=13 height=13 src="rudi_simple_files/image001.png"
-							alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Условия
 						на плащане: <b><span style='color:#0070C0'>по банков път/в брой</span></b></span></p>
 	
@@ -794,8 +885,7 @@
 	
 				<p class=MsoListParagraphCxSpLast style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
-						style='font-size:12.0pt;color:#0070C0'><img width=13 height=13 src="rudi_simple_files/image001.png"
-							alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Валидност
 						на офертата:  <b><span style='color:#0070C0'>15 календарни дни</span></b></span></p>
 	
@@ -1435,8 +1525,12 @@
 
 			function getOfferRenderCss() {
 				return '.hide-actions .no-print{display:none !important;}' +
-				    '.offer-doc-header{margin-bottom:12px;}' +
-				    '.offer-header-logo{display:block; width:100% !important; height:auto !important; max-width:100% !important; filter:brightness(1.24) contrast(1.08);}' +
+				    '.offer-doc-header{margin-bottom:12px; margin-left:-62px;}' +
+				    '.offer-header-logo{display:block; width:106% !important; height:auto !important; max-width:none !important; filter:brightness(1.24) contrast(1.08);}' +
+				    '.blue-circle-bullet{display:inline-block; width:10px; height:10px; border:2px solid #0070c0; border-radius:50%; vertical-align:middle; margin-right:4px; box-sizing:border-box;}' +
+				    '#pdf-content p.MsoListParagraphCxSpFirst,#pdf-content p.MsoListParagraphCxSpMiddle,#pdf-content p.MsoListParagraphCxSpLast,.print-content p.MsoListParagraphCxSpFirst,.print-content p.MsoListParagraphCxSpMiddle,.print-content p.MsoListParagraphCxSpLast{line-height:1.15 !important; margin-top:0 !important; margin-bottom:0 !important;}' +
+				    '#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:12.0pt"],#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:12.0pt"],#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:12.0pt"],.print-content p.MsoListParagraphCxSpFirst span[style*="font-size:12.0pt"],.print-content p.MsoListParagraphCxSpMiddle span[style*="font-size:12.0pt"],.print-content p.MsoListParagraphCxSpLast span[style*="font-size:12.0pt"],#pdf-content p.MsoNormal span[style*="font-size:12.0pt"][style*="Century Gothic"],.print-content p.MsoNormal span[style*="font-size:12.0pt"][style*="Century Gothic"]{font-size:10.5pt !important;}' +
+				    '#pdf-content p.MsoListParagraphCxSpFirst span[style*="font-size:10.0pt"],#pdf-content p.MsoListParagraphCxSpMiddle span[style*="font-size:10.0pt"],#pdf-content p.MsoListParagraphCxSpLast span[style*="font-size:10.0pt"],.print-content p.MsoListParagraphCxSpFirst span[style*="font-size:10.0pt"],.print-content p.MsoListParagraphCxSpMiddle span[style*="font-size:10.0pt"],.print-content p.MsoListParagraphCxSpLast span[style*="font-size:10.0pt"]{font-size:9pt !important;}' +
 				    '.offer-meta-layout{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin:2px 0 8px 0; width:100%; float:none !important; clear:both;}' +
 				    '.offer-meta-left{flex:1 1 auto; min-width:0;}' +
 				    '.offer-meta-date{font-size:11pt; font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif; color:#2d2d2d; line-height:1.3;}' +
