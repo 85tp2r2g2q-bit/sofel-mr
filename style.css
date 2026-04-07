@@ -49,7 +49,12 @@
 
 		/* Visual separation for on-page document area */
 		.pdf-container {
-			margin-top: 24px;
+			position: absolute;
+			left: -100000px;
+			top: 0;
+			width: 210mm;
+			opacity: 0;
+			pointer-events: none;
 			display: block;
 		}
 		.pdf-container-header {
