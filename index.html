@@ -692,9 +692,6 @@
 					var value = parseInt(data.counter, 10);
 					self.cloudCounter(isFinite(value) ? value : 0);
 					self.cloudStatus('Свързан с Firestore');
-					if (!self.offerNumber()) {
-						self.generateNextOfferNumber();
-					}
 				}, function (err) {
 					self.cloudStatus('Грешка при четене: ' + (err && err.message ? err.message : 'unknown'));
 				});
