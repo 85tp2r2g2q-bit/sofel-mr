@@ -269,6 +269,7 @@
 					<div class="mb-3">
 						<label class="form-label">Избор на получател</label>
 						<select class="form-select"  data-bind="options: recipients, optionsText: 'label', optionsValue: 'id', value: selectedRecipientId, optionsCaption: '— избери —'"></select>
+						<small class="text-muted" data-bind="text: recipientStatus"></small>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">До</label>
@@ -289,6 +290,11 @@
 					<div class="mb-3">
 						<label class="form-label">По запитване</label>
 						<input type="text" class="form-control" data-bind="value: inquiryFrom" />
+					</div>
+					<div class="d-flex align-items-center gap-2">
+						<button type="button" class="btn btn-outline-secondary" data-bind="click: saveRecipient">Запази получател</button>
+						<button type="button" class="btn btn-outline-danger" data-bind="click: deleteRecipient">Изтрий получател</button>
+						<small class="text-muted" data-bind="text: recipientSaveStatus"></small>
 					</div>
 				</div>
 			</div>
@@ -662,9 +668,146 @@
 			var firebaseDb = null;
 			var counterDocRef = null;
 			var offerNumberCounterRef = null;
+			var recipientsUnsubscribe = null;
+			var defaultRecipients = [
+				{ id: 1, label: 'ПЛАСТИК-СОФИЯ', company: '„ПЛАСТИК-СОФИЯ“ ООД', attention: 'Любомир Недков', phone: '+359 888626342', email: 'l.nedkov@plastic-sofia.com', inquiry: 'от 12.04.2021 – e-mail' },
+				{ id: 2, label: 'Клиент Пример', company: 'Клиент Пример ООД', attention: 'Иван Петров', phone: '+359 888111222', email: 'ivan@primer.bg', inquiry: 'по запитване' }
+			];
 
 			self.cloudCounter = ko.observable('—');
 			self.cloudStatus = ko.observable('Firebase не е конфигуриран');
+			self.recipientStatus = ko.observable('Получатели: локален списък');
+			self.recipientSaveStatus = ko.observable('');
+
+			function normalizeCompanyKey(value) {
+				return (value || '').toString().trim().toLowerCase();
+			}
+
+			function makeRecipientDocId(companyName) {
+				var source = normalizeCompanyKey(companyName);
+				if (!source) {
+					return '';
+				}
+				return source
+					.replace(/\s+/g, '-')
+					.replace(/[^a-z0-9\-\u0400-\u04FF]/g, '')
+					.replace(/\-+/g, '-')
+					.replace(/^\-+|\-+$/g, '');
+			}
+
+			function normalizeRecipient(rec, fallbackId) {
+				rec = rec || {};
+				return {
+					id: rec.id != null ? rec.id : fallbackId,
+					label: rec.label || rec.company || String(fallbackId || ''),
+					company: rec.company || '',
+					attention: rec.attention || '',
+					phone: rec.phone || '',
+					email: rec.email || '',
+					inquiry: rec.inquiry || ''
+				};
+			}
+
+			function loadRecipientsFromFirestore() {
+				if (!firebaseDb) {
+					self.recipients(defaultRecipients.slice());
+					self.recipientStatus('Получатели: локален списък');
+					return;
+				}
+
+				if (typeof recipientsUnsubscribe === 'function') {
+					recipientsUnsubscribe();
+					recipientsUnsubscribe = null;
+				}
+
+				recipientsUnsubscribe = firebaseDb.collection('recipients').onSnapshot(function (snapshot) {
+					if (!snapshot || snapshot.empty) {
+						self.recipients(defaultRecipients.slice());
+						self.recipientStatus('Получатели: няма записи в Firestore, ползва се локален списък');
+						return;
+					}
+
+					var list = snapshot.docs.map(function (docSnap) {
+						return normalizeRecipient(docSnap.data(), docSnap.id);
+					});
+					list.sort(function (a, b) {
+						return String(a.label || '').localeCompare(String(b.label || ''), 'bg');
+					});
+					self.recipients(list);
+					self.recipientStatus('Получатели: заредени от Firestore');
+				}, function () {
+					self.recipients(defaultRecipients.slice());
+					self.recipientStatus('Получатели: Firestore грешка, ползва се локален списък');
+				});
+			}
+
+			self.saveRecipient = function () {
+				if (!firebaseDb) {
+					self.recipientSaveStatus('Firestore не е свързан');
+					return;
+				}
+
+				var payload = {
+					label: (self.recipientCompany() || '').toString().trim(),
+					company: (self.recipientCompany() || '').toString().trim(),
+					attention: (self.attentionName() || '').toString().trim(),
+					phone: (self.recipientPhone() || '').toString().trim(),
+					email: (self.recipientEmail() || '').toString().trim(),
+					inquiry: (self.inquiryFrom() || '').toString().trim()
+				};
+
+				if (!payload.label) {
+					self.recipientSaveStatus('Попълни поле "До" преди запис');
+					return;
+				}
+
+				var companyKey = normalizeCompanyKey(payload.company);
+				var existing = ko.utils.arrayFirst(self.recipients(), function (r) {
+					return normalizeCompanyKey(r.company) === companyKey;
+				});
+
+				var docId = existing && existing.id != null ? String(existing.id).trim() : makeRecipientDocId(payload.company);
+				if (!docId) {
+					self.recipientSaveStatus('Липсва валиден ID за получателя');
+					return;
+				}
+
+				payload.id = docId;
+				self.recipientSaveStatus('Записване...');
+				firebaseDb.collection('recipients').doc(docId).set(payload, { merge: true }).then(function () {
+					self.selectedRecipientId(docId);
+					self.recipientSaveStatus('Получателят е записан');
+				}).catch(function (err) {
+					self.recipientSaveStatus('Грешка при запис: ' + (err && err.message ? err.message : 'unknown'));
+				});
+			};
+
+			self.deleteRecipient = function () {
+				if (!firebaseDb) {
+					self.recipientSaveStatus('Firestore не е свързан');
+					return;
+				}
+
+				var selectedId = self.selectedRecipientId();
+				if (selectedId === null || selectedId === undefined || String(selectedId).trim() === '') {
+					self.recipientSaveStatus('Избери получател за изтриване');
+					return;
+				}
+
+				var docId = String(selectedId).trim();
+				self.recipientSaveStatus('Изтриване...');
+				firebaseDb.collection('recipients').doc(docId).delete().then(function () {
+					self.selectedRecipientId('');
+					self.recipientCompany('');
+					self.attentionName('');
+					self.recipientPhone('');
+					self.recipientEmail('');
+					self.inquiryFrom('');
+					self.recipientSaveStatus('Получателят е изтрит');
+				}).catch(function (err) {
+					self.recipientSaveStatus('Грешка при изтриване: ' + (err && err.message ? err.message : 'unknown'));
+				});
+			};
 
 			function initCloudCounter() {
 				if (typeof firebase === 'undefined' || !firebase.apps) {
@@ -683,6 +826,7 @@
 				}
 				counterDocRef = firebaseDb.collection('stats').doc('main');
 				offerNumberCounterRef = firebaseDb.collection('counters').doc('offerNumber');
+				loadRecipientsFromFirestore();
 
 				counterDocRef.onSnapshot(function (docSnap) {
 					var data = docSnap.data() || {};
@@ -1380,28 +1524,33 @@
 
 			
 			// recipient fields bound to the PDF content
-			self.recipientCompany = ko.observable('„ПЛАСТИК-СОФИЯ" ООД');
-			self.attentionName = ko.observable('Любомир Недков');
-			self.recipientPhone = ko.observable('+359 888626342');
-			self.recipientEmail = ko.observable('l.nedkov@plastic-sofia.com');
-			self.inquiryFrom = ko.observable('от 12.04.2021 – e-mail');
+			self.recipientCompany = ko.observable('');
+			self.attentionName = ko.observable('');
+			self.recipientPhone = ko.observable('');
+			self.recipientEmail = ko.observable('');
+			self.inquiryFrom = ko.observable('');
 
 			// recipients list and selection
-			self.recipients = ko.observableArray([
-				{ id: 1, label: 'ПЛАСТИК-СОФИЯ', company: '„ПЛАСТИК-СОФИЯ“ ООД', attention: 'Любомир Недков', phone: '+359 888626342', email: 'l.nedkov@plastic-sofia.com', inquiry: 'от 12.04.2021 – e-mail' },
-				{ id: 2, label: 'Клиент Пример', company: 'Клиент Пример ООД', attention: 'Иван Петров', phone: '+359 888111222', email: 'ivan@primer.bg', inquiry: 'по запитване' }
-			]);
+			self.recipients = ko.observableArray(defaultRecipients.slice());
 			self.selectedRecipientId = ko.observable();
 
 			// when a recipient is selected, populate the form fields
 			self.selectedRecipientId.subscribe(function (id) {
-				var rec = ko.utils.arrayFirst(self.recipients(), function (r) { return r.id === id; });
+				var rec = ko.utils.arrayFirst(self.recipients(), function (r) {
+					return String(r.id) === String(id);
+				});
 				if (rec) {
 					self.recipientCompany(rec.company || '');
 					self.attentionName(rec.attention || '');
 					self.recipientPhone(rec.phone || '');
 					self.recipientEmail(rec.email || '');
 					self.inquiryFrom(rec.inquiry || '');
+				} else {
+					self.recipientCompany('');
+					self.attentionName('');
+					self.recipientPhone('');
+					self.recipientEmail('');
+					self.inquiryFrom('');
 				}
 			});
 
