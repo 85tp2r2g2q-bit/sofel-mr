@@ -56,6 +56,7 @@
 					<label class="form-label">Материал</label>
 					<select class="form-select"
 						data-bind="options: materialsForSelected, optionsText: materialOptionText, optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
+					<small class="text-muted" data-bind="text: materialsStatus"></small>
 				</div>
 
 
@@ -669,15 +670,23 @@
 			var counterDocRef = null;
 			var offerNumberCounterRef = null;
 			var recipientsUnsubscribe = null;
+			var priceIndexesUnsubscribe = null;
+			var materialsUnsubscribe = null;
 			var defaultRecipients = [
 				{ id: 1, label: 'ПЛАСТИК-СОФИЯ', company: '„ПЛАСТИК-СОФИЯ“ ООД', attention: 'Любомир Недков', phone: '+359 888626342', email: 'l.nedkov@plastic-sofia.com', inquiry: 'от 12.04.2021 – e-mail' },
 				{ id: 2, label: 'Клиент Пример', company: 'Клиент Пример ООД', attention: 'Иван Петров', phone: '+359 888111222', email: 'ivan@primer.bg', inquiry: 'по запитване' }
+			];
+			var defaultPriceIndexes = [
+				{ idx: 1, name: 'Стандартна оферта[Local]' },
+				{ idx: 0.95, name: 'За търговци[Local]' },
+				{ idx: 0.85, name: 'Пластик София[Local]' }
 			];
 
 			self.cloudCounter = ko.observable('—');
 			self.cloudStatus = ko.observable('Firebase не е конфигуриран');
 			self.recipientStatus = ko.observable('Получатели: локален списък');
 			self.recipientSaveStatus = ko.observable('');
+			self.materialsStatus = ko.observable('Материали: локален списък');
 
 			function normalizeCompanyKey(value) {
 				return (value || '').toString().trim().toLowerCase();
@@ -706,6 +715,120 @@
 					email: rec.email || '',
 					inquiry: rec.inquiry || ''
 				};
+			}
+
+			function normalizePriceIndex(docData, fallbackOrder) {
+				docData = docData || {};
+				var idx = parseFloat(docData.idx);
+				if (!isFinite(idx)) idx = 1;
+				var name = (docData.name || '').toString().trim();
+				if (!name) name = 'Стандартна оферта';
+				var order = parseFloat(docData.order);
+				if (!isFinite(order)) order = fallbackOrder;
+				return { idx: idx, name: name, order: order };
+			}
+
+			function normalizeMaterial(docData, fallbackId) {
+				docData = docData || {};
+				var id = docData.id != null ? docData.id : fallbackId;
+				id = parseInt(id, 10);
+				if (!isFinite(id)) id = parseInt(fallbackId, 10) || 0;
+				var name = (docData.name || '').toString().trim();
+				var nameEN = (docData.nameEN || '').toString().trim();
+				var price = Array.isArray(docData.price) ? docData.price : [];
+				var normalizedPrice = price.map(function (entry) {
+					return {
+						grammage: parseFloat(entry && entry.grammage) || 0,
+						value: parseFloat(entry && entry.value) || 0
+					};
+				}).filter(function (entry) {
+					return entry.grammage > 0;
+				});
+				normalizedPrice.sort(function (a, b) { return a.grammage - b.grammage; });
+				return {
+					id: id,
+					name: name || String(id),
+					nameEN: nameEN || name || String(id),
+					price: normalizedPrice
+				};
+			}
+
+			function loadMaterialsFromFirestore() {
+				if (!firebaseDb) {
+					self.materialsCatalog(defaultMaterials.slice());
+					self.materialsStatus('Материали: локален списък');
+					return;
+				}
+
+				if (typeof materialsUnsubscribe === 'function') {
+					materialsUnsubscribe();
+					materialsUnsubscribe = null;
+				}
+
+				materialsUnsubscribe = firebaseDb.collection('materials').onSnapshot(function (snapshot) {
+					if (!snapshot || snapshot.empty) {
+						self.materialsCatalog(defaultMaterials.slice());
+						self.materialsStatus('Материали: няма записи в Firestore, ползва се локален списък');
+						return;
+					}
+
+					var list = snapshot.docs.map(function (docSnap) {
+						return normalizeMaterial(docSnap.data(), docSnap.id);
+					});
+					list.sort(function (a, b) {
+						return (parseInt(a.id, 10) || 0) - (parseInt(b.id, 10) || 0);
+					});
+					self.materialsCatalog(list);
+					self.materialsStatus('Материали: заредени от Firestore');
+
+					var selectedId = parseInt(self.selectedMaterialId(), 10);
+					var exists = ko.utils.arrayFirst(list, function (m) {
+						return parseInt(m.id, 10) === selectedId;
+					});
+					if (!exists) {
+						self.selectedMaterialId(list.length ? list[0].id : null);
+					}
+				}, function () {
+					self.materialsCatalog(defaultMaterials.slice());
+					self.materialsStatus('Материали: Firestore грешка, ползва се локален списък');
+				});
+			}
+
+			function loadPriceIndexesFromFirestore() {
+				if (!firebaseDb) {
+					self.priceIndexes(defaultPriceIndexes.slice());
+					return;
+				}
+
+				if (typeof priceIndexesUnsubscribe === 'function') {
+					priceIndexesUnsubscribe();
+					priceIndexesUnsubscribe = null;
+				}
+
+				priceIndexesUnsubscribe = firebaseDb.collection('priceIndexes').onSnapshot(function (snapshot) {
+					if (!snapshot || snapshot.empty) {
+						self.priceIndexes(defaultPriceIndexes.slice());
+						if (!ko.utils.arrayFirst(self.priceIndexes(), function (p) { return parseFloat(p.idx) === parseFloat(self.selectedPriceIndex()); })) {
+							self.selectedPriceIndex(defaultPriceIndexes[0].idx);
+						}
+						return;
+					}
+
+					var list = snapshot.docs.map(function (docSnap, index) {
+						return normalizePriceIndex(docSnap.data(), index);
+					});
+					list.sort(function (a, b) { return a.order - b.order; });
+					self.priceIndexes(list.map(function (x) { return { idx: x.idx, name: x.name }; }));
+
+					if (!ko.utils.arrayFirst(self.priceIndexes(), function (p) { return parseFloat(p.idx) === parseFloat(self.selectedPriceIndex()); })) {
+						self.selectedPriceIndex(self.priceIndexes().length ? self.priceIndexes()[0].idx : 1);
+					}
+				}, function () {
+					self.priceIndexes(defaultPriceIndexes.slice());
+					if (!ko.utils.arrayFirst(self.priceIndexes(), function (p) { return parseFloat(p.idx) === parseFloat(self.selectedPriceIndex()); })) {
+						self.selectedPriceIndex(defaultPriceIndexes[0].idx);
+					}
+				});
 			}
 
 			function loadRecipientsFromFirestore() {
@@ -827,6 +950,8 @@
 				counterDocRef = firebaseDb.collection('stats').doc('main');
 				offerNumberCounterRef = firebaseDb.collection('counters').doc('offerNumber');
 				loadRecipientsFromFirestore();
+				loadPriceIndexesFromFirestore();
+				loadMaterialsFromFirestore();
 
 				counterDocRef.onSnapshot(function (docSnap) {
 					var data = docSnap.data() || {};
@@ -922,13 +1047,9 @@
 			// idx = 1: стандартна оферта (без промяна)
 			// idx = 0.95: оферта за търговци (-5% дисконт)
 			// idx = 0.85: оферта Пластик София (-15% дисконт)
-			self.priceIndexes = ko.observableArray([
-				{ idx: 1,    name: "Стандартна оферта" },
-				{ idx: 0.95, name: "За търговци" },
-				{ idx: 0.85, name: "Пластик София" },
-			]);
+			self.priceIndexes = ko.observableArray(defaultPriceIndexes.slice());
 			var arrGramjageOptions=[30,32,35,38,40,45,50,70,80,90];
-			var arrMaterials=[
+			var defaultMaterials=[
 						{ id: 301, name: "Бял Крафт", nameEN: "White Kraft", price: [
 							{ grammage: 30, value: 1.2 },
 							{ grammage: 32, value: 1.2 },
@@ -963,6 +1084,7 @@
 							{ grammage: 50, value: 1.85 }
 						] }
 					];
+			self.materialsCatalog = ko.observableArray(defaultMaterials.slice());
 			var arrPrintColors=[
 						{ count: 0, value: 0 },
 						{ count: 1, value: 3 },
@@ -995,7 +1117,7 @@
 					foldBOptions: [3,4,5,6,7,8,9,10,11,12], // налични стойности за Фалт B /см/
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60], // налични стойности за Дължина C /см/
 					// id: уникален ID на материала; name: наименование; price: доставна цена €/кг без ДДС
-					materials: arrMaterials
+					materials: defaultMaterials
 				},
 				{
 					id: 6, name: "хартиен формат", nameEN: "paper sheet format",
@@ -1011,7 +1133,7 @@
 					paperGrammageOptions: arrGramjageOptions,
 					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
-					materials: arrMaterials
+					materials: defaultMaterials
 				},
 				{
 					id: 5, name: "хартиен плик с прозорец", nameEN: "paper envelope with window",
@@ -1031,7 +1153,7 @@
 					lengthCOptions: [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38], // налични стойности за Дължина C /см/
 					cut: 1, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.0035, // Стойност на труда и материалите за този плик
-					materials: arrMaterials
+					materials: defaultMaterials
 				},
 				{
 					id: 3, name: "хартиен плик ТЕРМО/ГРИЛ", nameEN: "paper envelope THERMO/GRILL",
@@ -1052,7 +1174,7 @@
 					foldBOptions: [4,5,6,7,8], // налични стойности за Фалт B /см/
 					lengthCOptions: [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38], // налични стойности за Дължина C /см/
 					foilGrammageOptions: [15, 20], // налични грамажи за фолио/прозорец г/м²
-					materials: arrMaterials
+					materials: defaultMaterials
 				},
 				{
 					id: 4, name: "хартиена чанта", nameEN: "paper bag",
@@ -1071,7 +1193,7 @@
 					widthAOptions: [22, 24, 26, 28, 32, 35], // налични стойности за Ширина A /см/
 					foldBOptions: [10, 12, 14, 16, 17, 18, 20, 21, 22], // налични стойности за Фалт B /см/
 					lengthCOptions: [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], // налични стойности за Дължина C /см/
-					materials: arrMaterials
+					materials: defaultMaterials
 				}
 			]);
 
@@ -1084,6 +1206,8 @@
 
 			// материали за избрания плик (computed)
 			self.materialsForSelected = ko.computed(function () {
+				var fromCatalog = self.materialsCatalog();
+				if (Array.isArray(fromCatalog) && fromCatalog.length) return fromCatalog;
 				var env = self.selectedEnvelope();
 				return env && env.materials ? env.materials : [];
 			});
