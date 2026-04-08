@@ -956,24 +956,35 @@
 				return env && env.quantities ? env.quantities : [];
 			});
 
+			function resetArticleFields() {
+				self.widthA(0);
+				self.foldB(0);
+				self.lengthC(0);
+				self.windowManual(0);
+				self.paperGrammage(0);
+				self.foilGrammage(0);
+				self.paperPriceEur(0);
+				self.foilPriceEur(0);
+				self.selectedPriceIndex(1);
+				self.useBagWithPrintPriceInOffer(false);
+				self.widthASelectedOption('');
+				self.foldBSelectedOption('');
+				self.lengthCSelectedOption('');
+				self.paperGrammageSelectedOption('');
+				self.foilGrammageSelectedOption('');
+			}
+
 			// избран материал (само id) и computed за обекта
 			self.selectedMaterialId = ko.observable(null);
 			// при смяна на плика избирай първия материал по подразбиране
 			self.selectedEnvelopeId.subscribe(function () {
+				resetArticleFields();
 				var mats = self.materialsForSelected();
 				self.selectedMaterialId(mats.length ? mats[0].id : null);
 				var colors = self.printColorsForSelected();
 				self.selectedPrintColor(colors.length ? colors[0] : null);
 				var qtyOptions = self.quantitiesForSelected();
 				self.selectedQuantity(qtyOptions.length ? qtyOptions[0] : null);
-				self.widthASelectedOption('');
-				self.foldBSelectedOption('');
-				self.lengthCSelectedOption('');
-				self.paperGrammageSelectedOption('');
-				self.foilGrammageSelectedOption('');
-				self.paperPriceEur(0);
-				var env = self.selectedEnvelope();
-				self.foilPriceEur(env && env.foilPrice != null ? env.foilPrice : 0);
 			});
 			self.selectedMaterial = ko.computed(function () {
 				var id = self.selectedMaterialId();
@@ -1299,17 +1310,21 @@
 				return basePrice * printColorMultiplier();
 			}
 
+			function calculatePaperFormatPrice(entry) {
+				if (!entry) return 0;
+				var perKg = parseFloat(self.envelopesPerKg()) || 0;
+				var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
+				var basePrice = calculatePriceFromBase(entry, perKg * totalCost);
+				return basePrice * printColorMultiplier();
+			}
+
 			self.customerInquiryPriceEur = ko.computed(function () {
 				var selected = self.selectedQuantity();
 				if (!selected) return '0.00000';
 				var priceIndexMultiplier = parseFloat(self.selectedPriceIndex()) || 1;
 				var pricePerUnit;
 				if (self.isPaperFormatSelected()) {
-					// За хартиен формат (id=6): (Брой пликове в 1 кг * Обща себестойност) умножено/делено с индекса
-					var perKg = parseFloat(self.envelopesPerKg()) || 0;
-					var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
-					var basePrice = perKg * totalCost;
-					pricePerUnit = calculatePriceFromBase(selected, basePrice);
+					pricePerUnit = calculatePaperFormatPrice(selected);
 				} else if (self.isPaperBagSelected()) {
 					var baseCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
 					var idx = parseFloat(selected.index) || 1;
@@ -1343,9 +1358,7 @@
 						var pricePerUnit;
 						var bagWithPrintPricePerUnit = '';
 						if (self.isPaperFormatSelected()) {
-							var perKg = parseFloat(self.envelopesPerKg()) || 0;
-							var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
-							pricePerUnit = calculatePriceFromBase(q, perKg * totalCost);
+							pricePerUnit = calculatePaperFormatPrice(q);
 						} else {
 							pricePerUnit = calculateFinalPrice(q);
 						}
