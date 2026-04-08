@@ -127,7 +127,7 @@
 				<div class="mb-3" data-bind="visible: printColorsForSelected().length > 0">
 					<label class="form-label">Печат / брой цветове</label>
 					<select class="form-select"
-						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return v.count === 0 ? 'без цвят' : ((v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'); }"></select>
+						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return v.count === 0 ? 'без печат' : ((v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'); }"></select>
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Тегло на 1 плик /гр</label>
@@ -175,7 +175,7 @@
 				<!-- Нов падащ списък: количество -->
 				<div class="mb-3">
 					<label class="form-label">Тираж по запитване от клиент /бр</label>
-					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return q.qty; }, enable: quantitiesForSelected().length > 0"></select>
+					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return formatQuantity(q.qty); }, enable: quantitiesForSelected().length > 0"></select>
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">ОБЩО ХАРТИЯ ЗА ТИРАЖА /кг</label>
@@ -231,7 +231,7 @@
 						</thead>
 						<tbody data-bind="foreach: allQuantityPrices">
 							<tr>
-								<td data-bind="text: qty"></td>
+								<td data-bind="text: $root.formatQuantity(qty)"></td>
 								<td data-bind="text: pricePerUnit"></td>
 								<td data-bind="visible: $root.isPaperBagSelected, text: bagWithPrintPricePerUnit"></td>
 							</tr>
@@ -325,7 +325,7 @@
 									<td data-bind="text: size"></td>
 									<td data-bind="text: printInfo"></td>
 									<td data-bind="text: material"></td>
-									<td data-bind="text: minOrder"></td>
+									<td data-bind="text: $root.formatQuantity(minOrder)"></td>
 									<td>
 										<span data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
@@ -494,7 +494,7 @@
 								style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center
 									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span
-										data-bind='text: minOrder'></span></p>
+										data-bind='text: $root.formatQuantity(minOrder)'></span></p>
 							</td>
 							<td
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
@@ -1471,9 +1471,16 @@
 
 			function formatPriceValue(value) {
 				var numeric = parseFloat(value);
-				if (!isFinite(numeric)) return '0.00000 EUR';
-				return numeric.toFixed(5) + ' EUR';
+				if (!isFinite(numeric)) return '0.00000';
+				return numeric.toFixed(5);
 			}
+
+			self.formatQuantity = function (value) {
+				var numeric = parseFloat(value);
+				if (!isFinite(numeric)) return value == null ? '' : String(value);
+				var whole = Math.round(numeric);
+				return String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+			};
 
 			self.addToOffer = function () {
 				var env = self.selectedEnvelope();
@@ -1497,7 +1504,8 @@
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
-				var noColorText = self.selectedLanguage() === 'en' ? 'no color' : 'без цвят';
+				var priceUnit = (env && env.id === 6) ? 'EUR / кг' : 'EUR/бр';
+				var noColorText = self.selectedLanguage() === 'en' ? 'no print' : 'без печат';
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
 				var item = {
@@ -1506,11 +1514,12 @@
 						size: sizeStr,
 					printInfo: (colors === 0 ? noColorText : (colors === 1 ? oneColorText : (colors + manyColorsText))),
 					minOrder: qty,
+					priceUnit: priceUnit,
 					priceValue: ko.observable(initialPrice.toFixed(5)),
 					isEditingPrice: ko.observable(false)
 				};
 				item.formattedPrice = ko.pureComputed(function () {
-					return formatPriceValue(item.priceValue());
+					return formatPriceValue(item.priceValue()) + ' ' + (item.priceUnit || 'EUR/бр');
 				});
 				self.items.push(item);
 			};
