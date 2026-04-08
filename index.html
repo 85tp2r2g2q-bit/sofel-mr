@@ -364,7 +364,7 @@
 	</div>
 	<div class="pdf-container" data-bind="css: { 'dev-show': showPdfContainer }">
 		<div class="pdf-container-header">
-			<h5>Документ</h5>
+			<h5 data-bind="text: t('pdfDocumentTitle')"></h5>
 		</div>
 		<div id="pdf-content">
 			<div class="offer-doc-header">
@@ -376,11 +376,11 @@
 					<div class="offer-meta-left">
 						<div class="offer-meta-date" data-bind="text: documentDate"></div>
 						<div class="offer-contact-compact">
-							<p>До: <span class="value" data-bind="text: recipientCompany"></span></p>
-							<p>На вниманието на: <span class="value" data-bind="text: attentionName"></span></p>
-							<p>тел. за контакт : <span class="value" data-bind="text: recipientPhone"></span></p>
-							<p>e-mail : <span class="value" data-bind="text: recipientEmail"></span></p>
-							<p>по запитване: <span class="value" data-bind="text: inquiryFrom"></span></p>
+							<p><span data-bind="text: t('pdfToLabel')"></span>: <span class="value" data-bind="text: recipientCompany"></span></p>
+							<p><span data-bind="text: t('pdfAttentionLabel')"></span>: <span class="value" data-bind="text: attentionName"></span></p>
+							<p><span data-bind="text: t('pdfPhoneLabel')"></span>: <span class="value" data-bind="text: recipientPhone"></span></p>
+							<p><span data-bind="text: t('pdfEmailLabel')"></span>: <span class="value" data-bind="text: recipientEmail"></span></p>
+							<p><span data-bind="text: t('pdfInquiryLabel')"></span>: <span class="value" data-bind="text: inquiryFrom"></span></p>
 						</div>
 					</div>
 					<div class="offer-cert-logos">
@@ -390,18 +390,16 @@
 				</div>
 	
 				<p class="MsoNoSpacing offer-intro-gap" style='margin-top:0cm;margin-bottom:0.15cm'><span
-						style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>Във
-						връзка с отправено ваше запитване и предоставена проектна документация
-						предлагаме на вашето внимание следната:</span></p>
+						style='font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif' data-bind="text: t('pdfIntroText')"></span></p>
 	
 				<p class=MsoNormal align=center style='text-align:center'><b
-						style='font-size:17.0pt;line-height:110%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'>ОФЕРТА №<span
+						style='font-size:17.0pt;line-height:110%;font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'><span data-bind="text: t('pdfOfferNo')"></span><span
 							data-bind="text: offerNumber"></span>/<span data-bind="text: offerDate"></span></b></p>
 	
 				<p class=MsoNormal
 					style='margin-top:0cm;margin-right:27.25pt;margin-bottom:0cm;margin-left:0cm;line-height:normal'><span
-						style='font-size:12.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif'>Предмет на офертата:
-					</span><b><span data-bind="text: offerSubject" style='font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'></span></b></p>
+						style='font-size:12.0pt;font-family:"Mont ExtraLight DEMO","Century Gothic",sans-serif' data-bind="text: t('pdfOfferSubject')"></span>
+					<b><span data-bind="text: offerSubject" style='font-family:"Mont Heavy DEMO","Century Gothic",sans-serif'></span></b></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
@@ -414,48 +412,48 @@
 						<tr>
 							<td width=22 style='width:16.15pt;border:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-bottom:0cm;text-align:center;
-	  line-height:normal'><b><span style='font-size:10.0pt;color:#00B0F0'>№</span></b></p>
+	  line-height:normal'><b><span style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableNumber')"></span></b></p>
 							</td>
 							<td width=139 style='width:104.1pt;border:solid #1F497D 1.0pt;border-left:
 	  none;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Наименование</span></b></p>
+										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableName')"></span></b></p>
 							</td>
 							<td width=113 style='width:3.0cm;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Размер /см</span></b></p>
+										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableSize')"></span></b></p>
 							</td>
 							<td width=95 style='width:70.9pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Печат</span></b></p>
+										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTablePrint')"></span></b></p>
 							</td>
 							<td width=113 style='width:3.0cm;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Материал</span></b></p>
+										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableMaterial')"></span></b></p>
 							</td>
 							<td width=94 style='width:70.85pt;border:solid #1F497D 1.0pt;border-left:
 	  none;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:2.85pt;
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
-											style='font-size:10.0pt;color:#00B0F0'>Тираж</span></b></p>
+										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableQty')"></span></b></p>
 							</td>
 							<td width=85 style='width:63.8pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
 	  margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><span
-												style='font-size:10.0pt;color:red'>Цена </span></p>
+											style='font-size:10.0pt;color:red' data-bind="text: t('pdfTablePrice')"></span></p>
 							</td>
 							<td class='no-print'
 								style='width:80px;border:solid #1F497D 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
-								margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><b>Действия</b></p>
+								margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><b data-bind="text: t('pdfTableActions')"></b></p>
 							</td>
 						</tr>
 						<!-- ko foreach: items -->
@@ -547,57 +545,48 @@
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span>
 							<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Цена:
-						<b><span style='color:#0070C0'>посочените цени са без ДДС!</span></b></span></p>
+						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNotePricePrefix')"></span>
+						<b><span style='color:#0070C0' data-bind="text: t('pdfNotePriceBody')"></span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:12.0pt;font-family:Symbol;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span>
 							<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Условия 
-						на доставка: <b><span style='color:#0070C0'>посочените цени са от</span></b><span
-							style='color:#0070C0'> <b>наш склад в гр. Асеновград</b></span></span></p>
+						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteDeliveryPrefix')"></span> <b><span style='color:#0070C0' data-bind="text: t('pdfNoteDeliveryBody')"></span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:53.4pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:10.0pt;color:#0070C0'>-<span
 							style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>при желание е възможна доставка с куриер за сметка на клиента
-						/освен ако не е договорено друго</span></p>
+	color:#0070C0' data-bind="text: t('pdfNoteCourier')"></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Срок
-						за изработка<b> : <span style='color:#0070C0'>4 работни седмици</span></b></span></p>
+						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteLeadTimePrefix')"></span><b> <span style='color:#0070C0' data-bind="text: t('pdfNoteLeadTimeBody')"></span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;line-height:normal'><b><span
 							style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;color:#0070C0'>-
-							      </span></b><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>при получаване за заявка ,следва потвърждение на е-</span><span lang=EN-US style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>mail </span><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>,включващ максималния срок за изработка</span></p>
+							    </span></b><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
+	color:#0070C0' data-bind="text: t('pdfNoteLeadTimeSub')"></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Условия
-						на плащане: <b><span style='color:#0070C0'>по банков път/в брой</span></b></span></p>
+						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNotePaymentPrefix')"></span> <b><span style='color:#0070C0' data-bind="text: t('pdfNotePaymentBody')"></span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpMiddle style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;line-height:normal'><span lang=EN-US
-						style='font-size:12.0pt;font-family:"Century Gothic",sans-serif;color:#0070C0'>-     
+						style='font-size:12.0pt;font-family:"Century Gothic",sans-serif;color:#0070C0'>-
 					</span><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>плащанията се осъществяват предварително – аванс 50% , а
-						останалите 50% след потвърждение за произведена поръчка</span></p>
+	color:#0070C0' data-bind="text: t('pdfNotePaymentSub')"></span></p>
 	
 				<p class=MsoListParagraphCxSpLast style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:36.0pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:12.0pt;color:#0070C0'><span class="blue-circle-bullet" aria-hidden="true"></span><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'>Валидност
-						на офертата:  <b><span style='color:#0070C0'>15 календарни дни</span></b></span></p>
+						</span></span><span style='font-size:12.0pt;font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteValidityPrefix')"></span> <b><span style='color:#0070C0' data-bind="text: t('pdfNoteValidityBody')"></span></b></span></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
@@ -605,23 +594,21 @@
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
-	font-family:"Century Gothic",sans-serif'>*Цени клише <b>:</b></span></p>
+	font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteClicheTitle')"></span></span></p>
 	
 				<p class=MsoListParagraphCxSpFirst style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:53.4pt;text-indent:-18.0pt;line-height:normal'><span
 						style='font-size:10.0pt;color:#0070C0'>-<span
 							style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'>цената за печатни клишета се заплаща еднократно, при
-						първоначална поръчка</span></p>
+	color:#0070C0' data-bind="text: t('pdfNoteClicheSub1')"></span></p>
 	
 				<p class=MsoListParagraphCxSpLast style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:53.4pt;text-indent:-18.0pt;line-height:normal'><span lang=EN-US
 						style='font-size:14.0pt;color:#0070C0'>-<span
 							style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</span></span><span style='font-size:10.0pt;font-family:"Century Gothic",sans-serif;
-	color:#0070C0'> изчислява се на кв./см в зависимост от печатната площ и броя
-						цветове</span></p>
+	color:#0070C0' data-bind="text: t('pdfNoteClicheSub2')"></span></p>
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><b><span lang=EN-US style='font-size:
@@ -629,18 +616,16 @@
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><b><span style='font-size:12.0pt;
-	font-family:"Century Gothic",sans-serif'>*Важно <span style='color:#0070C0'>: С
-								всяка поръчка се издава фактура и декларация за съответствие за контакт с храни
-								.</span></span></b></p>
+	font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfImportantPrefix')"></span> <span style='color:#0070C0' data-bind="text: t('pdfImportantBody')"></span></span></b></p>
 	
 			</div>
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:10.0pt'>&nbsp;</span></p>
 
 			<div class="offer-doc-footer">
-				<div class="offer-footer-left">Изготвил: <span data-bind="text: issuedBy"></span>
-/фамилия, подпис/</div>
-				<div class="offer-footer-right">При съгласие с предложената оферта моля, да подпишете и върнете на упоменатия по-горе e-mail вашия отговор. Клиент
+				<div class="offer-footer-left"><span data-bind="text: t('pdfPreparedBy')"></span>: <span data-bind="text: issuedBy"></span>
+<span data-bind="text: t('pdfPreparedBySign')"></span></div>
+				<div class="offer-footer-right"><span data-bind="text: t('pdfFooterAgreement')"></span>
 					<span class="offer-footer-line"></span>
 				</div>
 			</div>
@@ -654,6 +639,58 @@
 			self.showAdvancedPricingFields = ko.observable(false);
 			self.showPdfContainer = ko.observable(false);
 			self.selectedLanguage = ko.observable('bg');
+			var arrPdfTranslations = [
+				{ key: 'pdfDocumentTitle', bg: 'Документ', en: 'Document' },
+				{ key: 'pdfToLabel', bg: 'До', en: 'To' },
+				{ key: 'pdfAttentionLabel', bg: 'На вниманието на', en: 'Attention' },
+				{ key: 'pdfPhoneLabel', bg: 'тел. за контакт', en: 'Contact phone' },
+				{ key: 'pdfEmailLabel', bg: 'e-mail', en: 'e-mail' },
+				{ key: 'pdfInquiryLabel', bg: 'по запитване', en: 'inquiry' },
+				{ key: 'offerTypeStandard', bg: 'Стандартна оферта', en: 'Standard offer' },
+				{ key: 'offerTypeMerchant', bg: 'За търговци', en: 'For merchants' },
+				{ key: 'offerTypePlasticSofia', bg: 'Пластик София', en: 'Plastic Sofia' },
+				{ key: 'pdfIntroText', bg: 'Във връзка с отправено ваше запитване и предоставена проектна документация предлагаме на вашето внимание следната:', en: 'In relation to your inquiry and the provided project documentation, we present the following offer:' },
+				{ key: 'pdfOfferNo', bg: 'ОФЕРТА №', en: 'OFFER NO ' },
+				{ key: 'pdfOfferSubject', bg: 'Предмет на офертата: ', en: 'Offer subject: ' },
+				{ key: 'pdfTableNumber', bg: '№', en: 'No.' },
+				{ key: 'pdfTableName', bg: 'Наименование', en: 'Product' },
+				{ key: 'pdfTableSize', bg: 'Размер /см', en: 'Size /cm' },
+				{ key: 'pdfTablePrint', bg: 'Печат', en: 'Print' },
+				{ key: 'pdfTableMaterial', bg: 'Материал', en: 'Material' },
+				{ key: 'pdfTableQty', bg: 'Тираж', en: 'Quantity' },
+				{ key: 'pdfTablePrice', bg: 'Цена', en: 'Price' },
+				{ key: 'pdfTableActions', bg: 'Действия', en: 'Actions' },
+				{ key: 'pdfNotePricePrefix', bg: 'Цена: ', en: 'Price: ' },
+				{ key: 'pdfNotePriceBody', bg: 'посочените цени са без ДДС!', en: 'all listed prices are excl. VAT!' },
+				{ key: 'pdfNoteDeliveryPrefix', bg: 'Условия на доставка:', en: 'Delivery terms:' },
+				{ key: 'pdfNoteDeliveryBody', bg: 'посочените цени са от наш склад в гр. Асеновград', en: 'prices are ex-warehouse, Asenovgrad' },
+				{ key: 'pdfNoteCourier', bg: 'при желание е възможна доставка с куриер за сметка на клиента /освен ако не е договорено друго', en: 'courier delivery is possible at the client\'s expense / unless agreed otherwise' },
+				{ key: 'pdfNoteLeadTimePrefix', bg: 'Срок за изработка:', en: 'Production lead time:' },
+				{ key: 'pdfNoteLeadTimeBody', bg: '4 работни седмици', en: '4 working weeks' },
+				{ key: 'pdfNoteLeadTimeSub', bg: 'при получаване за заявка ,следва потвърждение на e-mail, включващ максималния срок за изработка', en: 'after receiving the request, an e-mail confirmation follows with the maximum production lead time' },
+				{ key: 'pdfNotePaymentPrefix', bg: 'Условия на плащане:', en: 'Payment terms:' },
+				{ key: 'pdfNotePaymentBody', bg: 'по банков път/в брой', en: 'bank transfer / cash' },
+				{ key: 'pdfNotePaymentSub', bg: 'плащанията се осъществяват предварително – аванс 50% , а останалите 50% след потвърждение за произведена поръчка', en: 'payments are made in advance - 50% down payment and the remaining 50% after confirmation of completed production' },
+				{ key: 'pdfNoteValidityPrefix', bg: 'Валидност на офертата:', en: 'Offer validity:' },
+				{ key: 'pdfNoteValidityBody', bg: '15 календарни дни', en: '15 calendar days' },
+				{ key: 'pdfNoteClicheTitle', bg: '*Цени клише :', en: '*Printing plate prices:' },
+				{ key: 'pdfNoteClicheSub1', bg: 'цената за печатни клишета се заплаща еднократно, при първоначална поръчка', en: 'printing plate cost is paid once with the initial order' },
+				{ key: 'pdfNoteClicheSub2', bg: 'изчислява се на кв./см в зависимост от печатната площ и броя цветове', en: 'calculated per sq./cm depending on print area and number of colors' },
+				{ key: 'pdfImportantPrefix', bg: '*Важно:', en: '*Important:' },
+				{ key: 'pdfImportantBody', bg: 'С всяка поръчка се издава фактура и декларация за съответствие за контакт с храни.', en: 'Each order is issued with an invoice and declaration of conformity for food contact.' },
+				{ key: 'pdfPreparedBy', bg: 'Изготвил', en: 'Prepared by' },
+				{ key: 'pdfPreparedBySign', bg: '/фамилия, подпис/', en: '/name, signature/' },
+				{ key: 'pdfFooterAgreement', bg: 'При съгласие с предложената оферта моля, да подпишете и върнете на упоменатия по-горе e-mail вашия отговор. Клиент', en: 'If you agree with this offer, please sign and return your reply to the e-mail mentioned above. Client' }
+			];
+
+			self.t = function (key) {
+				var entry = ko.utils.arrayFirst(arrPdfTranslations, function (item) {
+					return item.key === key;
+				});
+				if (!entry) return key;
+				if (self.selectedLanguage() === 'en') return entry.en || entry.bg || key;
+				return entry.bg || entry.en || key;
+			};
 
 			function getLocalizedName(item) {
 				if (!item) return '';
@@ -669,13 +706,14 @@
 				return getLocalizedName(item);
 			};
 			
-			// Ценови индекси — прилагат се върху крайната себестойност преди добавяне в оферта.
-			// idx > 1 увеличава цената (напр. нов клиент), idx < 1 намалява (напр. предпочитан клиент).
-			// Добавяй нови редове по нужда: { idx: <множител>, name: "<наименование>" }
+			// Типове оферти — прилагат се върху крайната себестойност преди добавяне в оферта.
+			// idx = 1: стандартна оферта (без промяна)
+			// idx = 0.95: оферта за търговци (-5% дисконт)
+			// idx = 0.85: оферта Пластик София (-15% дисконт)
 			self.priceIndexes = ko.observableArray([
-				{ idx: 1,   name: "Без ценово предимство" },
-				{ idx: 1.1, name: "Нов клиент" },
-				{ idx: 0.9, name: "Пластик" },
+				{ idx: 1,    name: "Стандартна оферта" },
+				{ idx: 0.95, name: "За търговци" },
+				{ idx: 0.85, name: "Пластик София" },
 			]);
 			var arrGramjageOptions=[30,32,35,38,40,45,50,70,80,90];
 			var arrMaterials=[
@@ -1459,11 +1497,14 @@
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
+				var noColorText = self.selectedLanguage() === 'en' ? 'no color' : 'без цвят';
+				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
+				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
 				var item = {
 					name: env ? getLocalizedName(env) : '—',
 					material: mat ? getLocalizedName(mat) : '—',
 						size: sizeStr,
-					printInfo: (colors === 0 ? 'без цвят' : (colors === 1 ? '1 цвят' : (colors + ' цвята'))),
+					printInfo: (colors === 0 ? noColorText : (colors === 1 ? oneColorText : (colors + manyColorsText))),
 					minOrder: qty,
 					priceValue: ko.observable(initialPrice.toFixed(5)),
 					isEditingPrice: ko.observable(false)
