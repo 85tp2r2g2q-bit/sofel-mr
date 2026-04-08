@@ -327,7 +327,7 @@
 									<td data-bind="text: material"></td>
 									<td data-bind="text: $root.formatQuantity(minOrder)"></td>
 									<td>
-										<span data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
+										<span class="price-with-unit" data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
 											data-bind="visible: isEditingPrice, value: priceValue, valueUpdate: 'afterkeydown'" />
 									</td>
@@ -444,7 +444,7 @@
 	  margin-bottom:0cm;margin-left:2.85pt;text-align:center;line-height:normal'><b><span
 										style='font-size:10.0pt;color:#00B0F0' data-bind="text: t('pdfTableQty')"></span></b></p>
 							</td>
-							<td width=85 style='width:63.8pt;border:solid #1F497D 1.0pt;border-left:none;
+							<td width=105 style='width:78.8pt;border:solid #1F497D 1.0pt;border-left:none;
 	  padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center style='margin-top:0cm;margin-right:5.65pt;
 	  margin-bottom:0cm;margin-left:5.65pt;text-align:center;line-height:normal'><span
@@ -499,7 +499,7 @@
 							<td
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center
-									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span
+									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span class='price-with-unit'
 										data-bind='visible: !isEditingPrice(), text: formattedPrice'></span></b>
 									<input type='number' step='any' class='form-control form-control-sm inline-price-editor no-print'
 										data-bind='visible: isEditingPrice, value: priceValue, valueUpdate: "afterkeydown"' /></p>
@@ -1354,6 +1354,7 @@
 			
 			function getOfferRenderCss() {
 				return '.hide-actions .no-print{display:none !important;}' +
+				    '.price-with-unit{white-space:nowrap !important; display:inline-block;}' +
 				    '.offer-doc-header{margin-bottom:12px; margin-left:-62px;}' +
 				    '.offer-header-logo{display:block; width:106% !important; height:auto !important; max-width:none !important; filter:brightness(1.24) contrast(1.08);}' +
 				    '.blue-circle-bullet{display:inline-block; width:10px; height:10px; border:2px solid #0070c0; border-radius:50%; vertical-align:middle; margin-right:4px; box-sizing:border-box;}' +
@@ -1504,7 +1505,7 @@
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
-				var priceUnit = (env && env.id === 6) ? 'EUR / кг' : 'EUR/бр';
+				var priceUnit = (env && env.id === 6) ? 'EUR/кг' : 'EUR/бр';
 				var noColorText = self.selectedLanguage() === 'en' ? 'no print' : 'без печат';
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
