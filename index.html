@@ -12,6 +12,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+	<script src="default.js"></script>
 	<link rel="stylesheet" href="style.css">
 	<script>
 		var firebaseConfig = {
@@ -145,6 +146,7 @@
 					<label class="form-label">Печат / брой цветове</label>
 					<select class="form-select"
 						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return v.count === 0 ? 'без печат' : ((v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'); }"></select>
+					<small class="text-muted" data-bind="text: printColorsStatus"></small>
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Тегло на 1 плик /гр</label>
@@ -672,21 +674,19 @@
 			var recipientsUnsubscribe = null;
 			var priceIndexesUnsubscribe = null;
 			var materialsUnsubscribe = null;
-			var defaultRecipients = [
-				{ id: 1, label: 'ПЛАСТИК-СОФИЯ', company: '„ПЛАСТИК-СОФИЯ“ ООД', attention: 'Любомир Недков', phone: '+359 888626342', email: 'l.nedkov@plastic-sofia.com', inquiry: 'от 12.04.2021 – e-mail' },
-				{ id: 2, label: 'Клиент Пример', company: 'Клиент Пример ООД', attention: 'Иван Петров', phone: '+359 888111222', email: 'ivan@primer.bg', inquiry: 'по запитване' }
-			];
-			var defaultPriceIndexes = [
-				{ idx: 1, name: 'Стандартна оферта[Local]' },
-				{ idx: 0.95, name: 'За търговци[Local]' },
-				{ idx: 0.85, name: 'Пластик София[Local]' }
-			];
+			var printColorsUnsubscribe = null;
+			var defaults = window.SOFEL_DEFAULTS || {};
+			var defaultRecipients = defaults.defaultRecipients || [];
+			var defaultPriceIndexes = defaults.defaultPriceIndexes || [];
+			var defaultMaterials = defaults.defaultMaterials || [];
+			var defaultPrintColors = defaults.defaultPrintColors || [];
 
 			self.cloudCounter = ko.observable('—');
 			self.cloudStatus = ko.observable('Firebase не е конфигуриран');
 			self.recipientStatus = ko.observable('Получатели: локален списък');
 			self.recipientSaveStatus = ko.observable('');
 			self.materialsStatus = ko.observable('Материали: локален списък');
+			self.printColorsStatus = ko.observable('Цветове: локален списък');
 
 			function normalizeCompanyKey(value) {
 				return (value || '').toString().trim().toLowerCase();
@@ -791,6 +791,59 @@
 				}, function () {
 					self.materialsCatalog(defaultMaterials.slice());
 					self.materialsStatus('Материали: Firestore грешка, ползва се локален списък');
+				});
+			}
+
+			function normalizePrintColor(docData, fallbackOrder) {
+				docData = docData || {};
+				var count = parseInt(docData.count, 10);
+				if (!isFinite(count)) count = 0;
+				var value = parseFloat(docData.value);
+				if (!isFinite(value)) value = 0;
+				var order = parseFloat(docData.order);
+				if (!isFinite(order)) order = fallbackOrder;
+				return { count: count, value: value, order: order };
+			}
+
+			function loadPrintColorsFromFirestore() {
+				if (!firebaseDb) {
+					self.printColorsCatalog(defaultPrintColors.slice());
+					self.printColorsStatus('Цветове: локален списък');
+					return;
+				}
+
+				if (typeof printColorsUnsubscribe === 'function') {
+					printColorsUnsubscribe();
+					printColorsUnsubscribe = null;
+				}
+
+				printColorsUnsubscribe = firebaseDb.collection('printColors').onSnapshot(function (snapshot) {
+					if (!snapshot || snapshot.empty) {
+						self.printColorsCatalog(defaultPrintColors.slice());
+						self.printColorsStatus('Цветове: няма записи в Firestore, ползва се локален списък');
+						return;
+					}
+
+					var list = snapshot.docs.map(function (docSnap, index) {
+						return normalizePrintColor(docSnap.data(), index);
+					});
+					list.sort(function (a, b) { return a.order - b.order; });
+					var normalized = list.map(function (x) { return { count: x.count, value: x.value }; });
+					self.printColorsCatalog(normalized);
+					self.printColorsStatus('Цветове: заредени от Firestore');
+
+					var selected = self.selectedPrintColor();
+					var selectedCount = parseInt(selected && selected.count, 10);
+					var selectedValue = parseFloat(selected && selected.value);
+					var exists = ko.utils.arrayFirst(normalized, function (c) {
+						return (parseInt(c.count, 10) === selectedCount) && ((parseFloat(c.value) || 0) === (isFinite(selectedValue) ? selectedValue : 0));
+					});
+					if (!exists) {
+						self.selectedPrintColor(normalized.length ? normalized[0] : null);
+					}
+				}, function () {
+					self.printColorsCatalog(defaultPrintColors.slice());
+					self.printColorsStatus('Цветове: Firestore грешка, ползва се локален списък');
 				});
 			}
 
@@ -952,6 +1005,7 @@
 				loadRecipientsFromFirestore();
 				loadPriceIndexesFromFirestore();
 				loadMaterialsFromFirestore();
+				loadPrintColorsFromFirestore();
 
 				counterDocRef.onSnapshot(function (docSnap) {
 					var data = docSnap.data() || {};
@@ -1049,49 +1103,8 @@
 			// idx = 0.85: оферта Пластик София (-15% дисконт)
 			self.priceIndexes = ko.observableArray(defaultPriceIndexes.slice());
 			var arrGramjageOptions=[30,32,35,38,40,45,50,70,80,90];
-			var defaultMaterials=[
-						{ id: 301, name: "Бял Крафт", nameEN: "White Kraft", price: [
-							{ grammage: 30, value: 1.2 },
-							{ grammage: 32, value: 1.2 },
-							{ grammage: 35, value: 1.2 },
-							{ grammage: 38, value: 1.15 },
-							{ grammage: 40, value: 1.15 },
-							{ grammage: 45, value: 1.1 },
-							{ grammage: 50, value: 1.1 },
-							{ grammage: 70, value: 0.98 },
-							{ grammage: 80, value: 0.98 },
-							{ grammage: 90, value: 0.96 }
-						] },
-						{ id: 302, name: "Кафяв Крафт", nameEN: "Brown Kraft", price: [
-							{ grammage: 30, value: 1.15 },
-							{ grammage: 32, value: 1.15 },
-							{ grammage: 35, value: 1.1 },
-							{ grammage: 38, value: 1.1 },
-							{ grammage: 40, value: 1.05 },
-							{ grammage: 45, value: 1.05 },
-							{ grammage: 50, value: 1.0 },
-							{ grammage: 70, value: 0.9 },
-							{ grammage: 80, value: 0.9 },
-							{ grammage: 90, value: 0.86 }
-						] },
-						{ id: 303, name: "Екструдиран Крафт", nameEN: "Extruded Kraft", price: [
-							{ grammage: 40, value: 2.2 },
-							{ grammage: 45, value: 2.2 }
-						] },
-						{ id: 304, name: "Маслоустойчив Крафт", nameEN: "Greaseproof Kraft", price: [
-							{ grammage: 40, value: 1.85 },
-							{ grammage: 45, value: 1.85 },
-							{ grammage: 50, value: 1.85 }
-						] }
-					];
 			self.materialsCatalog = ko.observableArray(defaultMaterials.slice());
-			var arrPrintColors=[
-						{ count: 0, value: 0 },
-						{ count: 1, value: 3 },
-						{ count: 2, value: 5 },
-						{ count: 3, value: 7 },
-						{ count: 4, value: 10 }
-					];
+			self.printColorsCatalog = ko.observableArray(defaultPrintColors.slice());
 		    var _foilPrice=2.95; // базова цена за фолио €/кг без ДДС
 			self.selectedPriceIndex = ko.observable(1); // по подразбиране: без корекция
 			// Колекция от всички видове артикули (пликове, чанти, формати).
@@ -1102,7 +1115,7 @@
 				{
 					id: 2, name: "хартиен плик без прозорец", nameEN: "paper envelope without window",
 					// count: брой печатни цветове (0 = без печат); value: % надценка върху базовата цена
-					printColors: arrPrintColors,
+					printColors: defaultPrintColors,
 					// qty: тираж /бр/; index: множител или делител; sign='*' → цена=base*index, sign='/' → base/index (по-голям тираж = по-ниска цена)
 					quantities: [
 						{ qty: 30000, index: 1.7,sign : '*'   },
@@ -1121,7 +1134,7 @@
 				},
 				{
 					id: 6, name: "хартиен формат", nameEN: "paper sheet format",
-					printColors: arrPrintColors,
+					printColors: defaultPrintColors,
 					quantities: [
 						{ qty: 200, index: 1,sign : '*'  },
 						{ qty: 300, index: 1.03 ,sign : '/'},
@@ -1137,7 +1150,7 @@
 				},
 				{
 					id: 5, name: "хартиен плик с прозорец", nameEN: "paper envelope with window",
-					printColors: arrPrintColors,
+					printColors: defaultPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2,sign : '*'   },
 						{ qty: 30000, index: 1.75,sign : '*'   },
@@ -1157,7 +1170,7 @@
 				},
 				{
 					id: 3, name: "хартиен плик ТЕРМО/ГРИЛ", nameEN: "paper envelope THERMO/GRILL",
-					printColors: arrPrintColors,
+					printColors: defaultPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2.5,sign : '*'   },
 						{ qty: 30000, index: 2,sign : '*'   },
@@ -1178,7 +1191,7 @@
 				},
 				{
 					id: 4, name: "хартиена чанта", nameEN: "paper bag",
-					printColors: arrPrintColors,
+					printColors: defaultPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2,sign : '*'   },
 						{ qty: 25000, index: 1.7, sign: '*' },
@@ -1213,6 +1226,8 @@
 			});
 
 			self.printColorsForSelected = ko.computed(function () {
+				var fromCatalog = self.printColorsCatalog();
+				if (Array.isArray(fromCatalog) && fromCatalog.length) return fromCatalog;
 				var env = self.selectedEnvelope();
 				return env && env.printColors ? env.printColors : [];
 			});
