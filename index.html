@@ -20,11 +20,18 @@
 			<div class="col-md-6">
 				<div class="card p-3">
 					<h5 class="mb-3">Данни за артикула</h5>
+					<div class="mb-3">
+						<label class="form-label">Език</label>
+						<select class="form-select" data-bind="value: selectedLanguage">
+							<option value="bg">Български</option>
+							<option value="en">English</option>
+						</select>
+					</div>
 					<!-- Нов селект за пликове -->
 					<div class="mb-3">
 					<label class="form-label">Избор на продукт</label>
 					<select class="form-select"
-						data-bind="options: envelopes, optionsText: 'name', optionsValue: 'id', value: selectedEnvelopeId, optionsCaption: 'моля избери'"></select>
+						data-bind="options: envelopes, optionsText: envelopeOptionText, optionsValue: 'id', value: selectedEnvelopeId, optionsCaption: 'моля избери'"></select>
 				</div>
 				<div data-bind="visible: selectedEnvelope()">
 
@@ -32,7 +39,7 @@
 				<div class="mb-3">
 					<label class="form-label">Материал</label>
 					<select class="form-select"
-						data-bind="options: materialsForSelected, optionsText: 'name', optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
+						data-bind="options: materialsForSelected, optionsText: materialOptionText, optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
 				</div>
 
 
@@ -646,6 +653,21 @@
 			// Смени на true, за да покажеш разширените ценови полета.
 			self.showAdvancedPricingFields = ko.observable(false);
 			self.showPdfContainer = ko.observable(false);
+			self.selectedLanguage = ko.observable('bg');
+
+			function getLocalizedName(item) {
+				if (!item) return '';
+				if (self.selectedLanguage() === 'en' && item.nameEN) return item.nameEN;
+				return item.name || '';
+			}
+
+			self.envelopeOptionText = function (item) {
+				return getLocalizedName(item);
+			};
+
+			self.materialOptionText = function (item) {
+				return getLocalizedName(item);
+			};
 			
 			// Ценови индекси — прилагат се върху крайната себестойност преди добавяне в оферта.
 			// idx > 1 увеличава цената (напр. нов клиент), idx < 1 намалява (напр. предпочитан клиент).
@@ -657,7 +679,7 @@
 			]);
 			var arrGramjageOptions=[30,32,35,38,40,45,50,70,80,90];
 			var arrMaterials=[
-						{ id: 301, name: "Бял Крафт", price: [
+						{ id: 301, name: "Бял Крафт", nameEN: "White Kraft", price: [
 							{ grammage: 30, value: 1.2 },
 							{ grammage: 32, value: 1.2 },
 							{ grammage: 35, value: 1.2 },
@@ -669,7 +691,7 @@
 							{ grammage: 80, value: 0.98 },
 							{ grammage: 90, value: 0.96 }
 						] },
-						{ id: 302, name: "Кафяв Крафт", price: [
+						{ id: 302, name: "Кафяв Крафт", nameEN: "Brown Kraft", price: [
 							{ grammage: 30, value: 1.15 },
 							{ grammage: 32, value: 1.15 },
 							{ grammage: 35, value: 1.1 },
@@ -681,11 +703,11 @@
 							{ grammage: 80, value: 0.9 },
 							{ grammage: 90, value: 0.86 }
 						] },
-						{ id: 303, name: "Екструдиран Крафт", price: [
+						{ id: 303, name: "Екструдиран Крафт", nameEN: "Extruded Kraft", price: [
 							{ grammage: 40, value: 2.2 },
 							{ grammage: 45, value: 2.2 }
 						] },
-						{ id: 304, name: "Маслоустойчив Крафт", price: [
+						{ id: 304, name: "Маслоустойчив Крафт", nameEN: "Greaseproof Kraft", price: [
 							{ grammage: 40, value: 1.85 },
 							{ grammage: 45, value: 1.85 },
 							{ grammage: 50, value: 1.85 }
@@ -705,7 +727,7 @@
 			// За да добавиш нов артикул — копирай съществуващ блок и смени стойностите.
 			self.envelopes = ko.observableArray([
 				{
-					id: 2, name: "хартиен плик без прозорец",
+					id: 2, name: "хартиен плик без прозорец", nameEN: "paper envelope without window",
 					// count: брой печатни цветове (0 = без печат); value: % надценка върху базовата цена
 					printColors: arrPrintColors,
 					// qty: тираж /бр/; index: множител или делител; sign='*' → цена=base*index, sign='/' → base/index (по-голям тираж = по-ниска цена)
@@ -725,7 +747,7 @@
 					materials: arrMaterials
 				},
 				{
-					id: 6, name: "хартиен формат",
+					id: 6, name: "хартиен формат", nameEN: "paper sheet format",
 					printColors: arrPrintColors,
 					quantities: [
 						{ qty: 200, index: 1,sign : '*'  },
@@ -741,7 +763,7 @@
 					materials: arrMaterials
 				},
 				{
-					id: 5, name: "хартиен плик с прозорец",
+					id: 5, name: "хартиен плик с прозорец", nameEN: "paper envelope with window",
 					printColors: arrPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2,sign : '*'   },
@@ -761,7 +783,7 @@
 					materials: arrMaterials
 				},
 				{
-					id: 3, name: "хартиен плик ТЕРМО/ГРИЛ",
+					id: 3, name: "хартиен плик ТЕРМО/ГРИЛ", nameEN: "paper envelope THERMO/GRILL",
 					printColors: arrPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2.5,sign : '*'   },
@@ -782,7 +804,7 @@
 					materials: arrMaterials
 				},
 				{
-					id: 4, name: "хартиена чанта",
+					id: 4, name: "хартиена чанта", nameEN: "paper bag",
 					printColors: arrPrintColors,
 					quantities: [
 						{ qty: 20000, index: 2,sign : '*'   },
@@ -1431,14 +1453,15 @@
 				if (c && !isNaN(c)) sizeParts.push(c);
 				var sizeStr = sizeParts.join(' x ');
 				var selectedColor = self.selectedPrintColor() || { count: 1, value: 3 };
-				var colors = parseInt(selectedColor.count, 10) || 1;
+				var parsedColors = parseInt(selectedColor.count, 10);
+				var colors = isNaN(parsedColors) ? 1 : parsedColors;
 				var useBagPrintPrice = self.isPaperBagSelected() && self.useBagWithPrintPriceInOffer();
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
 				var item = {
-					name: env ? env.name : '—',
-					material: mat ? mat.name : '—',
+					name: env ? getLocalizedName(env) : '—',
+					material: mat ? getLocalizedName(mat) : '—',
 						size: sizeStr,
 					printInfo: (colors === 0 ? 'без цвят' : (colors === 1 ? '1 цвят' : (colors + ' цвята'))),
 					minOrder: qty,
