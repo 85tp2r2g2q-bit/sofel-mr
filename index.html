@@ -976,6 +976,8 @@
 			// при смяна на плика избирай първия материал по подразбиране
 			self.selectedEnvelopeId.subscribe(function () {
 				resetArticleFields();
+				var env = self.selectedEnvelope();
+				self.foilPriceEur(env && env.foilPrice != null ? env.foilPrice : 0);
 				var mats = self.materialsForSelected();
 				self.selectedMaterialId(mats.length ? mats[0].id : null);
 				var colors = self.printColorsForSelected();
