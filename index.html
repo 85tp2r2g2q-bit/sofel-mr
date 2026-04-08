@@ -1506,12 +1506,16 @@
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
 				var priceUnit = (env && env.id === 6) ? 'EUR/кг' : 'EUR/бр';
+				var grammageValue = parseFloat(self.paperGrammage()) || 0;
+				var grammageUnit = self.selectedLanguage() === 'en' ? 'gr' : 'гр';
+				var materialName = mat ? getLocalizedName(mat) : '—';
+				var materialWithGrammage = grammageValue > 0 ? (materialName + ' / ' + grammageValue + ' ' + grammageUnit) : materialName;
 				var noColorText = self.selectedLanguage() === 'en' ? 'no print' : 'без печат';
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
 				var item = {
 					name: env ? getLocalizedName(env) : '—',
-					material: mat ? getLocalizedName(mat) : '—',
+					material: materialWithGrammage,
 						size: sizeStr,
 					printInfo: (colors === 0 ? noColorText : (colors === 1 ? oneColorText : (colors + manyColorsText))),
 					minOrder: qty,
