@@ -352,7 +352,7 @@
 									<td data-bind="text: size"></td>
 									<td data-bind="text: printInfo"></td>
 									<td data-bind="text: material"></td>
-									<td data-bind="text: $root.formatQuantity(minOrder)"></td>
+									<td data-bind="text: $root.formatOfferQuantity(minOrder, priceUnit)"></td>
 									<td>
 										<span class="price-with-unit" data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
@@ -495,9 +495,6 @@
 								<p class=MsoNormal align=center
 									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span
 										data-bind='text: name'></span></p>
-								<p class=MsoNormal align=center
-									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><b><span
-											data-bind='text: material'></span></b></p>
 							</td>
 							<td
 								style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
@@ -521,7 +518,7 @@
 								style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
 								<p class=MsoNormal align=center
 									style='margin-top:0cm;margin-bottom:0cm;text-align:center;line-height:normal'><span
-										data-bind='text: $root.formatQuantity(minOrder)'></span></p>
+										data-bind='text: $root.formatOfferQuantity(minOrder, priceUnit)'></span></p>
 							</td>
 							<td
 								style='border-top:none;border-left:none;border-bottom:solid #1F497D 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 2.85pt 0cm 2.85pt'>
@@ -1408,7 +1405,8 @@
 			// offer metadata (dynamic)
 			self.issuerOptions = ko.observableArray([
 				{name:'Юлиана Николова',canedit :false},
-				{name:'Румен Хаджиев',canedit :true}
+				{name:'Румен Хаджиев',canedit :true},
+				{name:'Анелия Хаджиева',canedit :false},
 			]);
 			self.issuedBy = ko.observable('Юлиана Николова');
 			self.canEditActions = ko.computed(function () {
@@ -1597,6 +1595,16 @@
 				return String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 			};
 
+			self.formatOfferQuantity = function (value, priceUnit) {
+				var formatted = self.formatQuantity(value);
+				if (!formatted) return '';
+				var isEn = self.selectedLanguage && self.selectedLanguage() === 'en';
+				if (priceUnit === 'EUR/кг') {
+					return formatted + (isEn ? ' kg' : ' кг');
+				}
+				return formatted + (isEn ? ' pcs' : ' бр');
+			};
+
 			self.addToOffer = function () {
 				var env = self.selectedEnvelope();
 				var mat = self.selectedMaterial();
@@ -1621,9 +1629,14 @@
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
 				var priceUnit = (env && env.id === 6) ? 'EUR/кг' : 'EUR/бр';
 				var grammageValue = parseFloat(self.paperGrammage()) || 0;
+				var foilGrammageValue = parseFloat(self.foilGrammage()) || 0;
 				var grammageUnit = self.selectedLanguage() === 'en' ? 'gr' : 'гр';
 				var materialName = mat ? getLocalizedName(mat) : '—';
 				var materialWithGrammage = grammageValue > 0 ? (materialName + ' / ' + grammageValue + ' ' + grammageUnit) : materialName;
+				if (foilGrammageValue > 0) {
+					var foilText = String(foilGrammageValue).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+					materialWithGrammage += ' - BOPP ' + foilText + '\u00B5';
+				}
 				var noColorText = self.selectedLanguage() === 'en' ? 'no print' : 'без печат';
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
