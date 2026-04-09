@@ -135,6 +135,11 @@
 					<input type="number" step="any" class="form-control"
 						data-bind="value: foilPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
+				<div class="mb-3">
+					<label class="form-label">Цени клише</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: clichePrice, valueUpdate: 'afterkeydown'" />
+				</div>
 				<div class="mb-3" data-bind="visible: printColorsForSelected().length > 0">
 					<label class="form-label">Печат / брой цветове</label>
 					<select class="form-select"
@@ -345,6 +350,7 @@
 									<th>Печат</th>
 									<th>Материал</th>
 									<th>Тираж</th>
+									<th>Цена клише</th>
 									<th>Цена</th>
 									<th>Действия</th>
 								</tr>
@@ -357,6 +363,7 @@
 									<td data-bind="text: printInfo"></td>
 									<td data-bind="text: material"></td>
 									<td data-bind="text: $root.formatOfferQuantity(minOrder, priceUnit)"></td>
+									<td data-bind="text: formattedClichePrice"></td>
 									<td>
 										<span class="price-with-unit" data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
@@ -622,7 +629,7 @@
 	
 				<p class=MsoNormal style='margin-top:0cm;margin-right:27.25pt;margin-bottom:
 	0cm;margin-left:0cm;line-height:normal'><span style='font-size:12.0pt;
-	font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteClicheTitle')"></span></span></p>
+	font-family:"Century Gothic",sans-serif'><span data-bind="text: t('pdfNoteClicheTitle')"></span> <b><span style='color:#0070C0' data-bind="text: totalClichePriceFormatted"></span></b></span></p>
 	
 				<p class=MsoListParagraphCxSpFirst style='margin-top:0cm;margin-right:27.25pt;
 	margin-bottom:0cm;margin-left:53.4pt;text-indent:-18.0pt;line-height:normal'><span
@@ -1244,6 +1251,7 @@
 				self.foilGrammage(0);
 				self.paperPriceEur(0);
 				self.foilPriceEur(0);
+				self.clichePrice(0);
 				self.selectedPriceIndex(1);
 				self.useBagWithPrintPriceInOffer(false);
 				self.widthASelectedOption('');
@@ -1425,6 +1433,7 @@
 			self.paperPriceEur = ko.observable(0);
 			// Цена на фолиото в евро (без ДДС) — видимо за id === 3 и id === 5
 			self.foilPriceEur = ko.observable(0);
+			self.clichePrice = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
 
 			// Изчисляеми стойности за себестойност (readonly полета)
@@ -1871,6 +1880,14 @@
 			// items collection: allow adding multiple offer items
 			self.items = ko.observableArray([]);
 
+			self.totalClichePriceFormatted = ko.computed(function () {
+				var total = 0;
+				ko.utils.arrayForEach(self.items(), function (item) {
+					total += parseFloat(item && item.clichePriceValue && item.clichePriceValue()) || 0;
+				});
+				return total.toFixed(2) + ' EUR';
+			});
+
 			function formatPriceValue(value) {
 				var numeric = parseFloat(value);
 				if (!isFinite(numeric)) return '0.00000';
@@ -1916,6 +1933,7 @@
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
+				var initialClichePrice = parseFloat(self.clichePrice()) || 0;
 				var priceUnit = (env && env.id === 6) ? 'EUR/кг' : 'EUR/бр';
 				var grammageValue = parseFloat(self.paperGrammage()) || 0;
 				var foilGrammageValue = parseFloat(self.foilGrammage()) || 0;
@@ -1935,10 +1953,14 @@
 						size: sizeStr,
 					printInfo: (colors === 0 ? noColorText : (colors === 1 ? oneColorText : (colors + manyColorsText))),
 					minOrder: qty,
+					clichePriceValue: ko.observable(initialClichePrice.toFixed(5)),
 					priceUnit: priceUnit,
 					priceValue: ko.observable(initialPrice.toFixed(5)),
 					isEditingPrice: ko.observable(false)
 				};
+				item.formattedClichePrice = ko.pureComputed(function () {
+					return formatPriceValue(item.clichePriceValue()) + ' EUR';
+				});
 				item.formattedPrice = ko.pureComputed(function () {
 					return formatPriceValue(item.priceValue()) + ' ' + (item.priceUnit || 'EUR/бр');
 				});
