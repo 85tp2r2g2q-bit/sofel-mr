@@ -135,16 +135,16 @@
 					<input type="number" step="any" class="form-control"
 						data-bind="value: foilPriceEur, valueUpdate: 'afterkeydown'" />
 				</div>
-				<div class="mb-3">
-					<label class="form-label">Цени клише</label>
-					<input type="number" step="any" class="form-control"
-						data-bind="value: clichePrice, valueUpdate: 'afterkeydown'" />
-				</div>
 				<div class="mb-3" data-bind="visible: printColorsForSelected().length > 0">
 					<label class="form-label">Печат / брой цветове</label>
 					<select class="form-select"
 						data-bind="options: printColorsForSelected, value: selectedPrintColor, optionsText: function(v){ return v.count === 0 ? 'без печат' : ((v.count === 1 ? '1 цвят' : v.count + ' цвята') + ' / ' + v.value + '%'); }"></select>
 					<small class="text-muted" data-bind="text: printColorsStatus"></small>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Цени клише</label>
+					<input type="number" step="any" class="form-control"
+						data-bind="value: clichePrice, valueUpdate: 'afterkeydown', enable: hasPrintSelected, css: { 'readonly-field': !hasPrintSelected() }" />
 				</div>
 				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
 					<label class="form-label">Тегло на 1 плик /гр</label>
@@ -350,7 +350,6 @@
 									<th>Печат</th>
 									<th>Материал</th>
 									<th>Тираж</th>
-									<th>Цена клише</th>
 									<th>Цена</th>
 									<th>Действия</th>
 								</tr>
@@ -363,7 +362,6 @@
 									<td data-bind="text: printInfo"></td>
 									<td data-bind="text: material"></td>
 									<td data-bind="text: $root.formatOfferQuantity(minOrder, priceUnit)"></td>
-									<td data-bind="text: formattedClichePrice"></td>
 									<td>
 										<span class="price-with-unit" data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
@@ -1435,6 +1433,15 @@
 			self.foilPriceEur = ko.observable(0);
 			self.clichePrice = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
+			self.hasPrintSelected = ko.computed(function () {
+				var color = self.selectedPrintColor();
+				return (parseInt(color && color.count, 10) || 0) > 0;
+			});
+			self.selectedPrintColor.subscribe(function (color) {
+				if ((parseInt(color && color.count, 10) || 0) <= 0) {
+					self.clichePrice(0);
+				}
+			});
 
 			// Изчисляеми стойности за себестойност (readonly полета)
 			self.envelopeWeightGr = ko.computed(function () {
@@ -1883,7 +1890,9 @@
 			self.totalClichePriceFormatted = ko.computed(function () {
 				var total = 0;
 				ko.utils.arrayForEach(self.items(), function (item) {
-					total += parseFloat(item && item.clichePriceValue && item.clichePriceValue()) || 0;
+					var clichePerColor = parseFloat(item && item.clichePriceValue && item.clichePriceValue()) || 0;
+					var colorCount = parseInt(item && item.colorCount, 10) || 0;
+					total += clichePerColor * colorCount;
 				});
 				return total.toFixed(2) + ' EUR';
 			});
@@ -1929,6 +1938,8 @@
 				var selectedColor = self.selectedPrintColor() || { count: 1, value: 3 };
 				var parsedColors = parseInt(selectedColor.count, 10);
 				var colors = isNaN(parsedColors) ? 1 : parsedColors;
+				var clichePerColor = parseFloat(self.clichePrice()) || 0;
+				var clicheTotal = colors > 0 ? (clichePerColor * colors) : 0;
 				var useBagPrintPrice = self.isPaperBagSelected() && self.useBagWithPrintPriceInOffer();
 				var initialPrice = useBagPrintPrice
 					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
@@ -1947,12 +1958,16 @@
 				var noColorText = self.selectedLanguage() === 'en' ? 'no print' : 'без печат';
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
+				var clicheLabel = self.selectedLanguage() === 'en' ? ' / ' : ' / ';
 				var item = {
 					name: env ? getLocalizedName(env) : '—',
 					material: materialWithGrammage,
 						size: sizeStr,
-					printInfo: (colors === 0 ? noColorText : (colors === 1 ? oneColorText : (colors + manyColorsText))),
+					printInfo: (colors === 0
+						? noColorText
+						: ((colors === 1 ? oneColorText : (colors + manyColorsText)) + clicheLabel + clicheTotal.toFixed(2) + ' EUR')),
 					minOrder: qty,
+					colorCount: colors,
 					clichePriceValue: ko.observable(initialClichePrice.toFixed(5)),
 					priceUnit: priceUnit,
 					priceValue: ko.observable(initialPrice.toFixed(5)),
