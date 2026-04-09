@@ -52,6 +52,12 @@
 						data-bind="options: materialsForSelected, optionsText: materialOptionText, optionsValue: 'id', value: selectedMaterialId, enable: materialsForSelected().length > 0"></select>
 					<small class="text-muted" data-bind="text: materialsStatus"></small>
 				</div>
+				<div class="mb-3" data-bind="visible: showPocketTypeOption">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" id="pocket-type-checkbox" data-bind="checked: pocketType" />
+						<label class="form-check-label" for="pocket-type-checkbox">Тип джоб</label>
+					</div>
+				</div>
 
 
 				<!-- (Moved) Export / Print buttons will appear below Quantity -->
@@ -1250,6 +1256,9 @@
 				self.paperPriceEur(0);
 				self.foilPriceEur(0);
 				self.clichePrice(0);
+				if (typeof self.pocketType === 'function') {
+					self.pocketType(false);
+				}
 				self.selectedPriceIndex(1);
 				self.useBagWithPrintPriceInOffer(false);
 				self.widthASelectedOption('');
@@ -1433,6 +1442,11 @@
 			self.foilPriceEur = ko.observable(0);
 			self.clichePrice = ko.observable(0);
 			self.selectedPrintColor = ko.observable(self.printColorsForSelected().length ? self.printColorsForSelected()[0] : null);
+			self.pocketType = ko.observable(false);
+			self.showPocketTypeOption = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return !!(env && env.id === 2);
+			});
 			self.hasPrintSelected = ko.computed(function () {
 				var color = self.selectedPrintColor();
 				return (parseInt(color && color.count, 10) || 0) > 0;
@@ -1946,6 +1960,10 @@
 					: (parseFloat(self.customerInquiryPriceEur()) || 0);
 				var initialClichePrice = parseFloat(self.clichePrice()) || 0;
 				var priceUnit = (env && env.id === 6) ? 'EUR/кг' : 'EUR/бр';
+				var itemName = env ? getLocalizedName(env) : '—';
+				if (env && env.id === 2 && self.pocketType()) {
+					itemName = 'хартиен плик ТИП ДЖОБ';
+				}
 				var grammageValue = parseFloat(self.paperGrammage()) || 0;
 				var foilGrammageValue = parseFloat(self.foilGrammage()) || 0;
 				var grammageUnit = self.selectedLanguage() === 'en' ? 'gr' : 'гр';
@@ -1960,7 +1978,7 @@
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
 				var clicheLabel = self.selectedLanguage() === 'en' ? ' / ' : ' / ';
 				var item = {
-					name: env ? getLocalizedName(env) : '—',
+					name: itemName,
 					material: materialWithGrammage,
 						size: sizeStr,
 					printInfo: (colors === 0
