@@ -37,13 +37,6 @@
 			<div class="col-md-6">
 				<div class="card p-3">
 					<h5 class="mb-3">Данни за артикула</h5>
-					<div class="mb-3">
-						<label class="form-label">Език</label>
-						<select class="form-select" data-bind="value: selectedLanguage">
-							<option value="bg">Български</option>
-							<option value="en">English</option>
-						</select>
-					</div>
 					<!-- Нов селект за пликове -->
 					<div class="mb-3">
 					<label class="form-label">Избор на продукт</label>
@@ -325,6 +318,8 @@
 						<input type="date" class="form-control" data-bind="value: documentDateRaw" />
 					</div>
 					<div class="mb-3 controls-toolbar">
+						<button type="button" class="btn btn-outline-secondary"
+							data-bind="click: toggleLanguage, text: selectedLanguage() === 'bg' ? 'EN' : 'BG'"></button>
 						<button class="btn btn-success" data-bind="click: exportPdf">Export PDF</button>
 						<button class="btn btn-primary" data-bind="click: printDoc">Print</button>
 					</div>
@@ -1030,6 +1025,9 @@
 			self.showAdvancedPricingFields = ko.observable(false);
 			self.showPdfContainer = ko.observable(false);
 			self.selectedLanguage = ko.observable('bg');
+			self.toggleLanguage = function () {
+				self.selectedLanguage(self.selectedLanguage() === 'bg' ? 'en' : 'bg');
+			};
 			var arrPdfTranslations = [
 				{ key: 'pdfDocumentTitle', bg: 'Документ', en: 'Document' },
 				{ key: 'pdfToLabel', bg: 'До', en: 'To' },
