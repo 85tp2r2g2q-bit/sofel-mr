@@ -246,6 +246,13 @@
 						</div>
 					</div>
 				</div>
+				<div class="mb-3" data-bind="visible: isPaperBagSelected">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" id="paper-bag-graphic-print"
+							data-bind="checked: graphicPrintForPaperBag" />
+						<label class="form-check-label" for="paper-bag-graphic-print">Графичен печат</label>
+					</div>
+				</div>
 				<div class="mb-3">
 					<label class="form-label">КРАЙНА СЕБЕСТОЙНОСТ НА ГОТОВ ПРОДУКТ</label>
 					<table class="table table-sm table-bordered mb-0">
@@ -683,6 +690,7 @@
 			var priceIndexesUnsubscribe = null;
 			var materialsUnsubscribe = null;
 			var printColorsUnsubscribe = null;
+			var pricingSettingsUnsubscribe = null;
 			var defaults = window.SOFEL_DEFAULTS || {};
 			var defaultRecipients = defaults.defaultRecipients || [];
 			var defaultPriceIndexes = defaults.defaultPriceIndexes || [];
@@ -695,6 +703,7 @@
 			self.recipientSaveStatus = ko.observable('');
 			self.materialsStatus = ko.observable('Материали: локален списък');
 			self.printColorsStatus = ko.observable('Цветове: локален списък');
+			self.graphicPrintSurchargeEur = ko.observable(0.055);
 
 			function normalizeCompanyKey(value) {
 				return (value || '').toString().trim().toLowerCase();
@@ -892,6 +901,37 @@
 				});
 			}
 
+			function loadPricingSettingsFromFirestore() {
+				if (!firebaseDb) {
+					self.graphicPrintSurchargeEur(0.055);
+					return;
+				}
+
+				if (typeof pricingSettingsUnsubscribe === 'function') {
+					pricingSettingsUnsubscribe();
+					pricingSettingsUnsubscribe = null;
+				}
+
+				pricingSettingsUnsubscribe = firebaseDb.collection('settings').doc('pricing').onSnapshot(function (docSnap) {
+					if (!docSnap || !docSnap.exists) {
+						self.graphicPrintSurchargeEur(0.055);
+						return;
+					}
+
+					var data = docSnap.data() || {};
+					var surcharge = parseFloat(data.paperBagGraphicPrintSurcharge);
+					if (!isFinite(surcharge)) {
+						surcharge = parseFloat(data.graphicPrintSurcharge);
+					}
+					if (!isFinite(surcharge)) {
+						surcharge = 0.055;
+					}
+					self.graphicPrintSurchargeEur(surcharge);
+				}, function () {
+					self.graphicPrintSurchargeEur(0.055);
+				});
+			}
+
 			function loadRecipientsFromFirestore() {
 				if (!firebaseDb) {
 					self.recipients(defaultRecipients.slice());
@@ -1014,6 +1054,7 @@
 				loadPriceIndexesFromFirestore();
 				loadMaterialsFromFirestore();
 				loadPrintColorsFromFirestore();
+				loadPricingSettingsFromFirestore();
 
 				counterDocRef.onSnapshot(function (docSnap) {
 					var data = docSnap.data() || {};
@@ -1258,6 +1299,9 @@
 				self.paperPriceEur(0);
 				self.foilPriceEur(0);
 				self.clichePrice(0);
+				if (typeof self.graphicPrintForPaperBag === 'function') {
+					self.graphicPrintForPaperBag(false);
+				}
 				if (typeof self.pocketType === 'function') {
 					self.pocketType(false);
 				}
@@ -1635,6 +1679,9 @@
 				var selected = self.selectedQuantity();
 				if (!selected) return '0.00000';
 				var priceIndexMultiplier = parseFloat(self.selectedPriceIndex()) || 1;
+				var graphicPrintSurcharge = self.isPaperBagSelected() && self.graphicPrintForPaperBag()
+					? (parseFloat(self.graphicPrintSurchargeEur()) || 0)
+					: 0;
 				var pricePerUnit;
 				if (self.isPaperFormatSelected()) {
 					pricePerUnit = calculatePaperFormatPrice(selected);
@@ -1645,9 +1692,11 @@
 				} else {
 					pricePerUnit = calculateFinalPrice(selected);
 				}
-				pricePerUnit = pricePerUnit * priceIndexMultiplier;
+				pricePerUnit = (pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge;
 				return pricePerUnit.toFixed(5);
 			});
+
+			self.graphicPrintForPaperBag = ko.observable(false);
 
 			self.bagWithPrintPriceEur = ko.computed(function () {
 				if (!self.isPaperBagSelected()) return '';
@@ -1667,6 +1716,7 @@
 				self.allQuantityPrices = ko.computed(function () {
 					var qtys = self.quantitiesForSelected();
 					var priceIndexMultiplier = parseFloat(self.selectedPriceIndex()) || 1;
+					var graphicPrintSurcharge = self.isPaperBagSelected() && self.graphicPrintForPaperBag() ? (parseFloat(self.graphicPrintSurchargeEur()) || 0) : 0;
 					return qtys.map(function (q) {
 						var pricePerUnit;
 						var bagWithPrintPricePerUnit = '';
@@ -1675,7 +1725,7 @@
 						} else {
 							pricePerUnit = calculateFinalPrice(q);
 						}
-						pricePerUnit = pricePerUnit * priceIndexMultiplier;
+						pricePerUnit = (pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge;
 						if (self.isPaperBagSelected()) {
 							var weightPerBagGr = parseFloat(self.envelopeWeightGr()) || 0;
 							var printLaborPerBag = (weightPerBagGr * 0.23) / 1000;
