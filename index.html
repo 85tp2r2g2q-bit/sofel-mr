@@ -250,7 +250,7 @@
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" id="paper-bag-graphic-print"
 							data-bind="checked: graphicPrintForPaperBag" />
-						<label class="form-check-label" for="paper-bag-graphic-print">Графичен печат</label>
+						<label class="form-check-label" for="paper-bag-graphic-print">Дигитален печат</label>
 					</div>
 				</div>
 				<div class="mb-3">
@@ -376,7 +376,11 @@
 									<td data-bind="text: size"></td>
 									<td data-bind="text: printInfo"></td>
 									<td data-bind="text: material"></td>
-									<td data-bind="text: $root.formatOfferQuantity(minOrder, priceUnit)"></td>
+									<td>
+										<span data-bind="visible: !isEditingQuantity(), text: $root.formatOfferQuantity(minOrder, priceUnit)"></span>
+										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
+											data-bind="visible: isEditingQuantity, value: quantityValue, valueUpdate: 'afterkeydown'" />
+									</td>
 									<td>
 										<span class="price-with-unit" data-bind="visible: !isEditingPrice(), text: formattedPrice"></span>
 										<input type="number" step="any" class="form-control form-control-sm inline-price-editor"
@@ -1168,7 +1172,7 @@
 					id: 2, name: "хартиен плик без прозорец", nameEN: "paper envelope without window",
 					// count: брой печатни цветове (0 = без печат); value: % надценка върху базовата цена
 					printColors: defaultPrintColors,
-					// qty: тираж /бр/; index: множител или делител; sign='*' → цена=base*index, sign='/' → base/index (по-голям тираж = по-ниска цена)
+					// qty: тираж /бр/; index: множител или делител; sign='*' > цена=base*index, sign='/' > base/index (по-голям тираж = по-ниска цена)
 					quantities: [
 						{ qty: 30000, index: 1.7,sign : '*'   },
 						{ qty: 50000, index: 1.6 ,sign : '*'},
@@ -1177,7 +1181,7 @@
 					],
 					cut: 1, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.002, // Стойност на труда и материалите за този плик
-					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м², предлагани в падащото меню
+					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м?, предлагани в падащото меню
 					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], // налични стойности за Ширина A /см/
 					foldBOptions: [3,4,5,6,7,8,9,10,11,12], // налични стойности за Фалт B /см/
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60], // налични стойности за Дължина C /см/
@@ -1211,8 +1215,8 @@
 						{ qty: 200000, index: 1.35,sign : '*'  }
 					],
 					foilPrice : _foilPrice, // цена за фолио (само за плик с каширане) без ддс
-					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м², предлагани в падащото меню
-					foilGrammageOptions: [15, 20], // налични грамажи за фолио/прозорец г/м²
+					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м?, предлагани в падащото меню
+					foilGrammageOptions: [15, 20], // налични грамажи за фолио/прозорец г/м?
 					widthAOptions: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], // налични стойности за Ширина A /см/
 					foldBOptions: [3,4,5,6,7,8,9,10,11,12], // налични стойности за Фалт B /см/
 					lengthCOptions: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60], // налични стойности за Дължина C /см/
@@ -1234,11 +1238,11 @@
 					cut: 4, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.0, // Стойност на труда и материалите за този плик
 					cashirane :0.005, //каширане
-					paperGrammageOptions: [32,35,38,40,45,50], // налични грамажи г/м², предлагани в падащото меню
+					paperGrammageOptions: [32,35,38,40,45,50], // налични грамажи г/м?, предлагани в падащото меню
 					widthAOptions: [12,13,14,15,16,17,18], // налични стойности за Ширина A /см/
 					foldBOptions: [4,5,6,7,8], // налични стойности за Фалт B /см/
 					lengthCOptions: [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38], // налични стойности за Дължина C /см/
-					foilGrammageOptions: [15, 20], // налични грамажи за фолио/прозорец г/м²
+					foilGrammageOptions: [15, 20], // налични грамажи за фолио/прозорец г/м?
 					materials: defaultMaterials
 				},
 				{
@@ -1254,7 +1258,7 @@
 					cut: 1, // Стойност на отрязъка за този плик
 					flatHandels :0.006, // Стойност на ръчките за хартиената чанта
 					trudAndMaterials: 0.007, // Стойност на труда и материалите за този плик
-					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м², предлагани в падащото меню
+					paperGrammageOptions: arrGramjageOptions, // налични грамажи г/м?, предлагани в падащото меню
 					widthAOptions: [22, 24, 26, 28, 32, 35], // налични стойности за Ширина A /см/
 					foldBOptions: [10, 12, 14, 16, 17, 18, 20, 21, 22], // налични стойности за Фалт B /см/
 					lengthCOptions: [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], // налични стойности за Дължина C /см/
@@ -1775,9 +1779,9 @@
 
 			// offer metadata (dynamic)
 			self.issuerOptions = ko.observableArray([
-				{name:'Юлиана Николова',canedit :false},
+				{name:'Юлиана Николова',canedit :true},
 				{name:'Румен Хаджиев',canedit :true},
-				{name:'Анелия Хаджиева',canedit :false},
+				{name:'Анелия Хаджиева',canedit :true},
 			]);
 			self.issuedBy = ko.observable('Юлиана Николова');
 			self.canEditActions = ko.computed(function () {
@@ -1977,7 +1981,8 @@
 			};
 
 			self.formatOfferQuantity = function (value, priceUnit) {
-				var formatted = self.formatQuantity(value);
+				var rawValue = ko.utils.unwrapObservable(value);
+				var formatted = self.formatQuantity(rawValue);
 				if (!formatted) return '';
 				var isEn = self.selectedLanguage && self.selectedLanguage() === 'en';
 				if (priceUnit === 'EUR/кг') {
@@ -2029,20 +2034,29 @@
 				var oneColorText = self.selectedLanguage() === 'en' ? '1 color' : '1 цвят';
 				var manyColorsText = self.selectedLanguage() === 'en' ? ' colors' : ' цвята';
 				var clicheLabel = self.selectedLanguage() === 'en' ? ' / ' : ' / ';
+				var basePrintInfo = colors === 0
+					? noColorText
+					: ((colors === 1 ? oneColorText : (colors + manyColorsText)) + clicheLabel + clicheTotal.toFixed(2) + ' EUR');
 				var item = {
 					name: itemName,
 					material: materialWithGrammage,
 						size: sizeStr,
-					printInfo: (colors === 0
-						? noColorText
-						: ((colors === 1 ? oneColorText : (colors + manyColorsText)) + clicheLabel + clicheTotal.toFixed(2) + ' EUR')),
-					minOrder: qty,
+					basePrintInfo: basePrintInfo,
+					minOrder: ko.observable(qty),
 					colorCount: colors,
+					envId: env ? env.id : 0,
+					digitalPrintSelected: env && env.id === 4 && self.graphicPrintForPaperBag(),
 					clichePriceValue: ko.observable(initialClichePrice.toFixed(5)),
 					priceUnit: priceUnit,
 					priceValue: ko.observable(initialPrice.toFixed(5)),
-					isEditingPrice: ko.observable(false)
+					quantityValue: ko.observable(qty.toFixed(2)),
+					isEditingPrice: ko.observable(false),
+					isEditingQuantity: ko.observable(false)
 				};
+				item.printInfo = ko.pureComputed(function () {
+					var digitalLabel = self.selectedLanguage() === 'en' ? 'Digital' : 'Дигитален';
+					return item.digitalPrintSelected ? digitalLabel : item.basePrintInfo;
+				});
 				item.formattedClichePrice = ko.pureComputed(function () {
 					return formatPriceValue(item.clichePriceValue()) + ' EUR';
 				});
@@ -2058,8 +2072,12 @@
 				if (currentlyEditing) {
 					var normalized = parseFloat(item.priceValue());
 					item.priceValue(isFinite(normalized) ? normalized.toFixed(5) : '0.00000');
+					var normalizedQty = parseFloat(item.quantityValue());
+					item.quantityValue(isFinite(normalizedQty) ? normalizedQty.toFixed(2) : '0.00');
+					item.minOrder(isFinite(normalizedQty) ? normalizedQty : 0);
 				}
 				item.isEditingPrice(!currentlyEditing);
+				item.isEditingQuantity(!item.isEditingQuantity());
 			};
 
 			self.removeItem = function (item) {
@@ -2076,3 +2094,4 @@
 </body>
 
 </html>
+
