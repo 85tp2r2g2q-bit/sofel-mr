@@ -286,7 +286,9 @@
 					<h5>Получател</h5>
 					<div class="mb-3">
 						<label class="form-label">Избор на получател</label>
-						<select class="form-select"  data-bind="options: recipients, optionsText: 'label', optionsValue: 'id', value: selectedRecipientId, optionsCaption: '— избери —'"></select>
+						<input type="text" class="form-control mb-2" placeholder="Търси получател..."
+							data-bind="textInput: recipientSearchTerm" />
+						<select class="form-select"  data-bind="options: filteredRecipients, optionsText: 'label', optionsValue: 'id', value: selectedRecipientId, optionsCaption: '— избери —'"></select>
 						<small class="text-muted" data-bind="text: recipientStatus"></small>
 					</div>
 					<div class="mb-3">
@@ -1755,6 +1757,23 @@
 
 			// recipients list and selection
 			self.recipients = ko.observableArray(defaultRecipients.slice());
+			self.recipientSearchTerm = ko.observable('');
+			self.sortedRecipients = ko.pureComputed(function () {
+				return self.recipients().slice().sort(function (a, b) {
+					var aText = (a && (a.label || a.company) ? String(a.label || a.company) : '').trim();
+					var bText = (b && (b.label || b.company) ? String(b.label || b.company) : '').trim();
+					return aText.localeCompare(bText, 'bg', { sensitivity: 'base' });
+				});
+			});
+			self.filteredRecipients = ko.pureComputed(function () {
+				var term = (self.recipientSearchTerm() || '').toString().trim().toLowerCase();
+				if (!term) return self.sortedRecipients();
+				return ko.utils.arrayFilter(self.sortedRecipients(), function (r) {
+					var label = (r && r.label ? String(r.label) : '').toLowerCase();
+					var company = (r && r.company ? String(r.company) : '').toLowerCase();
+					return label.indexOf(term) !== -1 || company.indexOf(term) !== -1;
+				});
+			});
 			self.selectedRecipientId = ko.observable();
 
 			// when a recipient is selected, populate the form fields
