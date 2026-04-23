@@ -1194,10 +1194,10 @@
 					id: 6, name: "хартиен формат", nameEN: "paper sheet format",
 					printColors: defaultPrintColors,
 					quantities: [
-						{ qty: 200, index: 1,sign : '*'  },
-						{ qty: 300, index: 1.03 ,sign : '/'},
-						{ qty: 500, index: 1.05,sign : '/' },
-						{ qty: 1000, index: 1.1,sign : '/' }
+						{ qty: 200, index: 1,sign : '*' ,colorIdx : 0.8  },
+						{ qty: 300, index: 1.03 ,sign : '/',colorIdx : 0.75},
+						{ qty: 500, index: 1.05,sign : '/' ,colorIdx : 0.7},
+						{ qty: 1000, index: 1.1,sign : '/',colorIdx : 0.6 }
 					],
 					cut: 0, // Стойност на отрязъка за този плик
 					trudAndMaterials: 0.004, // Стойност на труда и материалите за този плик
@@ -1675,9 +1675,24 @@
 
 			function calculatePaperFormatPrice(entry) {
 				if (!entry) return 0;
-				var perKg = parseFloat(self.envelopesPerKg()) || 0;
-				var totalCost = parseFloat(self.totalCostPerEnvelopeEur()) || 0;
-				var basePrice = calculatePriceFromBase(entry, perKg * totalCost);
+				var paperPrice = parseFloat(self.paperPriceEur()) || 0;
+				var idx = parseFloat(entry && entry.index) || 1;
+				var colorIdx = parseFloat(entry && entry.colorIdx) || 0;
+				var selectedColor = self.selectedPrintColor();
+				var colorCount = parseInt(selectedColor && selectedColor.count, 10) || 0;
+				var additionalCost;
+				if ((entry && entry.sign) === '*') {
+					additionalCost = 0.8 * idx;
+				} else {
+					additionalCost = idx !== 0 ? 0.8 / idx : 0;
+				}
+				var basePrice = paperPrice + additionalCost;
+				if (self.hasPrintSelected()) {
+					basePrice += colorIdx;
+				}
+				if (colorCount === 1) {
+					return basePrice;
+				}
 				return basePrice * printColorMultiplier();
 			}
 
