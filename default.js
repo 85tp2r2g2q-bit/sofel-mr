@@ -42,6 +42,11 @@
 				{ grammage: 40, value: 1.85 },
 				{ grammage: 45, value: 1.85 },
 				{ grammage: 50, value: 1.85 }
+			] },
+			{ id: 305, name: 'Рециклиран Крафт', nameEN: 'Recycled Kraft', price: [
+				{ grammage: 70, value: 0.75 },
+				{ grammage: 80, value: 0.7 },
+				{ grammage: 90, value: 0.68 }
 			] }
 		],
 		defaultPrintColors: [

@@ -417,6 +417,126 @@
 					</div>
 				</div>
 			</div>
+			<div class="col-12 mt-3">
+				<div class="card p-3">
+					<h5>Записани оферти</h5>
+					<div class="alert alert-light border d-flex justify-content-between align-items-center py-2 px-3 mb-3">
+						<div>
+							<strong>Общо записани:</strong>
+							<span data-bind="text: filteredSavedOffers().length"></span>
+						</div>
+						<small class="text-muted" data-bind="text: savedOffersStatus"></small>
+					</div>
+					<div class="row g-2 align-items-end mb-3">
+						<div class="col-md-4">
+							<label class="form-label">Филтър по получател</label>
+							<input type="text" class="form-control" placeholder="Въведи получател..." data-bind="textInput: savedOffersRecipientFilter" />
+						</div>
+						<div class="col-md-8 d-flex justify-content-md-end gap-2">
+							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadPreviousSavedOffersPage, enable: canLoadPreviousSavedOffersPage">Назад</button>
+							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadNextSavedOffersPage, enable: canLoadNextSavedOffersPage">Напред</button>
+						</div>
+					</div>
+					<div class="table-responsive" data-bind="visible: filteredSavedOffers().length > 0">
+						<table class="table table-sm table-bordered mb-0 align-middle">
+							<thead class="table-light">
+								<tr>
+									<th>№ оферта</th>
+									<th>Получател</th>
+									<th>Предмет</th>
+									<th>Дата</th>
+									<th>Издадена от</th>
+									<th>Позиции</th>
+									<th>Последна промяна</th>
+									<th>Действия</th>
+								</tr>
+							</thead>
+							<tbody data-bind="foreach: filteredSavedOffers">
+								<tr>
+									<td data-bind="text: offerNumber"></td>
+									<td data-bind="text: recipientCompany"></td>
+									<td data-bind="text: offerSubject"></td>
+									<td data-bind="text: documentDateRaw"></td>
+									<td data-bind="text: issuedBy"></td>
+									<td data-bind="text: itemCount"></td>
+									<td data-bind="text: updatedAtText"></td>
+									<td class="text-center">
+										<button type="button" class="btn btn-sm btn-outline-secondary me-1" data-bind="click: $root.previewSavedOffer">Преглед</button>
+										<button type="button" class="btn btn-sm btn-outline-primary me-1" data-bind="click: $root.loadSavedOffer">Зареди</button>
+										<button type="button" class="btn btn-sm btn-outline-danger" data-bind="click: $root.deleteSavedOffer">Изтрий</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="text-muted small" data-bind="visible: filteredSavedOffers().length === 0">
+						Няма записани оферти за показване.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="saved-offer-preview-modal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-scrollable">
+			<div class="modal-content" data-bind="with: selectedSavedOfferPreview">
+				<div class="modal-header">
+					<h5 class="modal-title">Преглед на оферта <span data-bind="text: offerNumber"></span></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row g-3 mb-3">
+						<div class="col-md-4">
+							<div><strong>Получател:</strong> <span data-bind="text: recipientCompany"></span></div>
+							<div><strong>На вниманието:</strong> <span data-bind="text: recipientAttention"></span></div>
+							<div><strong>Телефон:</strong> <span data-bind="text: recipientPhone"></span></div>
+							<div><strong>Имейл:</strong> <span data-bind="text: recipientEmail"></span></div>
+						</div>
+						<div class="col-md-4">
+							<div><strong>Предмет:</strong> <span data-bind="text: offerSubject"></span></div>
+							<div><strong>Дата:</strong> <span data-bind="text: documentDateRaw"></span></div>
+							<div><strong>Издадена от:</strong> <span data-bind="text: issuedBy"></span></div>
+							<div><strong>По запитване:</strong> <span data-bind="text: recipientInquiry"></span></div>
+						</div>
+						<div class="col-md-4">
+							<div><strong>Позиции:</strong> <span data-bind="text: itemCount"></span></div>
+							<div><strong>Последна промяна:</strong> <span data-bind="text: updatedAtText"></span></div>
+							<div><strong>PDF файл:</strong> <span data-bind="text: pdfFileName"></span></div>
+						</div>
+					</div>
+					<div class="table-responsive" data-bind="visible: items.length > 0">
+						<table class="table table-sm table-bordered align-middle mb-0">
+							<thead class="table-light">
+								<tr>
+									<th>№</th>
+									<th>Наименование</th>
+									<th>Размер</th>
+									<th>Печат / клише</th>
+									<th>Материал</th>
+									<th>Тираж</th>
+									<th>Цена</th>
+								</tr>
+							</thead>
+							<tbody data-bind="foreach: items">
+								<tr>
+									<td data-bind="text: rowNumber"></td>
+									<td data-bind="text: name"></td>
+									<td data-bind="text: size"></td>
+									<td data-bind="text: printInfo"></td>
+									<td data-bind="text: material"></td>
+									<td data-bind="text: quantityText"></td>
+									<td data-bind="text: priceText"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="text-muted small" data-bind="visible: items.length === 0">
+						Няма записани позиции в тази оферта.
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Затвори</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="pdf-container" data-bind="css: { 'dev-show': showPdfContainer }">
@@ -697,6 +817,12 @@
 			var materialsUnsubscribe = null;
 			var printColorsUnsubscribe = null;
 			var pricingSettingsUnsubscribe = null;
+			var offersUnsubscribe = null;
+			var offersSearchUnsubscribe = null;
+			var savedOffersPageSize = 10;
+			var savedOffersPageCursors = [];
+			var savedOffersCurrentPageIndex = 0;
+			var savedOffersLastVisibleDoc = null;
 			var defaults = window.SOFEL_DEFAULTS || {};
 			var defaultRecipients = defaults.defaultRecipients || [];
 			var defaultPriceIndexes = defaults.defaultPriceIndexes || [];
@@ -709,6 +835,27 @@
 			self.recipientSaveStatus = ko.observable('');
 			self.materialsStatus = ko.observable('Материали: локален списък');
 			self.printColorsStatus = ko.observable('Цветове: локален списък');
+			self.savedOffers = ko.observableArray([]);
+			self.allSavedOffers = ko.observableArray([]);
+			self.savedOffersStatus = ko.observable('Записани оферти: локален списък');
+			self.savedOffersRecipientFilter = ko.observable('');
+			self.canLoadPreviousSavedOffersPage = ko.observable(false);
+			self.canLoadNextSavedOffersPage = ko.observable(false);
+			self.loadPreviousSavedOffersPage = function () {};
+			self.loadNextSavedOffersPage = function () {};
+			self.isSavedOffersFilterActive = ko.pureComputed(function () {
+				return !!(self.savedOffersRecipientFilter() || '').toString().trim();
+			});
+			self.filteredSavedOffers = ko.pureComputed(function () {
+				var term = (self.savedOffersRecipientFilter() || '').toString().trim().toLowerCase();
+				var list = term ? self.allSavedOffers() : self.savedOffers();
+				if (!term) return list;
+				return ko.utils.arrayFilter(list, function (offer) {
+					var recipient = (offer && offer.recipientCompany ? String(offer.recipientCompany) : '').toLowerCase();
+					return recipient.indexOf(term) !== -1;
+				});
+			});
+			self.selectedSavedOfferPreview = ko.observable(null);
 			self.graphicPrintSurchargeEur = ko.observable(0.055);
 
 			function normalizeCompanyKey(value) {
@@ -774,6 +921,56 @@
 					nameEN: nameEN || name || String(id),
 					price: normalizedPrice
 				};
+			}
+
+			function formatFirestoreDate(value) {
+				if (!value) return '';
+				if (value && typeof value.toDate === 'function') {
+					value = value.toDate();
+				}
+				var date = value instanceof Date ? value : new Date(value);
+				if (!(date instanceof Date) || isNaN(date.getTime())) {
+					return '';
+				}
+				return date.toLocaleString('bg-BG');
+			}
+
+			function normalizeSavedOffer(docData, fallbackId) {
+				docData = docData || {};
+				var recipient = docData.recipient || {};
+				var items = Array.isArray(docData.items) ? docData.items : [];
+				return {
+					id: fallbackId || '',
+					offerNumber: (docData.offerNumber || fallbackId || '').toString().trim(),
+					offerSubject: (docData.offerSubject || '').toString().trim(),
+					documentDateRaw: (docData.documentDateRaw || '').toString().trim(),
+					issuedBy: (docData.issuedBy || '').toString().trim(),
+					recipientCompany: (recipient.company || '').toString().trim(),
+					recipientAttention: (recipient.attention || '').toString().trim(),
+					recipientPhone: (recipient.phone || '').toString().trim(),
+					recipientEmail: (recipient.email || '').toString().trim(),
+					recipientInquiry: (recipient.inquiry || '').toString().trim(),
+					itemCount: items.length,
+					recipient: recipient,
+					items: items,
+					offerDate: (docData.offerDate || '').toString().trim(),
+					pdfFileName: (docData.pdfFileName || '').toString().trim(),
+					updatedAtValue: docData.updatedAt || null,
+					updatedAtText: formatFirestoreDate(docData.updatedAt)
+				};
+			}
+
+			function formatSavedOfferQuantity(savedItem) {
+				var quantity = parseFloat(savedItem && savedItem.quantity);
+				if (!isFinite(quantity)) return '';
+				var unit = savedItem && savedItem.priceUnit === 'EUR/кг' ? ' кг' : ' бр';
+				return self.formatQuantity(quantity) + unit;
+			}
+
+			function formatSavedOfferPrice(savedItem) {
+				var price = parseFloat(savedItem && savedItem.price);
+				if (!isFinite(price)) return '0.00000';
+				return price.toFixed(5) + ' ' + ((savedItem && savedItem.priceUnit) || 'EUR/бр');
 			}
 
 			function loadMaterialsFromFirestore() {
@@ -867,6 +1064,114 @@
 				}, function () {
 					self.printColorsCatalog(defaultPrintColors.slice());
 					self.printColorsStatus('Цветове: Firestore грешка, ползва се локален списък');
+				});
+			}
+
+			function loadOffersFromFirestore() {
+				if (!firebaseDb) {
+					self.savedOffers([]);
+					self.allSavedOffers([]);
+					self.savedOffersStatus('Записани оферти: Firestore не е свързан');
+					self.canLoadPreviousSavedOffersPage(false);
+					self.canLoadNextSavedOffersPage(false);
+					return;
+				}
+
+				if (typeof offersUnsubscribe === 'function') {
+					offersUnsubscribe();
+					offersUnsubscribe = null;
+				}
+				if (typeof offersSearchUnsubscribe === 'function') {
+					offersSearchUnsubscribe();
+					offersSearchUnsubscribe = null;
+				}
+				savedOffersPageCursors = [];
+				savedOffersCurrentPageIndex = 0;
+				savedOffersLastVisibleDoc = null;
+
+				offersSearchUnsubscribe = firebaseDb.collection('offers').orderBy('updatedAt', 'desc').onSnapshot(function (snapshot) {
+					if (!snapshot || snapshot.empty) {
+						self.allSavedOffers([]);
+						return;
+					}
+
+					self.allSavedOffers(snapshot.docs.map(function (docSnap) {
+						return normalizeSavedOffer(docSnap.data(), docSnap.id);
+					}));
+				}, function () {
+					self.allSavedOffers([]);
+				});
+
+				function updateSavedOffersStatus() {
+					if (self.isSavedOffersFilterActive()) {
+						self.savedOffersStatus('Записани оферти: търсене във всички оферти, намерени ' + self.filteredSavedOffers().length);
+						return;
+					}
+					self.savedOffersStatus('Записани оферти: страница ' + (savedOffersCurrentPageIndex + 1) + ', заредени от Firestore');
+				}
+
+				function subscribeToSavedOffersPage(startAfterDoc) {
+					if (typeof offersUnsubscribe === 'function') {
+						offersUnsubscribe();
+						offersUnsubscribe = null;
+					}
+					var query = firebaseDb.collection('offers').orderBy('updatedAt', 'desc').limit(savedOffersPageSize);
+					if (startAfterDoc) {
+						query = query.startAfter(startAfterDoc);
+					}
+
+					offersUnsubscribe = query.onSnapshot(function (snapshot) {
+						if (!snapshot || snapshot.empty) {
+							self.savedOffers([]);
+							self.savedOffersStatus('Записани оферти: няма записи в Firestore');
+							self.canLoadNextSavedOffersPage(false);
+							self.canLoadPreviousSavedOffersPage(savedOffersCurrentPageIndex > 0 && !self.isSavedOffersFilterActive());
+							return;
+						}
+
+						var list = snapshot.docs.map(function (docSnap) {
+							return normalizeSavedOffer(docSnap.data(), docSnap.id);
+						});
+						list.sort(function (a, b) {
+							var aTime = a.updatedAtValue && typeof a.updatedAtValue.toMillis === 'function' ? a.updatedAtValue.toMillis() : 0;
+							var bTime = b.updatedAtValue && typeof b.updatedAtValue.toMillis === 'function' ? b.updatedAtValue.toMillis() : 0;
+							if (bTime !== aTime) return bTime - aTime;
+							return String(b.offerNumber || '').localeCompare(String(a.offerNumber || ''), 'bg', { numeric: true, sensitivity: 'base' });
+						});
+						self.savedOffers(list);
+						savedOffersLastVisibleDoc = snapshot.docs.length ? snapshot.docs[snapshot.docs.length - 1] : null;
+						self.canLoadPreviousSavedOffersPage(savedOffersCurrentPageIndex > 0 && !self.isSavedOffersFilterActive());
+						self.canLoadNextSavedOffersPage(snapshot.docs.length === savedOffersPageSize && !self.isSavedOffersFilterActive());
+						updateSavedOffersStatus();
+					}, function (err) {
+						self.savedOffers([]);
+						self.canLoadPreviousSavedOffersPage(false);
+						self.canLoadNextSavedOffersPage(false);
+						self.savedOffersStatus('Записани оферти: грешка при четене - ' + (err && err.message ? err.message : 'unknown'));
+					});
+				}
+
+				subscribeToSavedOffersPage(null);
+
+				self.loadNextSavedOffersPage = function () {
+					if (!savedOffersLastVisibleDoc || !self.canLoadNextSavedOffersPage() || self.isSavedOffersFilterActive()) return;
+					savedOffersPageCursors[savedOffersCurrentPageIndex] = savedOffersLastVisibleDoc;
+					savedOffersCurrentPageIndex += 1;
+					subscribeToSavedOffersPage(savedOffersPageCursors[savedOffersCurrentPageIndex - 1]);
+				};
+
+				self.loadPreviousSavedOffersPage = function () {
+					if (savedOffersCurrentPageIndex <= 0 || self.isSavedOffersFilterActive()) return;
+					savedOffersCurrentPageIndex -= 1;
+					var previousCursor = savedOffersCurrentPageIndex === 0 ? null : savedOffersPageCursors[savedOffersCurrentPageIndex - 1];
+					subscribeToSavedOffersPage(previousCursor);
+				};
+
+				self.savedOffersRecipientFilter.subscribe(function (value) {
+					var hasFilter = !!(value || '').toString().trim();
+					self.canLoadPreviousSavedOffersPage(!hasFilter && savedOffersCurrentPageIndex > 0);
+					self.canLoadNextSavedOffersPage(!hasFilter && self.savedOffers().length === savedOffersPageSize);
+					updateSavedOffersStatus();
 				});
 			}
 
@@ -1061,6 +1366,7 @@
 				loadMaterialsFromFirestore();
 				loadPrintColorsFromFirestore();
 				loadPricingSettingsFromFirestore();
+				loadOffersFromFirestore();
 
 				counterDocRef.onSnapshot(function (docSnap) {
 					var data = docSnap.data() || {};
@@ -1907,6 +2213,149 @@
 				    '@media print{ .no-print{display:none !important;} body{margin:0;} }';
 			}
 
+			function buildOfferPayload(pdfFileName) {
+				return {
+					offerNumber: (self.offerNumber() || '').toString().trim(),
+					offerDate: (self.offerDate() || '').toString().trim(),
+					offerSubject: (self.offerSubject() || '').toString().trim(),
+					documentDateRaw: (self.documentDateRaw() || '').toString().trim(),
+					issuedBy: (self.issuedBy() || '').toString().trim(),
+					recipient: {
+						company: (self.recipientCompany() || '').toString().trim(),
+						attention: (self.attentionName() || '').toString().trim(),
+						phone: (self.recipientPhone() || '').toString().trim(),
+						email: (self.recipientEmail() || '').toString().trim(),
+						inquiry: (self.inquiryFrom() || '').toString().trim()
+					},
+					pdfFileName: pdfFileName || '',
+					items: self.items().map(function (item, index) {
+						var qtyValue = item && item.minOrder ? ko.utils.unwrapObservable(item.minOrder) : 0;
+						var priceValue = item && item.priceValue ? ko.utils.unwrapObservable(item.priceValue) : 0;
+						var clicheValue = item && item.clichePriceValue ? ko.utils.unwrapObservable(item.clichePriceValue) : 0;
+						return {
+							rowNumber: index + 1,
+							name: item && item.name ? item.name : '',
+							size: item && item.size ? item.size : '',
+							printInfo: item && item.printInfo ? ko.utils.unwrapObservable(item.printInfo) : '',
+							material: item && item.material ? item.material : '',
+							quantity: parseFloat(qtyValue) || 0,
+							price: parseFloat(priceValue) || 0,
+							priceUnit: item && item.priceUnit ? item.priceUnit : '',
+							clichePrice: parseFloat(clicheValue) || 0,
+							colorCount: parseInt(item && item.colorCount, 10) || 0,
+							envId: parseInt(item && item.envId, 10) || 0,
+							digitalPrintSelected: !!(item && item.digitalPrintSelected)
+						};
+					})
+				};
+			}
+
+			function createOfferItemFromSavedData(savedItem) {
+				savedItem = savedItem || {};
+				var quantity = parseFloat(savedItem.quantity) || 0;
+				var price = parseFloat(savedItem.price) || 0;
+				var clichePrice = parseFloat(savedItem.clichePrice) || 0;
+				var basePrintInfo = (savedItem.printInfo || '').toString().trim();
+				var item = {
+					name: (savedItem.name || '').toString(),
+					material: (savedItem.material || '').toString(),
+					size: (savedItem.size || '').toString(),
+					basePrintInfo: basePrintInfo,
+					minOrder: ko.observable(quantity),
+					colorCount: parseInt(savedItem.colorCount, 10) || 0,
+					envId: parseInt(savedItem.envId, 10) || 0,
+					digitalPrintSelected: !!savedItem.digitalPrintSelected,
+					clichePriceValue: ko.observable(clichePrice.toFixed(5)),
+					priceUnit: (savedItem.priceUnit || 'EUR/бр').toString(),
+					priceValue: ko.observable(price.toFixed(5)),
+					quantityValue: ko.observable(quantity.toFixed(2)),
+					isEditingPrice: ko.observable(false),
+					isEditingQuantity: ko.observable(false)
+				};
+				item.printInfo = ko.pureComputed(function () {
+					var digitalLabel = self.selectedLanguage() === 'en' ? 'Digital' : 'Дигитален';
+					return item.digitalPrintSelected ? digitalLabel : item.basePrintInfo;
+				});
+				item.formattedClichePrice = ko.pureComputed(function () {
+					return formatPriceValue(item.clichePriceValue()) + ' EUR';
+				});
+				item.formattedPrice = ko.pureComputed(function () {
+					return formatPriceValue(item.priceValue()) + ' ' + (item.priceUnit || 'EUR/бр');
+				});
+				return item;
+			}
+
+			self.loadSavedOffer = function (savedOffer) {
+				if (!savedOffer) return;
+				self.offerNumber((savedOffer.offerNumber || '').toString());
+				self.offerSubject((savedOffer.offerSubject || '').toString());
+				self.offerDate((savedOffer.offerDate || '').toString() || (new Date()).toISOString().slice(0, 10));
+				self.documentDateRaw((savedOffer.documentDateRaw || '').toString() || (new Date()).toISOString().slice(0, 10));
+				self.issuedBy((savedOffer.issuedBy || '').toString() || self.issuedBy());
+				self.selectedRecipientId('');
+				self.recipientCompany(savedOffer.recipient && savedOffer.recipient.company ? String(savedOffer.recipient.company) : '');
+				self.attentionName(savedOffer.recipient && savedOffer.recipient.attention ? String(savedOffer.recipient.attention) : '');
+				self.recipientPhone(savedOffer.recipient && savedOffer.recipient.phone ? String(savedOffer.recipient.phone) : '');
+				self.recipientEmail(savedOffer.recipient && savedOffer.recipient.email ? String(savedOffer.recipient.email) : '');
+				self.inquiryFrom(savedOffer.recipient && savedOffer.recipient.inquiry ? String(savedOffer.recipient.inquiry) : '');
+				self.items((Array.isArray(savedOffer.items) ? savedOffer.items : []).map(createOfferItemFromSavedData));
+				self.savedOffersStatus('Заредена оферта № ' + ((savedOffer.offerNumber || '').toString() || '?'));
+			};
+
+			self.deleteSavedOffer = function (savedOffer) {
+				if (!savedOffer || !savedOffer.id) return;
+				if (!confirm('Изтриване на оферта ' + (savedOffer.offerNumber || savedOffer.id) + '?')) return;
+				firebaseDb.collection('offers').doc(savedOffer.id).delete()
+					.catch(function (err) { alert('Грешка при изтриване: ' + err.message); });
+			};
+
+			self.previewSavedOffer = function (savedOffer) {
+				if (!savedOffer) return;
+				var items = Array.isArray(savedOffer.items) ? savedOffer.items : [];
+				self.selectedSavedOfferPreview({
+					offerNumber: savedOffer.offerNumber || '',
+					recipientCompany: savedOffer.recipientCompany || '',
+					recipientAttention: savedOffer.recipientAttention || '',
+					recipientPhone: savedOffer.recipientPhone || '',
+					recipientEmail: savedOffer.recipientEmail || '',
+					recipientInquiry: savedOffer.recipientInquiry || '',
+					offerSubject: savedOffer.offerSubject || '',
+					documentDateRaw: savedOffer.documentDateRaw || '',
+					issuedBy: savedOffer.issuedBy || '',
+					itemCount: savedOffer.itemCount || 0,
+					updatedAtText: savedOffer.updatedAtText || '',
+					pdfFileName: savedOffer.pdfFileName || '',
+					items: items.map(function (item, index) {
+						return {
+							rowNumber: item && item.rowNumber ? item.rowNumber : (index + 1),
+							name: item && item.name ? item.name : '',
+							size: item && item.size ? item.size : '',
+							printInfo: item && item.printInfo ? item.printInfo : '',
+							material: item && item.material ? item.material : '',
+							quantityText: formatSavedOfferQuantity(item),
+							priceText: formatSavedOfferPrice(item)
+						};
+					})
+				});
+				var modalElement = document.getElementById('saved-offer-preview-modal');
+				if (!modalElement || typeof bootstrap === 'undefined' || !bootstrap.Modal) return;
+				bootstrap.Modal.getOrCreateInstance(modalElement).show();
+			};
+
+			function saveOfferToFirestore(pdfFileName) {
+				if (!firebaseDb) {
+					return Promise.reject(new Error('Firestore не е свързан'));
+				}
+				var offerNumber = (self.offerNumber() || '').toString().trim();
+				if (!offerNumber) {
+					return Promise.reject(new Error('Липсва номер на офертата'));
+				}
+				var docId = offerNumber.replace(/[\\/?#\[\]]+/g, '-').trim();
+				var payload = buildOfferPayload(pdfFileName);
+				payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+				return firebaseDb.collection('offers').doc(docId).set(payload, { merge: true });
+			}
+
 
 			self.exportPdf = function () {
 				var element = document.getElementById('pdf-content');
@@ -1928,6 +2377,13 @@
 				var safeOrderNumber = orderNumber.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_');
 				var safeCompanyName = companyName.replace(/[\\/:*?"<>|]+/g, '').replace(/[„“"']/g, '').replace(/\s+/g, '_');
 				var pdfFileName = (safeOrderNumber || 'porachka') + '_' + (safeCompanyName || 'firma') + '.pdf';
+				if (!orderNumber) {
+					self.offerNumberStatus('Липсва номер на офертата');
+					if (exportMount && exportMount.parentNode) {
+						exportMount.parentNode.removeChild(exportMount);
+					}
+					return;
+				}
 				var styleEl = document.createElement('style');
 				styleEl.type = 'text/css';
 				styleEl.id = 'pdf-export-render-style';
@@ -1948,7 +2404,7 @@
 					pagebreak: { mode: ['css', 'legacy'], avoid: ['p', 'tr', 'td', 'th', '.offer-doc-footer'] },
 					jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 				};
-				var task = html2pdf().set(opt).from(exportClone).save();
+				var task;
 				function cleanup() {
 					if (styleEl && styleEl.parentNode) {
 						styleEl.parentNode.removeChild(styleEl);
@@ -1957,11 +2413,18 @@
 						exportMount.parentNode.removeChild(exportMount);
 					}
 				}
-				if (task && typeof task.then === 'function') {
-					task.then(cleanup, cleanup);
-				} else {
-					setTimeout(cleanup, 1000);
-				}
+				saveOfferToFirestore(pdfFileName).then(function () {
+					self.offerNumberStatus('Офертата е записана във Firestore');
+					task = html2pdf().set(opt).from(exportClone).save();
+					if (task && typeof task.then === 'function') {
+						task.then(cleanup, cleanup);
+					} else {
+						setTimeout(cleanup, 1000);
+					}
+				}).catch(function (err) {
+					self.offerNumberStatus('Грешка при запис на офертата: ' + (err && err.message ? err.message : 'unknown'));
+					cleanup();
+				});
 			};
 
 			self.printDoc = function () {
