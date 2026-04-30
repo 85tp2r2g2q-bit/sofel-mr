@@ -285,10 +285,14 @@
 		.form-tabs {
 			border-bottom: 0;
 		}
+		.form-tabs .nav-item {
+			flex: 0 0 auto;
+		}
 		.form-tabs .nav-link {
 			border: 1px solid #d9dee6;
 			border-bottom: 0;
 			color: #495057;
+			white-space: nowrap;
 		}
 		.form-tabs .nav-link.active {
 			background: #f4f7fb;
@@ -358,6 +362,18 @@
 		}
 		.controls-toolbar .btn { flex: 0 1 auto; }
 		@media (max-width: 576px) {
+			.form-tabs {
+				display: flex;
+				flex-wrap: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+				-webkit-overflow-scrolling: touch;
+				padding-bottom: .2rem;
+				scrollbar-width: thin;
+			}
+			.form-tabs::-webkit-scrollbar {
+				height: 6px;
+			}
 			.controls-toolbar .btn { flex: 1 1 100%; }
 			.tab-step-actions {
 				justify-content: stretch;

@@ -36,6 +36,8 @@
 	<nav class="sticky-action-bar navbar">
 		<div class="container-fluid px-3 gap-2">
 			<span class="navbar-brand mb-0 h6 text-muted me-auto">SOFEL-MR оферти</span>
+			<button type="button" class="btn btn-outline-secondary btn-sm"
+				data-bind="click: toggleLanguage, text: selectedLanguage() === 'bg' ? 'EN' : 'BG'" title="Смяна на език" aria-label="Смяна на език"></button>
 			<button class="btn btn-outline-secondary btn-sm" data-bind="click: toggleTheme, attr: { title: themeMode() === 'light' ? 'Soft Gray тема' : 'Light тема', 'aria-label': themeMode() === 'light' ? 'Soft Gray тема' : 'Light тема' }">
 				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m0 1a7 7 0 1 1 0 14z"/><path d="M8 1a7 7 0 0 1 0 14z"/></svg>
 			</button>
@@ -52,13 +54,13 @@
 			<div class="col-12 mb-3">
 				<ul class="nav nav-tabs form-tabs" role="tablist">
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tab-item" type="button" role="tab">Данни за артикула</button>
+						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tab-item" type="button" role="tab">Артикул</button>
 					</li>
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-recipient" type="button" role="tab">Получател</button>
 					</li>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-offer" type="button" role="tab">Данни за офертата</button>
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-offer" type="button" role="tab">Оферта</button>
 					</li>
 				</ul>
 			</div>
@@ -67,10 +69,6 @@
 			<div class="col-12 tab-pane fade show active" id="form-tab-item" role="tabpanel">
 				<div class="card p-3 form-section-card">
 					<h5 class="border-bottom pb-2 mb-3">Данни за артикула</h5>
-					<div class="mb-3 d-flex justify-content-end">
-						<button type="button" class="btn btn-outline-secondary"
-							data-bind="click: toggleLanguage, text: selectedLanguage() === 'bg' ? 'EN' : 'BG'"></button>
-					</div>
 					<!-- Нов селект за пликове -->
 					<div class="mb-3">
 					<label class="form-label">Избор на продукт</label>
