@@ -31,12 +31,28 @@
 	</script>
 </head>
 
-<body class="p-4">
+<body class="p-4" style="padding-top: calc(1.5rem + 56px) !important;">
+	<!-- Sticky action bar -->
+	<nav class="sticky-action-bar navbar">
+		<div class="container-fluid px-3 gap-2">
+			<a class="navbar-brand mb-0 me-auto d-flex align-items-center" href="#">
+				<img src="rudi_simple_files/image005.jpg" alt="Sofel лого" style="height:38px; width:auto; object-fit:contain;" />
+			</a>
+			<button class="btn btn-outline-success btn-sm" data-bind="click: exportPdf">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
+				Export PDF
+			</button>
+			<button class="btn btn-outline-primary btn-sm" data-bind="click: printDoc">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg>
+				Print
+			</button>
+		</div>
+	</nav>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
 				<div class="card p-3">
-					<h5 class="mb-3">Данни за артикула</h5>
+					<h5 class="border-bottom pb-2 mb-3">Данни за артикула</h5>
 					<div class="mb-3 d-flex justify-content-end">
 						<button type="button" class="btn btn-outline-secondary"
 							data-bind="click: toggleLanguage, text: selectedLanguage() === 'bg' ? 'EN' : 'BG'"></button>
@@ -283,7 +299,7 @@
 
 			<div class="col-md-6">
 				<div class="card p-3">
-					<h5>Получател</h5>
+					<h5 class="border-bottom pb-2 mb-3">Получател</h5>
 					<div class="mb-3">
 						<label class="form-label">Избор на получател</label>
 						<input type="text" class="form-control mb-2" placeholder="Търси получател..."
@@ -320,7 +336,7 @@
 			</div>
 			<div class="col-12 mt-3">
 				<div class="card p-3">
-					<h5>Данни за офертата</h5>
+					<h5 class="border-bottom pb-2 mb-3">Данни за офертата</h5>
 					<div class="mb-3">
 						<label class="form-label">Издадена от</label>
 						<select class="form-select" data-bind="options: issuerOptions, optionsText: 'name', optionsValue: 'name', value: issuedBy"></select>
@@ -341,7 +357,7 @@
 						<label class="form-label">Дата на документа</label>
 						<input type="date" class="form-control" data-bind="value: documentDateRaw" />
 					</div>
-					<div class="mb-3 controls-toolbar">
+					<div class="mb-3 controls-toolbar d-grid gap-2 d-sm-flex">
 						<button class="btn btn-outline-success" data-bind="click: exportPdf">
 							<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
 							Export PDF
@@ -355,7 +371,7 @@
 			</div>
 			<div class="col-12 mt-3">
 				<div class="card p-3">
-					<h5>Генерирани оферти</h5>
+					<h5 class="border-bottom pb-2 mb-3">Генерирани оферти</h5>
 					<div class="alert alert-light border d-flex justify-content-between align-items-center py-2 px-3 mb-3">
 						<div>
 							<strong>Cloud брояч:</strong>
@@ -364,7 +380,7 @@
 						<small class="text-muted" data-bind="text: cloudStatus"></small>
 					</div>
 					<div class="table-responsive">
-						<table class="table table-sm table-bordered mb-0 align-middle">
+						<table class="table table-sm table-bordered table-striped table-hover mb-0 align-middle">
 							<thead class="table-light">
 								<tr>
 									<th>№</th>
@@ -409,7 +425,7 @@
 													</svg>
 												</span>
 											</button>
-											<button class="btn btn-sm btn-danger icon-btn" data-bind="click: $parent.removeItem, attr: { title: 'Изтрий', 'aria-label': 'Изтрий' }">
+											<button class="btn btn-sm btn-outline-danger icon-btn" data-bind="click: $parent.removeItem, attr: { title: 'Изтрий', 'aria-label': 'Изтрий' }">
 												<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 													<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
 													<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM7 2v1h2V2z"></path>
@@ -425,7 +441,7 @@
 			</div>
 			<div class="col-12 mt-3">
 				<div class="card p-3">
-					<h5>Записани оферти</h5>
+					<h5 class="border-bottom pb-2 mb-3">Записани оферти</h5>
 					<div class="alert alert-light border d-flex justify-content-between align-items-center py-2 px-3 mb-3">
 						<div>
 							<strong>Общо записани:</strong>
@@ -439,12 +455,16 @@
 							<input type="text" class="form-control" placeholder="Въведи получател..." data-bind="textInput: savedOffersRecipientFilter" />
 						</div>
 						<div class="col-md-8 d-flex justify-content-md-end gap-2">
-							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadPreviousSavedOffersPage, enable: canLoadPreviousSavedOffersPage">Назад</button>
-							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadNextSavedOffersPage, enable: canLoadNextSavedOffersPage">Напред</button>
+							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadPreviousSavedOffersPage, enable: canLoadPreviousSavedOffersPage">
+								<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg>Назад
+							</button>
+							<button type="button" class="btn btn-outline-secondary" data-bind="click: loadNextSavedOffersPage, enable: canLoadNextSavedOffersPage">Напред
+								<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="ms-1"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+							</button>
 						</div>
 					</div>
 					<div class="table-responsive" data-bind="visible: filteredSavedOffers().length > 0">
-						<table class="table table-sm table-bordered mb-0 align-middle">
+						<table class="table table-sm table-bordered table-striped table-hover mb-0 align-middle">
 							<thead class="table-light">
 								<tr>
 									<th>№ оферта</th>
@@ -465,7 +485,7 @@
 									<td class="text-nowrap" data-bind="text: documentDateRaw"></td>
 									<td data-bind="text: issuedBy"></td>
 									<td data-bind="text: itemCount"></td>
-									<td data-bind="text: updatedAtText"></td>
+									<td class="text-nowrap" data-bind="text: updatedAtText"></td>
 									<td class="text-center text-nowrap">
 										<button type="button" class="btn btn-sm btn-outline-secondary icon-btn me-1" data-bind="click: $root.previewSavedOffer" title="Преглед" aria-label="Преглед">
 											<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
@@ -488,6 +508,7 @@
 			</div>
 		</div>
 	</div>
+	</div><!-- /container -->
 	<div class="modal fade" id="saved-offer-preview-modal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content" data-bind="with: selectedSavedOfferPreview">
@@ -706,7 +727,7 @@
 											</svg>
 										</span>
 									</button>
-									<button class='btn btn-sm btn-danger icon-btn' data-bind='click: $parent.removeItem, attr: { title: "Изтрий", "aria-label": "Изтрий" }'>
+									<button class='btn btn-sm btn-outline-danger icon-btn' data-bind='click: $parent.removeItem, attr: { title: "Изтрий", "aria-label": "Изтрий" }'>
 										<svg viewBox='0 0 16 16' fill='currentColor' aria-hidden='true'>
 											<path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z'></path>
 											<path d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM7 2v1h2V2z'></path>
@@ -2603,4 +2624,5 @@
 </body>
 
 </html>
+
 
