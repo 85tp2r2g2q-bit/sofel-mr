@@ -232,7 +232,7 @@
 					<label class="form-label">Тираж по запитване от клиент /бр</label>
 					<select class="form-select" data-bind="options: quantitiesForSelected, value: selectedQuantity, optionsText: function(q){ return formatQuantity(q.qty); }, enable: quantitiesForSelected().length > 0"></select>
 				</div>
-				<div class="mb-3" data-bind="visible: showAdvancedPricingFields">
+				<div class="mb-3" data-bind="visible:  isPaperBagSelected()">
 					<label class="form-label">ОБЩО ХАРТИЯ ЗА ТИРАЖА /кг</label>
 					<input type="number" step="any" class="form-control readonly-field" readonly
 						data-bind="value: totalPaperForQuantityKg, valueUpdate: 'afterkeydown'" />
