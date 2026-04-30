@@ -274,6 +274,13 @@
 			border-bottom: 1px solid #dee2e6;
 			box-shadow: 0 2px 8px rgba(0,0,0,.07);
 			height: 56px;
+			flex-wrap: nowrap;
+		}
+		.sticky-action-bar .container-fluid {
+			flex-wrap: nowrap;
+		}
+		.sticky-action-bar .btn {
+			white-space: nowrap;
 		}
 
 		/* Responsive controls toolbar */

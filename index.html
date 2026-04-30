@@ -35,16 +35,12 @@
 	<!-- Sticky action bar -->
 	<nav class="sticky-action-bar navbar">
 		<div class="container-fluid px-3 gap-2">
-			<a class="navbar-brand mb-0 me-auto d-flex align-items-center" href="#">
-				<img src="rudi_simple_files/image005.jpg" alt="Sofel лого" style="height:38px; width:auto; object-fit:contain;" />
-			</a>
-			<button class="btn btn-outline-success btn-sm" data-bind="click: exportPdf">
-				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
-				Export PDF
+			<span class="navbar-brand mb-0 h6 text-muted me-auto">SOFEL-MR оферти</span>
+			<button class="btn btn-outline-success btn-sm" data-bind="click: exportPdf" title="Export PDF" aria-label="Export PDF">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
 			</button>
-			<button class="btn btn-outline-primary btn-sm" data-bind="click: printDoc">
-				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="me-1"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg>
-				Print
+			<button class="btn btn-outline-primary btn-sm" data-bind="click: printDoc" title="Print" aria-label="Print">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg>
 			</button>
 		</div>
 	</nav>
