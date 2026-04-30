@@ -282,6 +282,66 @@
 		.sticky-action-bar .btn {
 			white-space: nowrap;
 		}
+		.form-tabs {
+			border-bottom: 0;
+		}
+		.form-tabs .nav-link {
+			border: 1px solid #d9dee6;
+			border-bottom: 0;
+			color: #495057;
+		}
+		.form-tabs .nav-link.active {
+			background: #f4f7fb;
+			color: #1f3c68;
+			font-weight: 600;
+		}
+		.form-tabs-content {
+			width: 100%;
+		}
+		.form-section-card {
+			background: #f9fbff;
+			border: 1px solid #dfe6f1;
+			box-shadow: 0 1px 0 rgba(13, 110, 253, 0.03);
+		}
+		.tab-step-actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: .5rem;
+			margin-top: 1rem;
+			padding-top: .75rem;
+			border-top: 1px dashed #d8dee8;
+		}
+		.mobile-scroll-hint {
+			display: none;
+			font-size: .8rem;
+			color: #6c757d;
+			margin-top: .35rem;
+		}
+		.has-mobile-fade {
+			position: relative;
+		}
+		.theme-soft-gray {
+			background: #eceff3;
+		}
+		.theme-soft-gray .card {
+			background: #f6f8fb;
+			border-color: #d5dde8;
+		}
+		.theme-soft-gray .table-light {
+			--bs-table-bg: #e8edf4;
+		}
+		.theme-soft-gray .form-control,
+		.theme-soft-gray .form-select {
+			border-color: #c8d0db;
+			background-color: #ffffff;
+		}
+		.theme-soft-gray .sticky-action-bar {
+			background: rgba(241, 244, 248, 0.96);
+			border-bottom-color: #c8d0db;
+		}
+		.mobile-action-bar {
+			display: none;
+		}
 
 		/* Responsive controls toolbar */
 		.controls-toolbar {
@@ -299,6 +359,50 @@
 		.controls-toolbar .btn { flex: 0 1 auto; }
 		@media (max-width: 576px) {
 			.controls-toolbar .btn { flex: 1 1 100%; }
+			.tab-step-actions {
+				justify-content: stretch;
+			}
+			.tab-step-actions .btn {
+				flex: 1 1 100%;
+			}
+			.mobile-action-bar {
+				display: flex;
+				position: fixed;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 1035;
+				padding: .5rem .75rem;
+				gap: .5rem;
+				justify-content: center;
+				background: rgba(255,255,255,.96);
+				border-top: 1px solid #d9dee6;
+				backdrop-filter: blur(6px);
+			}
+			.mobile-action-bar .btn {
+				width: 46px;
+				height: 38px;
+				padding: 0;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+			}
+			body {
+				padding-bottom: 72px !important;
+			}
+			.mobile-scroll-hint {
+				display: block;
+			}
+			.has-mobile-fade::after {
+				content: '';
+				position: absolute;
+				right: 0;
+				top: 0;
+				width: 28px;
+				height: 100%;
+				pointer-events: none;
+				background: linear-gradient(to left, rgba(255,255,255,.9), rgba(255,255,255,0));
+			}
 			.offer-doc-header {
 				padding: 0;
 			}

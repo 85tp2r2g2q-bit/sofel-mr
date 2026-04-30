@@ -31,11 +31,14 @@
 	</script>
 </head>
 
-<body class="p-4" style="padding-top: calc(1.5rem + 56px) !important;">
+<body class="p-4" style="padding-top: calc(1.5rem + 56px) !important;" data-bind="css: themeModeClass">
 	<!-- Sticky action bar -->
 	<nav class="sticky-action-bar navbar">
 		<div class="container-fluid px-3 gap-2">
 			<span class="navbar-brand mb-0 h6 text-muted me-auto">SOFEL-MR оферти</span>
+			<button class="btn btn-outline-secondary btn-sm" data-bind="click: toggleTheme, attr: { title: themeMode() === 'light' ? 'Soft Gray тема' : 'Light тема', 'aria-label': themeMode() === 'light' ? 'Soft Gray тема' : 'Light тема' }">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m0 1a7 7 0 1 1 0 14z"/><path d="M8 1a7 7 0 0 1 0 14z"/></svg>
+			</button>
 			<button class="btn btn-outline-success btn-sm" data-bind="click: exportPdf" title="Export PDF" aria-label="Export PDF">
 				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
 			</button>
@@ -46,8 +49,23 @@
 	</nav>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-6">
-				<div class="card p-3">
+			<div class="col-12 mb-3">
+				<ul class="nav nav-tabs form-tabs" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tab-item" type="button" role="tab">Данни за артикула</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-recipient" type="button" role="tab">Получател</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-offer" type="button" role="tab">Данни за офертата</button>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tab-content form-tabs-content">
+			<div class="col-12 tab-pane fade show active" id="form-tab-item" role="tabpanel">
+				<div class="card p-3 form-section-card">
 					<h5 class="border-bottom pb-2 mb-3">Данни за артикула</h5>
 					<div class="mb-3 d-flex justify-content-end">
 						<button type="button" class="btn btn-outline-secondary"
@@ -287,14 +305,19 @@
 				<div class="mt-3 d-flex justify-content-end">
 					<button class="btn btn-outline-secondary" data-bind="click: addToOffer">Добави към оферта</button>
 				</div>
+				<div class="tab-step-actions">
+					<button type="button" class="btn btn-outline-primary" data-bind="click: goToRecipientTab">
+						Напред: Получател
+					</button>
+				</div>
 					<!-- Показване на стойността (количество * цена) -->
 				</div>
 				</div>
 			</div>
 			
 
-			<div class="col-md-6">
-				<div class="card p-3">
+			<div class="col-12 tab-pane fade" id="form-tab-recipient" role="tabpanel">
+				<div class="card p-3 form-section-card">
 					<h5 class="border-bottom pb-2 mb-3">Получател</h5>
 					<div class="mb-3">
 						<label class="form-label">Избор на получател</label>
@@ -328,10 +351,14 @@
 						<button type="button" class="btn btn-outline-danger" data-bind="click: deleteRecipient">Изтрий получател</button>
 						<small class="text-muted" data-bind="text: recipientSaveStatus"></small>
 					</div>
+					<div class="tab-step-actions">
+						<button type="button" class="btn btn-outline-secondary" data-bind="click: goToItemTab">Назад: Данни за артикула</button>
+						<button type="button" class="btn btn-outline-primary" data-bind="click: goToOfferTab">Напред: Данни за офертата</button>
+					</div>
 				</div>
 			</div>
-			<div class="col-12 mt-3">
-				<div class="card p-3">
+			<div class="col-12 mt-3 tab-pane fade" id="form-tab-offer" role="tabpanel">
+				<div class="card p-3 form-section-card">
 					<h5 class="border-bottom pb-2 mb-3">Данни за офертата</h5>
 					<div class="mb-3">
 						<label class="form-label">Издадена от</label>
@@ -363,7 +390,11 @@
 							Print
 						</button>
 					</div>
+					<div class="tab-step-actions">
+						<button type="button" class="btn btn-outline-secondary" data-bind="click: goToRecipientTab">Назад: Получател</button>
+					</div>
 				</div>
+			</div>
 			</div>
 			<div class="col-12 mt-3">
 				<div class="card p-3">
@@ -375,7 +406,7 @@
 						</div>
 						<small class="text-muted" data-bind="text: cloudStatus"></small>
 					</div>
-					<div class="table-responsive">
+					<div class="table-responsive has-mobile-fade">
 						<table class="table table-sm table-bordered table-striped table-hover mb-0 align-middle">
 							<thead class="table-light">
 								<tr>
@@ -433,6 +464,7 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="mobile-scroll-hint">Плъзни таблицата наляво/надясно</div>
 				</div>
 			</div>
 			<div class="col-12 mt-3">
@@ -459,7 +491,7 @@
 							</button>
 						</div>
 					</div>
-					<div class="table-responsive" data-bind="visible: filteredSavedOffers().length > 0">
+					<div class="table-responsive has-mobile-fade" data-bind="visible: filteredSavedOffers().length > 0">
 						<table class="table table-sm table-bordered table-striped table-hover mb-0 align-middle">
 							<thead class="table-light">
 								<tr>
@@ -481,7 +513,10 @@
 									<td class="text-nowrap" data-bind="text: documentDateRaw"></td>
 									<td data-bind="text: issuedBy"></td>
 									<td data-bind="text: itemCount"></td>
-									<td class="text-nowrap" data-bind="text: updatedAtText"></td>
+									<td class="text-nowrap">
+										<span class="badge" data-bind="text: updatedAtBadgeText, css: updatedAtBadgeClass"></span>
+										<div class="small text-muted mt-1" data-bind="text: updatedAtText"></div>
+									</td>
 									<td class="text-center text-nowrap">
 										<button type="button" class="btn btn-sm btn-outline-secondary icon-btn me-1" data-bind="click: $root.previewSavedOffer" title="Преглед" aria-label="Преглед">
 											<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
@@ -497,12 +532,21 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="mobile-scroll-hint" data-bind="visible: filteredSavedOffers().length > 0">Плъзни таблицата наляво/надясно</div>
 					<div class="text-muted small" data-bind="visible: filteredSavedOffers().length === 0">
 						Няма записани оферти за показване.
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="mobile-action-bar d-md-none">
+		<button type="button" class="btn btn-outline-success" data-bind="click: exportPdf" title="Export PDF" aria-label="Export PDF">
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.155-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.73-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 1.00-.234.399-.233.61-.655.213-.423.213-.984t-.213-.99a1.5 1.5 0 0 0-.61-.654 1.9 1.9 0 0 0-1.0-.233zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.726 0 .425-.118.727a.9.9 0 0 1-.354.455q-.238.152-.61.152h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg>
+		</button>
+		<button type="button" class="btn btn-outline-primary" data-bind="click: printDoc" title="Print" aria-label="Print">
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg>
+		</button>
 	</div>
 	</div><!-- /container -->
 	<div class="modal fade" id="saved-offer-preview-modal" tabindex="-1" aria-hidden="true">
@@ -870,6 +914,45 @@
 			self.savedOffersRecipientFilter = ko.observable('');
 			self.canLoadPreviousSavedOffersPage = ko.observable(false);
 			self.canLoadNextSavedOffersPage = ko.observable(false);
+			self.themeMode = ko.observable('light');
+			self.themeModeClass = ko.pureComputed(function () {
+				return self.themeMode() === 'soft-gray' ? 'theme-soft-gray' : 'theme-light';
+			});
+			self.toggleTheme = function () {
+				self.themeMode(self.themeMode() === 'light' ? 'soft-gray' : 'light');
+			};
+			function focusFirstFieldInTab(tabTarget) {
+				window.setTimeout(function () {
+					var targetPane = document.querySelector(tabTarget);
+					if (!targetPane) return;
+					var firstField = targetPane.querySelector('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])');
+					if (!firstField) return;
+					if (firstField.offsetParent === null) return;
+					firstField.focus();
+				}, 80);
+			}
+			function showFormTab(tabTarget) {
+				var trigger = document.querySelector('.form-tabs .nav-link[data-bs-target="' + tabTarget + '"]');
+				if (!trigger) return;
+				if (window.bootstrap && window.bootstrap.Tab) {
+					window.bootstrap.Tab.getOrCreateInstance(trigger).show();
+					focusFirstFieldInTab(tabTarget);
+					return;
+				}
+				var currentActive = document.querySelector('.form-tabs .nav-link.active');
+				if (currentActive) currentActive.classList.remove('active');
+				trigger.classList.add('active');
+				var panes = document.querySelectorAll('.form-tabs-content .tab-pane');
+				panes.forEach(function (pane) {
+					pane.classList.remove('active', 'show');
+				});
+				var targetPane = document.querySelector(tabTarget);
+				if (targetPane) targetPane.classList.add('active', 'show');
+				focusFirstFieldInTab(tabTarget);
+			}
+			self.goToItemTab = function () { showFormTab('#form-tab-item'); };
+			self.goToRecipientTab = function () { showFormTab('#form-tab-recipient'); };
+			self.goToOfferTab = function () { showFormTab('#form-tab-offer'); };
 			self.loadPreviousSavedOffersPage = function () {};
 			self.loadNextSavedOffersPage = function () {};
 			self.isSavedOffersFilterActive = ko.pureComputed(function () {
@@ -964,10 +1047,45 @@
 				return date.toLocaleString('bg-BG');
 			}
 
+			function getSavedOfferUpdatedAtDate(value) {
+				if (!value) return null;
+				if (value && typeof value.toDate === 'function') {
+					value = value.toDate();
+				}
+				var date = value instanceof Date ? value : new Date(value);
+				if (!(date instanceof Date) || isNaN(date.getTime())) {
+					return null;
+				}
+				return date;
+			}
+
+			function getSavedOfferRecencyBadge(value) {
+				var date = getSavedOfferUpdatedAtDate(value);
+				if (!date) {
+					return { text: 'Без дата', css: 'text-bg-light text-dark' };
+				}
+				var now = new Date();
+				var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+				var tomorrowStart = new Date(todayStart);
+				tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+				if (date >= todayStart && date < tomorrowStart) {
+					return { text: 'Днес', css: 'text-bg-success' };
+				}
+				var day = todayStart.getDay();
+				var mondayOffset = day === 0 ? 6 : day - 1;
+				var weekStart = new Date(todayStart);
+				weekStart.setDate(weekStart.getDate() - mondayOffset);
+				if (date >= weekStart) {
+					return { text: 'Тази седмица', css: 'text-bg-warning text-dark' };
+				}
+				return { text: 'По-стара', css: 'text-bg-secondary' };
+			}
+
 			function normalizeSavedOffer(docData, fallbackId) {
 				docData = docData || {};
 				var recipient = docData.recipient || {};
 				var items = Array.isArray(docData.items) ? docData.items : [];
+				var recencyBadge = getSavedOfferRecencyBadge(docData.updatedAt);
 				return {
 					id: fallbackId || '',
 					offerNumber: (docData.offerNumber || fallbackId || '').toString().trim(),
@@ -985,7 +1103,9 @@
 					offerDate: (docData.offerDate || '').toString().trim(),
 					pdfFileName: (docData.pdfFileName || '').toString().trim(),
 					updatedAtValue: docData.updatedAt || null,
-					updatedAtText: formatFirestoreDate(docData.updatedAt)
+					updatedAtText: formatFirestoreDate(docData.updatedAt),
+					updatedAtBadgeText: recencyBadge.text,
+					updatedAtBadgeClass: recencyBadge.css
 				};
 			}
 
