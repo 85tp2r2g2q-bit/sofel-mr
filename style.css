@@ -293,6 +293,35 @@
 			border-bottom: 0;
 			color: #495057;
 			white-space: nowrap;
+			display: inline-flex;
+			align-items: center;
+			gap: .45rem;
+		}
+		.tab-progress-badge {
+			display: inline-flex;
+			align-items: center;
+			padding: .15rem .45rem;
+			border-radius: 999px;
+			font-size: .7rem;
+			line-height: 1.1;
+			font-weight: 600;
+			letter-spacing: .02em;
+			border: 1px solid transparent;
+		}
+		.tab-progress-empty {
+			background: #f8f9fa;
+			color: #6c757d;
+			border-color: #dee2e6;
+		}
+		.tab-progress-partial {
+			background: #fff4db;
+			color: #8a5a00;
+			border-color: #ffd788;
+		}
+		.tab-progress-done {
+			background: #e8f7ee;
+			color: #1f7a43;
+			border-color: #b9e5c9;
 		}
 		.form-tabs .nav-link.active {
 			background: #f4f7fb;
@@ -346,6 +375,10 @@
 		.mobile-action-bar {
 			display: none;
 		}
+		.mobile-flow-nav,
+		.mobile-flow-nextprev {
+			display: none;
+		}
 
 		/* Responsive controls toolbar */
 		.controls-toolbar {
@@ -362,6 +395,31 @@
 		}
 		.controls-toolbar .btn { flex: 0 1 auto; }
 		@media (max-width: 576px) {
+			.mobile-flow-nav {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: .4rem;
+				margin-top: .55rem;
+			}
+			.mobile-flow-nav .btn {
+				padding: .35rem .3rem;
+				font-size: .78rem;
+				white-space: nowrap;
+			}
+			.mobile-flow-nextprev {
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+				align-items: center;
+				gap: .5rem;
+				margin-top: .45rem;
+				padding-top: .2rem;
+			}
+			.mobile-flow-step-label {
+				text-align: center;
+				font-size: .78rem;
+				font-weight: 600;
+				color: #5a6472;
+			}
 			.form-tabs {
 				display: flex;
 				flex-wrap: nowrap;

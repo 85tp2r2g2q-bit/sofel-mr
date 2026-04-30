@@ -54,15 +54,25 @@
 			<div class="col-12 mb-3">
 				<ul class="nav nav-tabs form-tabs" role="tablist">
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tab-item" type="button" role="tab">Артикул</button>
+						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tab-item" type="button" role="tab">Артикул <span class="tab-progress-badge" data-bind="text: itemTabProgressLabel, css: itemTabProgressClass"></span></button>
 					</li>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-recipient" type="button" role="tab">Получател</button>
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-recipient" type="button" role="tab">Получател <span class="tab-progress-badge" data-bind="text: recipientTabProgressLabel, css: recipientTabProgressClass"></span></button>
 					</li>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-offer" type="button" role="tab">Оферта</button>
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tab-offer" type="button" role="tab">Оферта <span class="tab-progress-badge" data-bind="text: offerTabProgressLabel, css: offerTabProgressClass"></span></button>
 					</li>
 				</ul>
+				<div class="mobile-flow-nav d-md-none" aria-label="Навигация по стъпки">
+					<button type="button" class="btn btn-sm" data-bind="click: goToItemTab, css: { 'btn-primary': activeTabKey() === 'item', 'btn-outline-secondary': activeTabKey() !== 'item' }">1. Артикул</button>
+					<button type="button" class="btn btn-sm" data-bind="click: goToRecipientTab, css: { 'btn-primary': activeTabKey() === 'recipient', 'btn-outline-secondary': activeTabKey() !== 'recipient' }">2. Получател</button>
+					<button type="button" class="btn btn-sm" data-bind="click: goToOfferTab, css: { 'btn-primary': activeTabKey() === 'offer', 'btn-outline-secondary': activeTabKey() !== 'offer' }">3. Оферта</button>
+				</div>
+				<div class="mobile-flow-nextprev d-md-none">
+					<button type="button" class="btn btn-outline-secondary btn-sm" data-bind="click: goToPrevTab, enable: hasPrevTab">Назад</button>
+					<div class="mobile-flow-step-label" data-bind="text: mobileStepLabel"></div>
+					<button type="button" class="btn btn-primary btn-sm" data-bind="click: goToNextTab, enable: hasNextTab">Напред</button>
+				</div>
 			</div>
 
 			<div class="tab-content form-tabs-content">
@@ -919,6 +929,22 @@
 			self.toggleTheme = function () {
 				self.themeMode(self.themeMode() === 'light' ? 'soft-gray' : 'light');
 			};
+			self.activeTabKey = ko.observable('item');
+			function tabTargetToKey(tabTarget) {
+				if (tabTarget === '#form-tab-recipient') return 'recipient';
+				if (tabTarget === '#form-tab-offer') return 'offer';
+				return 'item';
+			}
+			function setActiveTabKeyByTarget(tabTarget) {
+				self.activeTabKey(tabTargetToKey(tabTarget));
+			}
+			function scrollToFormTopOnMobile() {
+				if (!window.matchMedia || !window.matchMedia('(max-width: 767.98px)').matches) return;
+				var formRoot = document.querySelector('.form-tabs');
+				if (!formRoot) return;
+				var top = formRoot.getBoundingClientRect().top + window.pageYOffset - 70;
+				window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+			}
 			function focusFirstFieldInTab(tabTarget) {
 				window.setTimeout(function () {
 					var targetPane = document.querySelector(tabTarget);
@@ -932,6 +958,8 @@
 			function showFormTab(tabTarget) {
 				var trigger = document.querySelector('.form-tabs .nav-link[data-bs-target="' + tabTarget + '"]');
 				if (!trigger) return;
+				setActiveTabKeyByTarget(tabTarget);
+				scrollToFormTopOnMobile();
 				if (window.bootstrap && window.bootstrap.Tab) {
 					window.bootstrap.Tab.getOrCreateInstance(trigger).show();
 					focusFirstFieldInTab(tabTarget);
@@ -948,9 +976,41 @@
 				if (targetPane) targetPane.classList.add('active', 'show');
 				focusFirstFieldInTab(tabTarget);
 			}
+			self.hasPrevTab = ko.computed(function () {
+				return self.activeTabKey() !== 'item';
+			});
+			self.hasNextTab = ko.computed(function () {
+				return self.activeTabKey() !== 'offer';
+			});
+			self.mobileStepLabel = ko.computed(function () {
+				var key = self.activeTabKey();
+				if (key === 'recipient') return 'Стъпка 2 от 3';
+				if (key === 'offer') return 'Стъпка 3 от 3';
+				return 'Стъпка 1 от 3';
+			});
 			self.goToItemTab = function () { showFormTab('#form-tab-item'); };
 			self.goToRecipientTab = function () { showFormTab('#form-tab-recipient'); };
 			self.goToOfferTab = function () { showFormTab('#form-tab-offer'); };
+			self.goToPrevTab = function () {
+				var key = self.activeTabKey();
+				if (key === 'offer') {
+					self.goToRecipientTab();
+					return;
+				}
+				if (key === 'recipient') {
+					self.goToItemTab();
+				}
+			};
+			self.goToNextTab = function () {
+				var key = self.activeTabKey();
+				if (key === 'item') {
+					self.goToRecipientTab();
+					return;
+				}
+				if (key === 'recipient') {
+					self.goToOfferTab();
+				}
+			};
 			self.loadPreviousSavedOffersPage = function () {};
 			self.loadNextSavedOffersPage = function () {};
 			self.isSavedOffersFilterActive = ko.pureComputed(function () {
@@ -2325,6 +2385,62 @@
 				return weekday + ', ' + day + ' ' + month + ' ' + year + ' г.';
 			});
 
+			function hasTextValue(value) {
+				return (value !== null && value !== undefined && String(value).trim() !== '');
+			}
+
+			function buildTabProgress(completed, total) {
+				if (completed <= 0) {
+					return { label: 'Непопълнен', className: 'tab-progress-empty' };
+				}
+				if (completed >= total) {
+					return { label: 'Готов', className: 'tab-progress-done' };
+				}
+				return { label: 'Частично', className: 'tab-progress-partial' };
+			}
+
+			self.itemTabProgress = ko.computed(function () {
+				var total = 6;
+				var completed = 0;
+				if (self.selectedEnvelopeId() !== null && self.selectedEnvelopeId() !== undefined && self.selectedEnvelopeId() !== '') completed += 1;
+				if (self.selectedMaterialId() !== null && self.selectedMaterialId() !== undefined && self.selectedMaterialId() !== '') completed += 1;
+				if ((parseFloat(self.paperGrammage()) || 0) > 0) completed += 1;
+				if ((parseFloat(self.widthA()) || 0) > 0) completed += 1;
+				if ((parseFloat(self.lengthC()) || 0) > 0) completed += 1;
+				var qty = self.selectedQuantity();
+				var qtyValue = qty && typeof qty === 'object' ? (parseFloat(qty.qty) || 0) : (parseFloat(qty) || 0);
+				if (qtyValue > 0) completed += 1;
+				if (!self.isPaperFormatSelected()) {
+					total += 1;
+					if ((parseFloat(self.foldB()) || 0) > 0) completed += 1;
+				}
+				return buildTabProgress(completed, total);
+			});
+			self.itemTabProgressLabel = ko.computed(function () { return self.itemTabProgress().label; });
+			self.itemTabProgressClass = ko.computed(function () { return self.itemTabProgress().className; });
+
+			self.recipientTabProgress = ko.computed(function () {
+				var completed = 0;
+				if (hasTextValue(self.recipientCompany())) completed += 1;
+				if (hasTextValue(self.attentionName())) completed += 1;
+				if (hasTextValue(self.recipientPhone())) completed += 1;
+				if (hasTextValue(self.recipientEmail())) completed += 1;
+				return buildTabProgress(completed, 4);
+			});
+			self.recipientTabProgressLabel = ko.computed(function () { return self.recipientTabProgress().label; });
+			self.recipientTabProgressClass = ko.computed(function () { return self.recipientTabProgress().className; });
+
+			self.offerTabProgress = ko.computed(function () {
+				var completed = 0;
+				if (hasTextValue(self.issuedBy())) completed += 1;
+				if (hasTextValue(self.offerNumber())) completed += 1;
+				if (hasTextValue(self.offerSubject())) completed += 1;
+				if (hasTextValue(self.documentDateRaw())) completed += 1;
+				return buildTabProgress(completed, 4);
+			});
+			self.offerTabProgressLabel = ko.computed(function () { return self.offerTabProgress().label; });
+			self.offerTabProgressClass = ko.computed(function () { return self.offerTabProgress().className; });
+
 			
 			function getOfferRenderCss() {
 				return '.hide-actions .no-print{display:none !important;}' +
@@ -2732,7 +2848,20 @@
 
 		}
 
-		ko.applyBindings(new ViewModel());
+		var viewModel = new ViewModel();
+		ko.applyBindings(viewModel);
+		document.querySelectorAll('.form-tabs .nav-link').forEach(function (link) {
+			link.addEventListener('shown.bs.tab', function (event) {
+				var target = event && event.target ? event.target.getAttribute('data-bs-target') : '';
+				if (target === '#form-tab-recipient') {
+					viewModel.activeTabKey('recipient');
+				} else if (target === '#form-tab-offer') {
+					viewModel.activeTabKey('offer');
+				} else {
+					viewModel.activeTabKey('item');
+				}
+			});
+		});
 	</script>
 
 </body>
