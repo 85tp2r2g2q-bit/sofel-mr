@@ -31,7 +31,7 @@
 	</script>
 </head>
 
-<body class="p-4" style="padding-top: calc(1.5rem + 56px) !important;" data-bind="css: themeModeClass">
+<body class="p-4" style="padding-top: calc(1.5rem + 56px) !important;" data-bind="css: bodyStateClass">
 	<!-- Sticky action bar -->
 	<nav class="sticky-action-bar navbar">
 		<div class="container-fluid px-3 gap-2">
@@ -47,8 +47,28 @@
 			<button class="btn btn-outline-primary btn-sm" data-bind="click: printDoc" title="Print" aria-label="Print">
 				<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg>
 			</button>
+			<button class="btn btn-outline-secondary btn-sm d-none d-lg-inline-flex" data-bind="click: toggleDesktopSummary, text: showDesktopSummary() ? 'Скрий summary' : 'Покажи summary'" title="Показване/скриване на summary" aria-label="Показване/скриване на summary"></button>
 		</div>
 	</nav>
+	<aside class="desktop-summary-panel" data-bind="visible: showDesktopSummary" aria-label="Обобщение на офертата">
+		<div class="desktop-summary-card">
+			<div class="desktop-summary-title">Обобщение</div>
+			<div class="desktop-summary-grid">
+				<div class="desktop-summary-label">Продукт</div>
+				<div class="desktop-summary-value" data-bind="text: selectedEnvelopeDisplay"></div>
+				<div class="desktop-summary-label">Материал</div>
+				<div class="desktop-summary-value" data-bind="text: selectedMaterialDisplay"></div>
+				<div class="desktop-summary-label">Тираж</div>
+				<div class="desktop-summary-value" data-bind="text: selectedQuantityDisplay"></div>
+				<div class="desktop-summary-label">Крайна цена</div>
+				<div class="desktop-summary-value desktop-summary-price" data-bind="text: selectedFinalPriceDisplay"></div>
+			</div>
+			<div class="desktop-summary-footer">
+				<span class="desktop-summary-status" data-bind="text: offerSummaryStatusLabel, css: offerSummaryStatusClass"></span>
+				<span class="desktop-summary-items" data-bind="text: offerItemsCountLabel"></span>
+			</div>
+		</div>
+	</aside>
 	<div class="container">
 		<div class="row">
 			<div class="col-12 mb-3">
@@ -923,8 +943,19 @@
 			self.canLoadPreviousSavedOffersPage = ko.observable(false);
 			self.canLoadNextSavedOffersPage = ko.observable(false);
 			self.themeMode = ko.observable('light');
+			self.showDesktopSummary = ko.observable(true);
+			self.toggleDesktopSummary = function () {
+				self.showDesktopSummary(!self.showDesktopSummary());
+			};
 			self.themeModeClass = ko.pureComputed(function () {
 				return self.themeMode() === 'soft-gray' ? 'theme-soft-gray' : 'theme-light';
+			});
+			self.bodyStateClass = ko.pureComputed(function () {
+				return {
+					'theme-soft-gray': self.themeMode() === 'soft-gray',
+					'theme-light': self.themeMode() !== 'soft-gray',
+					'desktop-summary-hidden': !self.showDesktopSummary()
+				};
 			});
 			self.toggleTheme = function () {
 				self.themeMode(self.themeMode() === 'light' ? 'soft-gray' : 'light');
@@ -2440,6 +2471,49 @@
 			});
 			self.offerTabProgressLabel = ko.computed(function () { return self.offerTabProgress().label; });
 			self.offerTabProgressClass = ko.computed(function () { return self.offerTabProgress().className; });
+
+			self.selectedEnvelopeDisplay = ko.computed(function () {
+				var env = self.selectedEnvelope();
+				return env ? getLocalizedName(env) : '—';
+			});
+			self.selectedMaterialDisplay = ko.computed(function () {
+				var material = self.selectedMaterial();
+				return material ? getLocalizedName(material) : '—';
+			});
+			self.selectedQuantityDisplay = ko.computed(function () {
+				var selected = self.selectedQuantity();
+				var qty = selected && typeof selected === 'object' ? selected.qty : selected;
+				if (!qty) return '—';
+				var unit = self.isPaperFormatSelected() ? 'кг' : 'бр';
+				return self.formatQuantity(qty) + ' ' + unit;
+			});
+			self.selectedFinalPriceDisplay = ko.computed(function () {
+				var finalPrice = self.isPaperBagSelected() && self.useBagWithPrintPriceInOffer()
+					? (parseFloat(self.bagWithPrintPriceEur()) || 0)
+					: (parseFloat(self.customerInquiryPriceEur()) || 0);
+				var unit = self.isPaperFormatSelected() ? 'EUR/кг' : 'EUR/бр';
+				return finalPrice.toFixed(5) + ' ' + unit;
+			});
+			self.offerSummaryStatus = ko.computed(function () {
+				var done = 0;
+				var itemCount = (typeof self.items === 'function' && self.items()) ? self.items().length : 0;
+				if (self.itemTabProgress().className === 'tab-progress-done') done += 1;
+				if (self.recipientTabProgress().className === 'tab-progress-done') done += 1;
+				if (self.offerTabProgress().className === 'tab-progress-done') done += 1;
+				if (done === 3 && itemCount > 0) {
+					return { label: 'Офертата е готова', className: 'summary-status-done' };
+				}
+				if (done > 0 || itemCount > 0) {
+					return { label: 'Офертата е в прогрес', className: 'summary-status-progress' };
+				}
+				return { label: 'Очаква попълване', className: 'summary-status-empty' };
+			});
+			self.offerSummaryStatusLabel = ko.computed(function () { return self.offerSummaryStatus().label; });
+			self.offerSummaryStatusClass = ko.computed(function () { return self.offerSummaryStatus().className; });
+			self.offerItemsCountLabel = ko.computed(function () {
+				var count = (typeof self.items === 'function' && self.items()) ? self.items().length : 0;
+				return 'Позиции: ' + count;
+			});
 
 			
 			function getOfferRenderCss() {
