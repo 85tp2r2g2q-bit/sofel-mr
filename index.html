@@ -288,6 +288,11 @@
 						data-bind="options: priceIndexes, optionsText: 'name', optionsValue: 'idx', value: selectedPriceIndex"></select>
 				</div>
 				<div class="mb-3">
+					<div class="form-check mb-2">
+						<input class="form-check-input" type="checkbox" id="stock-retail-mode"
+							data-bind="checked: stockRetailPriceMode" />
+						<label class="form-check-label" for="stock-retail-mode" data-bind="text: stockRetailModeLabel"></label>
+					</div>
 					<label class="form-label fw-bold" data-bind="text: isPaperBagSelected() ? 'ЦЕНА ЗА ЧАНТА БЕЗ ПЕЧАТ КЛИЕНТА EUR БЕЗ ДДС' : 'Цена според запитването на клиента'"></label>
 					<input type="number" step="any" class="form-control readonly-field fw-bold" readonly
 						data-bind="value: customerInquiryPriceEur, valueUpdate: 'afterkeydown'" />
@@ -1058,6 +1063,21 @@
 			});
 			self.selectedSavedOfferPreview = ko.observable(null);
 			self.graphicPrintSurchargeEur = ko.observable(0.055);
+			self.stockRetailMarkupPercent = ko.observable(20);
+			self.stockRetailPriceMode = ko.observable(false);
+			self.stockRetailMultiplier = ko.computed(function () {
+				var percent = parseFloat(self.stockRetailMarkupPercent());
+				if (!isFinite(percent)) percent = 20;
+				return self.stockRetailPriceMode() ? (1 + (percent / 100)) : 1;
+			});
+			self.stockRetailModeLabel = ko.computed(function () {
+				var percent = parseFloat(self.stockRetailMarkupPercent());
+				if (!isFinite(percent)) percent = 20;
+				var text = (Math.abs(percent % 1) < 0.000001)
+					? String(percent.toFixed(0))
+					: String(percent.toFixed(2)).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+				return 'Стоки на склад/ Цена на дребно (+' + text + '%)';
+			});
 
 			function normalizeCompanyKey(value) {
 				return (value || '').toString().trim().toLowerCase();
@@ -1453,6 +1473,7 @@
 			function loadPricingSettingsFromFirestore() {
 				if (!firebaseDb) {
 					self.graphicPrintSurchargeEur(0.055);
+					self.stockRetailMarkupPercent(20);
 					return;
 				}
 
@@ -1464,6 +1485,7 @@
 				pricingSettingsUnsubscribe = firebaseDb.collection('settings').doc('pricing').onSnapshot(function (docSnap) {
 					if (!docSnap || !docSnap.exists) {
 						self.graphicPrintSurchargeEur(0.055);
+						self.stockRetailMarkupPercent(20);
 						return;
 					}
 
@@ -1475,9 +1497,18 @@
 					if (!isFinite(surcharge)) {
 						surcharge = 0.055;
 					}
+					var stockRetailPercent = parseFloat(data.stockRetailMarkupPercent);
+					if (!isFinite(stockRetailPercent)) {
+						stockRetailPercent = parseFloat(data.retailMarkupPercent);
+					}
+					if (!isFinite(stockRetailPercent)) {
+						stockRetailPercent = 20;
+					}
 					self.graphicPrintSurchargeEur(surcharge);
+					self.stockRetailMarkupPercent(stockRetailPercent);
 				}, function () {
 					self.graphicPrintSurchargeEur(0.055);
+					self.stockRetailMarkupPercent(20);
 				});
 			}
 
@@ -2247,6 +2278,7 @@
 				var graphicPrintSurcharge = self.isPaperBagSelected() && self.graphicPrintForPaperBag()
 					? (parseFloat(self.graphicPrintSurchargeEur()) || 0)
 					: 0;
+				var stockRetailMultiplier = self.stockRetailMultiplier();
 				var pricePerUnit;
 				if (self.isPaperFormatSelected()) {
 					pricePerUnit = calculatePaperFormatPrice(selected);
@@ -2257,7 +2289,7 @@
 				} else {
 					pricePerUnit = calculateFinalPrice(selected);
 				}
-				pricePerUnit = (pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge;
+				pricePerUnit = ((pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge) * stockRetailMultiplier;
 				return pricePerUnit.toFixed(5);
 			});
 
@@ -2268,10 +2300,11 @@
 				var selected = self.selectedQuantity();
 				if (!selected) return '0.0000';
 				var qty = parseFloat(selected.qty) || 0;
+				var stockRetailMultiplier = self.stockRetailMultiplier();
 				var printLaborTotal = parseFloat(self.printLaborPriceEur()) || 0;
 				var bagWithoutPrint = parseFloat(self.customerInquiryPriceEur()) || 0;
 				var printLaborPerBag = qty > 0 ? (printLaborTotal / qty) : 0;
-				var pricePerUnit = printLaborPerBag + bagWithoutPrint;
+				var pricePerUnit = (printLaborPerBag * stockRetailMultiplier) + bagWithoutPrint;
 				return pricePerUnit.toFixed(4);
 			});
 
@@ -2282,6 +2315,7 @@
 					var qtys = self.quantitiesForSelected();
 					var priceIndexMultiplier = parseFloat(self.selectedPriceIndex()) || 1;
 					var graphicPrintSurcharge = self.isPaperBagSelected() && self.graphicPrintForPaperBag() ? (parseFloat(self.graphicPrintSurchargeEur()) || 0) : 0;
+							var stockRetailMultiplier = self.stockRetailMultiplier();
 					return qtys.map(function (q) {
 						var pricePerUnit;
 						var bagWithPrintPricePerUnit = '';
@@ -2290,11 +2324,12 @@
 						} else {
 							pricePerUnit = calculateFinalPrice(q);
 						}
-						pricePerUnit = (pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge;
+						var baseAdjustedPrice = (pricePerUnit * priceIndexMultiplier) + graphicPrintSurcharge;
+						pricePerUnit = baseAdjustedPrice * stockRetailMultiplier;
 						if (self.isPaperBagSelected()) {
 							var weightPerBagGr = parseFloat(self.envelopeWeightGr()) || 0;
 							var printLaborPerBag = (weightPerBagGr * 0.23) / 1000;
-							bagWithPrintPricePerUnit = (pricePerUnit + printLaborPerBag).toFixed(4);
+							bagWithPrintPricePerUnit = ((baseAdjustedPrice + printLaborPerBag) * stockRetailMultiplier).toFixed(4);
 						}
 						return {
 							qty: q.qty,
